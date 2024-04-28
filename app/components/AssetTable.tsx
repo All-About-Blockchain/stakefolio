@@ -17,6 +17,7 @@ const AssetTable: React.FC<PortfolioAsset> = ({ assets }) => (
           <td>{asset.balance}</td>
           <td>{asset.name}</td>
           <td>{asset.metrics}</td>
+          <td>{asset.price}</td>
         </tr>
       ))}
     </tbody>

@@ -8,6 +8,7 @@ export type StakedAsset = {
   description?: string;
   logoUrl?: string;
   metrics?: number;
+  price?: number;
 };
 
 type Metric = {
@@ -36,5 +37,6 @@ export type PortfolioAsset = {
     description: string;
     logoUrl: string;
     metrics: number;
+    price?: number;
   }>;
 };

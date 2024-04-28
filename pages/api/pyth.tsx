@@ -1,4 +1,3 @@
-const express = require('express');
 const { Connection } = require('@solana/web3.js');
 const {
   PythHttpClient,
