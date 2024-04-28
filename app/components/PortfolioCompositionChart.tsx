@@ -13,7 +13,7 @@ const PortfolioCompositionChart = ({ data }: { data: StakedAsset[] }) => {
     <PieChart width={800} height={800}>
       <Pie
         data={data}
-        dataKey='value'
+        dataKey='balance'
         startAngle={90}
         endAngle={-270}
         cx='50%'
@@ -28,10 +28,10 @@ const PortfolioCompositionChart = ({ data }: { data: StakedAsset[] }) => {
           innerRadius,
           outerRadius,
           value,
-          name,
+          symbol,
         }) => {
           const RADIAN = Math.PI / 180;
-          const radius = innerRadius + (outerRadius - innerRadius) * 1.1; // 1.3 is a scaling factor
+          const radius = innerRadius + (outerRadius - innerRadius) * 1.3;
           const x = cx + radius * Math.cos(-midAngle * RADIAN);
           const y = cy + radius * Math.sin(-midAngle * RADIAN);
           return (
@@ -42,14 +42,20 @@ const PortfolioCompositionChart = ({ data }: { data: StakedAsset[] }) => {
               textAnchor={x > cx ? 'start' : 'end'}
               dominantBaseline='central'
             >
-              {name}
+              {symbol}
             </text>
           );
         }}
         labelLine={false}
       >
         {data.map((item, index) => (
-          <Cell key={`cell-${index}`} fill={item.color} radius={7} />
+          <Cell
+            key={`cell-${index}`}
+            fill={item.color}
+            stroke='rgba(255,255,255, 0.5'
+            strokeWidth={2}
+            radius={7}
+          />
         ))}
       </Pie>
     </PieChart>
