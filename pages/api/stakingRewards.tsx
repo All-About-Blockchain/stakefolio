@@ -36,11 +36,11 @@ export default async function handler(
     body: JSON.stringify({ query }),
   });
 
-  console.log("stakingRewardsResponse", response)
+  console.log('stakingRewardsResponse', response);
 
   const data = await response.json();
 
-  console.log("stakingRewardsData", data)
+  console.log('stakingRewardsData', data);
 
   res.status(200).json(data);
 }

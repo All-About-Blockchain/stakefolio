@@ -42,7 +42,7 @@ export function usePythLookup() {
 
   const [myPortfolioPrices, setMyPortfolioPrices] = useState<PriceData[]>([]); // Specify the type as PriceData[]
 
-/*   useEffect(() => {
+  /*   useEffect(() => {
     if (pythData) {
       const prices = pythData.prices.filter((price: PriceData, index: number) =>
         myPortfolio.assets.includes(price.symbols)

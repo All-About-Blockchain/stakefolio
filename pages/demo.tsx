@@ -21,7 +21,7 @@ export default function Demo() {
   const [aprData, setAprData] = useState([]);
   const [coinMarketCapData, setCoinMarketCapData] = useState([]);
 
-  console.log("setAprData", setAprData);
+  console.log('setAprData', setAprData);
 
   useEffect(() => {
     fetch('/api/stakingRewards')

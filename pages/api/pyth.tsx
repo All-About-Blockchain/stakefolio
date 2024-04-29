@@ -10,14 +10,12 @@ const PYTHNET_CLUSTER_NAME = PythCluster.pythnet;
 const connection = new Connection(getPythClusterApiUrl(PYTHNET_CLUSTER_NAME));
 const pythPublicKey = getPythProgramKeyForCluster(PYTHNET_CLUSTER_NAME);
 
-const app = express();
-
 import { Request, Response } from 'express';
 
 interface PythData {
   // Define the structure of the Pyth data here
 }
-
+/* 
 app.get('/api/pyth', async (req: Request, res: Response) => {
   try {
     const pythClient = new PythHttpClient(connection, pythPublicKey);
@@ -34,3 +32,5 @@ app.get('/api/pyth', async (req: Request, res: Response) => {
 app.listen(3000, () => {
   console.log('Server is running on port 3000');
 });
+
+ */
