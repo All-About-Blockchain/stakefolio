@@ -9,7 +9,7 @@ import {
   PriceData,
 } from '@pythnetwork/client';
 import { PythHttpClientResult } from '@pythnetwork/client/lib/PythHttpClient';
-import { portfolioBalance } from '@/pages';
+import { portfolioBalance } from '@/pages/demo';
 
 const PYTHNET_CLUSTER_NAME: PythCluster = 'pythnet';
 const connection = new Connection(getPythClusterApiUrl(PYTHNET_CLUSTER_NAME));
@@ -42,14 +42,14 @@ export function usePythLookup() {
 
   const [myPortfolioPrices, setMyPortfolioPrices] = useState<PriceData[]>([]); // Specify the type as PriceData[]
 
-  useEffect(() => {
+/*   useEffect(() => {
     if (pythData) {
       const prices = pythData.prices.filter((price: PriceData, index: number) =>
         myPortfolio.assets.includes(price.symbols)
       );
       setMyPortfolioPrices(prices);
     }
-  }, [myPortfolio.assets, pythData]);
+  }, [myPortfolio.assets, pythData]); */
 
   console.log('myPortfolioPrices', myPortfolioPrices);
 

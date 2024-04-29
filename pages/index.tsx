@@ -1,57 +1,17 @@
-import AssetTable from '@/app/components/AssetTable';
-import PortfolioCompositionChart from '@/app/components/PortfolioCompositionChart';
-import { useCrossReferencedAssets } from '@/app/hooks/apr';
-import { Metadata } from 'next';
-import { useEffect, useState } from 'react';
+import Link from 'next/link'
+import React from 'react'
 
-export const portfolioBalance = [
-  { symbol: 'ATOM', balance: 40, color: '#F2CC69' },
-  { symbol: 'INJ', balance: 300, color: '#f97316' },
-  { symbol: 'TIA', balance: 200, color: '#16f2df' },
-];
-
-export const metadata: Metadata = {
-  title: 'Stakefolio | Staking Balances and Rewards',
-};
-
-export default function Index() {
-  const [aprData, setAprData] = useState([]);
-  const [coinMarketCapData, setCoinMarketCapData] = useState([]);
-
-  useEffect(() => {
-    fetch('/api/stakingRewards')
-      .then((response) => response.json())
-      .then((data) => setAprData(data.data.assets));
-  }, []);
-
-  console.log('aprData', aprData);
-
-  useEffect(() => {
-    fetch('/api/coinmarketcap')
-      .then((response) => response.json())
-      .then((data) => setCoinMarketCapData(data.data))
-      .catch((error) => console.error('Error:', error));
-  }, []);
-
-  console.log('coinMarketCapData', coinMarketCapData);
-
-  const assetData = useCrossReferencedAssets(
-    portfolioBalance,
-    aprData,
-    coinMarketCapData
-  );
-
-  console.log('crossReferencedAssets', assetData);
-
+const index = () => {
   return (
-    <main className='min-h-90 grid w-full grid-cols-2 justify-between p-24'>
-      <div>Summary</div>
-      <div className='min-h-[400px] w-full'>
-        <PortfolioCompositionChart data={portfolioBalance} />
+    <div className='flex flex-col p-8 px-12 gap-8'>
+      <div className='flex flex-col gap-2'>
+        <Link target="_blank" href="/stakefolio_staking_walkthrough.pdf">Staking Walkthrough</Link>
+        <Link target="_blank" href="https://www.keplr.app/">Keplr</Link>
+        <Link target="_blank" href="https://www.leapwallet.io/">Leap</Link>
+        <Link target="_blank" href="https://www.kado.money/">Kado</Link>
       </div>
-      <div>
-        <AssetTable assets={assetData} />
-      </div>
-    </main>
-  );
+    </div>
+  )
 }
+
+export default index

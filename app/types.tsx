@@ -26,17 +26,17 @@ export type Asset = {
   metrics: Metric[];
 };
 
-export type PortfolioAsset = {
+export type PortfolioAssets = {
   assets: Array<{
     symbol: string;
     balance: number;
     color: string;
-    name: string;
-    id: string;
-    slug: string;
-    description: string;
-    logoUrl: string;
-    metrics: number;
+    name?: string;
+    id?: string;
+    slug?: string;
+    description?: string;
+    logoUrl?: string;
+    metrics?: number;
     price?: number;
   }>;
 };
