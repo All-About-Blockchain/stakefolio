@@ -46,8 +46,7 @@ export default function Demo() {
 
   return (
     <main className='min-h-90 grid w-full grid-cols-1 justify-between p-24'>
-      <div>Summary</div>
-      <Summary data={assetsData} />
+      {/* <Summary data={assetsData} /> */}
       <div className='min-h-[400px] w-full'>
         <PortfolioCompositionChart data={portfolioBalance} />
       </div>
