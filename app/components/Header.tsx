@@ -7,11 +7,9 @@ const Header = () => {
       <Link href='/'>
         <span className='text-2xl font-bold'>Stakefol.io</span>
       </Link>
-      {/* <div className='flex gap-4 px-4 pb-[1px]'>
-        <Link href="/demo/">
-          Demo
-        </Link>
-      </div> */}
+      <div className='flex gap-4 px-4 pb-[1px]'>
+        <Link href='/demo/'>Demo</Link>
+      </div>
     </div>
   );
 };

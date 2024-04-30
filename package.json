@@ -12,6 +12,7 @@
   "dependencies": {
     "@pythnetwork/client": "^2.21.0",
     "axios": "^1.6.8",
+    "decimal.js": "^10.4.3",
     "next": "14.2.3",
     "react": "^18.3.1",
     "react-dom": "^18",
