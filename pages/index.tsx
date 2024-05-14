@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import React from 'react';
 
 const index = () => {
   return (
@@ -14,7 +13,7 @@ const index = () => {
         <Link target='_blank' href='https://www.leapwallet.io/'>
           Leap
         </Link>
-        <Link target='_blank' href='https://www.kado.money/'>
+        <Link target='_blank' href='https://app.kado.money/?onPayCurrency=CAD&onRevCurrency=ATOM&network=Cosmos%20Hub'>
           Kado
         </Link>
       </div>
