@@ -255,6 +255,7 @@ function formatAmount(amount: string, decimals: number) {
 
 export function useAllBalances() {
   const [data, setData] = useState<ChainBalances[]>([]);
+  const [loading, setLoading] = useState(true);
   const chainHooks = useAllChains();
   const { assets: registryAssets, loading: registryLoading } =
     useChainRegistryAssets();
@@ -268,22 +269,44 @@ export function useAllBalances() {
     [chainHooks]
   );
 
+  function delay(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
   useEffect(() => {
     if (registryLoading) return;
+    let cancelled = false;
+    let timer: NodeJS.Timeout | null = null;
+
     async function fetchAll() {
+      setLoading(true);
       const results: ChainBalances[] = [];
       for (const { chainName, address, chain, assetList } of chainHooks) {
-        if (!address || !chain) continue;
+        if (!address || !chain) {
+          results.push({
+            chainName,
+            address: address || '',
+            balances: [],
+            delegations: [],
+          });
+          continue;
+        }
         try {
           const rpc = chain.apis?.rpc?.[0]?.address;
-          if (!rpc) continue;
-          const client = await StargateClient.connect(rpc);
+          if (!rpc) {
+            results.push({
+              chainName,
+              address,
+              balances: [],
+              delegations: [],
+            });
+            continue;
+          }
+          /* const client = await StargateClient.connect(rpc);
           const balancesRaw = Array.from(await client.getAllBalances(address));
 
-          // Use chain-registry asset list first, then wallet assetList as fallback
           const assetLists = [registryAssets[chainName], assetList];
 
-          // Map balances to include asset meta and formatted amount
           const balances = balancesRaw.map((b) => {
             const meta = getAssetMetaFromLists(assetLists, b.denom);
             const decimals = meta?.decimals ?? 0;
@@ -296,9 +319,8 @@ export function useAllBalances() {
               decimals,
               displayDenom: meta?.displayDenom || b.denom,
             };
-          });
+          }); */
 
-          // Staking delegations
           const tmClient = await Tendermint34Client.connect(rpc);
           const queryClient = new QueryClient(tmClient);
           const staking = setupStakingExtension(queryClient);
@@ -331,14 +353,32 @@ export function useAllBalances() {
             delegations,
           });
         } catch (err) {
-          // Optionally handle error per chain
+          results.push({
+            chainName,
+            address,
+            balances: [],
+            delegations: [],
+          });
         }
+        await delay(1000);
       }
-      setData(results);
+      if (!cancelled) {
+        setData(results);
+        setLoading(false);
+      }
     }
-    fetchAll();
-    // Only run when addresses or chainIds or chainHooks change
-  }, [addressesDep, chainIdsDep, chainHooks, registryLoading, registryAssets]);
 
-  return data;
+    // Fetch immediately, then set up interval
+    fetchAll();
+    timer = setInterval(() => {
+      fetchAll();
+    }, 15000);
+
+    return () => {
+      cancelled = true;
+      if (timer) clearInterval(timer);
+    };
+  }, [addressesDep, chainIdsDep, registryLoading, registryAssets, chainHooks]);
+
+  return { assets: data, loading };
 }

@@ -49,7 +49,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     <ChainProvider
       chains={filteredChains}
       assetLists={assetLists}
-      wallets={[keplrWallet, leapWallet, cosmostationWallet, walletConnect]}
+      wallets={[keplrWallet, leapWallet, cosmostationWallet]}
       walletModal={InterchainWalletModal as any}
     >
       <Header />

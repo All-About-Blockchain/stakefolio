@@ -5,8 +5,9 @@ export function AllBalancesList() {
 
   return (
     <div className='flex flex-col gap-6'>
-      {all.length === 0 && <div>Loading balances...</div>}
-      {all.map((chain) => (
+      {all.loading && <div>Loading balances...</div>}
+      {!all.loading && all.assets.length === 0 && <div>No balances found.</div>}
+      {all.assets.map((chain) => (
         <div key={chain.chainName} className='rounded border p-4'>
           <div className='mb-2 text-lg font-bold'>{chain.chainName}</div>
           <div className='mb-1 text-sm'>
