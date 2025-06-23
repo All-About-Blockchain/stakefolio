@@ -8,6 +8,8 @@ import { leapWallet } from '@interchain-kit/leap-extension';
 import { cosmostationWallet } from '@interchain-kit/cosmostation-extension';
 import { chains, assetLists } from '@chain-registry/v2';
 import { WCWallet } from '@interchain-kit/core';
+import Header from '@/app/components/Header';
+import Footer from '@/app/components/Footer';
 
 // Filter chains you want to support
 const chainNames = [
@@ -50,7 +52,9 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       wallets={[keplrWallet, leapWallet, cosmostationWallet, walletConnect]}
       walletModal={InterchainWalletModal as any}
     >
+      <Header />
       <Component {...pageProps} />
+      <Footer />
     </ChainProvider>
   );
 }
