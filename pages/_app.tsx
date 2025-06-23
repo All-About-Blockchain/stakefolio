@@ -10,7 +10,27 @@ import { chains, assetLists } from '@chain-registry/v2';
 import { WCWallet } from '@interchain-kit/core';
 
 // Filter chains you want to support
-const chainNames = ['cosmoshub', 'osmosis', 'juno'];
+const chainNames = [
+  'cosmoshub',
+  'osmosis',
+  'juno',
+  'stargaze',
+  'akash',
+  'axelar',
+  'evmos',
+  'crescent',
+  'comdex',
+  'chihuahua',
+  'stride',
+  'quicksilver',
+  'kujira',
+  'persistence',
+  'regen',
+  'bitsong',
+  'gravitybridge',
+  'umee',
+  'desmos',
+];
 const filteredChains = chains.filter((c) => chainNames.includes(c.chainName));
 
 const walletConnect = new WCWallet(undefined, {

@@ -18,7 +18,8 @@ export function AllBalancesList() {
               {chain.balances.length === 0 && <li>None</li>}
               {chain.balances.map((b, i) => (
                 <li key={i}>
-                  {b.amount} <span className='font-mono'>{b.denom}</span>
+                  {b.displayAmount}{' '}
+                  <span className='font-mono'>{b.displayDenom}</span>
                 </li>
               ))}
             </ul>
@@ -30,10 +31,9 @@ export function AllBalancesList() {
               {chain.delegations.map((d, i) => (
                 <li key={i}>
                   <span className='font-mono'>
-                    {d.balance.amount} {d.balance.denom}
+                    {d.balance.displayAmount} {d.balance.displayDenom}
                   </span>{' '}
-                  to <span className='font-mono'>{d.validatorAddress}</span>{' '}
-                  (shares: {d.shares})
+                  to <span className='font-mono'>{d.validatorAddress}</span>
                 </li>
               ))}
             </ul>

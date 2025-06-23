@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { useChain } from '@interchain-kit/react';
 import { AllBalancesList } from '@/app/components/AllBalancesList';
 
