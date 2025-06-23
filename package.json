@@ -1,6 +1,6 @@
 {
   "name": "stakefolio",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -10,19 +10,28 @@
     "prettier": "prettier --write --ignore-path .gitignore ."
   },
   "dependencies": {
+    "@chain-registry/v2": "^1.71.237",
+    "@dao-dao/cosmiframe": "^1.0.0",
+    "@interchain-kit/core": "^0.3.41",
+    "@interchain-kit/cosmostation-extension": "^0.3.41",
+    "@interchain-kit/keplr-extension": "^0.3.41",
+    "@interchain-kit/leap-extension": "^0.3.41",
+    "@interchain-kit/react": "^0.3.41",
+    "@interchain-ui/react": "^1.26.3",
     "@pythnetwork/client": "^2.21.0",
+    "add": "^2.0.6",
     "axios": "^1.6.8",
     "decimal.js": "^10.4.3",
-    "next": "14.2.3",
-    "react": "^18.3.1",
-    "react-dom": "^18",
-    "recharts": "^2.12.0"
+    "next": "^15.3.4",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "recharts": "^3.0.0-beta.2"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
     "eslint": "^8",
     "eslint-config-next": "14.2.3",
     "eslint-config-prettier": "^9.1.0",
