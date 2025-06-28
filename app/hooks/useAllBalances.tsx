@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { useChain } from '@interchain-kit/react';
 import {
   StargateClient,
@@ -260,14 +260,24 @@ export function useAllBalances() {
   const { assets: registryAssets, loading: registryLoading } =
     useChainRegistryAssets();
 
-  const addressesDep = useMemo(
-    () => chainHooks.map((c) => c.address).join(','),
+  // Only consider connected chains
+  const connectedChains = useMemo(
+    () => chainHooks.filter((c) => c.address && c.chain),
     [chainHooks]
+  );
+
+  // Debounce: Only fetch after 500ms of no address changes
+  const addressesDep = useMemo(
+    () => connectedChains.map((c) => c.address).join(','),
+    [connectedChains]
   );
   const chainIdsDep = useMemo(
-    () => chainHooks.map((c) => c.chain?.chainId).join(','),
-    [chainHooks]
+    () => connectedChains.map((c) => c.chain?.chainId).join(','),
+    [connectedChains]
   );
+
+  const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
+  const pollInterval = useRef<NodeJS.Timeout | null>(null);
 
   function delay(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -276,21 +286,16 @@ export function useAllBalances() {
   useEffect(() => {
     if (registryLoading) return;
     let cancelled = false;
-    let timer: NodeJS.Timeout | null = null;
+
+    function clearTimers() {
+      if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
+      if (pollInterval.current) clearInterval(pollInterval.current);
+    }
 
     async function fetchAll() {
       setLoading(true);
       const results: ChainBalances[] = [];
-      for (const { chainName, address, chain, assetList } of chainHooks) {
-        if (!address || !chain) {
-          results.push({
-            chainName,
-            address: address || '',
-            balances: [],
-            delegations: [],
-          });
-          continue;
-        }
+      for (const { chainName, address, chain, assetList } of connectedChains) {
         try {
           const rpc = chain.apis?.rpc?.[0]?.address;
           if (!rpc) {
@@ -302,7 +307,13 @@ export function useAllBalances() {
             });
             continue;
           }
-          /* const client = await StargateClient.connect(rpc);
+          console.log(
+            `[RPC] Connecting to ${rpc} for balances of ${chainName} (${address})`
+          );
+          const client = await StargateClient.connect(rpc);
+          console.log(
+            `[RPC] Fetching all balances for ${address} on ${chainName}`
+          );
           const balancesRaw = Array.from(await client.getAllBalances(address));
 
           const assetLists = [registryAssets[chainName], assetList];
@@ -319,11 +330,17 @@ export function useAllBalances() {
               decimals,
               displayDenom: meta?.displayDenom || b.denom,
             };
-          }); */
+          });
 
+          console.log(
+            `[RPC] Connecting to ${rpc} for staking delegations of ${chainName} (${address})`
+          );
           const tmClient = await Tendermint34Client.connect(rpc);
           const queryClient = new QueryClient(tmClient);
           const staking = setupStakingExtension(queryClient);
+          console.log(
+            `[RPC] Fetching delegator delegations for ${address} on ${chainName}`
+          );
           const delegationsResp =
             await staking.staking.delegatorDelegations(address);
           const delegations = (delegationsResp.delegationResponses || []).map(
@@ -360,7 +377,7 @@ export function useAllBalances() {
             delegations: [],
           });
         }
-        await delay(1000);
+        await delay(500); // small delay between chains
       }
       if (!cancelled) {
         setData(results);
@@ -368,17 +385,25 @@ export function useAllBalances() {
       }
     }
 
-    // Fetch immediately, then set up interval
-    fetchAll();
-    timer = setInterval(() => {
+    // Debounce fetchAll
+    clearTimers();
+    debounceTimeout.current = setTimeout(() => {
       fetchAll();
-    }, 15000);
+      // Poll every 30s
+      pollInterval.current = setInterval(fetchAll, 30000);
+    }, 500);
 
     return () => {
       cancelled = true;
-      if (timer) clearInterval(timer);
+      clearTimers();
     };
-  }, [addressesDep, chainIdsDep, registryLoading, registryAssets, chainHooks]);
+  }, [
+    addressesDep,
+    chainIdsDep,
+    registryLoading,
+    registryAssets,
+    connectedChains,
+  ]);
 
   return { assets: data, loading };
 }

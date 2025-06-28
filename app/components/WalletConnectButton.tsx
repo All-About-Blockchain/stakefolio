@@ -12,7 +12,7 @@ const WalletConnectButton = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const walletManager = useWalletManager();
-  
+
   // Call all useChain hooks at the top level
   const cosmoshub = useChain('cosmoshub');
   const osmosis = useChain('osmosis');
@@ -58,66 +58,73 @@ const WalletConnectButton = () => {
   ];
 
   // Count connected chains
-  const connectedChains = chainHooks.filter(chain => chain.address);
+  const connectedChains = chainHooks.filter((chain) => chain.address);
   const totalChains = chainHooks.length;
 
   const handleConnectAll = async () => {
     // List of problematic chain IDs that don't have proper modular chain info
     const problematicChainIds = ['crescent-1', 'bitsong-2b'];
-    
+
     // Get all chains that aren't connected yet and have valid chain info
-    const unconnectedChains = chainHooks.filter(chain => 
-      !chain.address && 
-      chain.chain?.chainId && 
-      !problematicChainIds.includes(chain.chain.chainId)
+    const unconnectedChains = chainHooks.filter(
+      (chain) =>
+        !chain.address &&
+        chain.chain?.chainId &&
+        !problematicChainIds.includes(chain.chain.chainId)
     );
-    
+
     if (unconnectedChains.length === 0) {
-      console.log('No chains to connect - all are already connected or invalid');
+      console.log(
+        'No chains to connect - all are already connected or invalid'
+      );
       return;
     }
 
-    console.log(`Found ${unconnectedChains.length} chains to connect:`, 
-      unconnectedChains.map(c => `${c.chainName} (${c.chain?.chainId})`));
+    console.log(
+      `Found ${unconnectedChains.length} chains to connect:`,
+      unconnectedChains.map((c) => `${c.chainName} (${c.chain?.chainId})`)
+    );
 
     setIsConnecting(true);
-    
+
     try {
       // Connect to chains sequentially with proper delays
       let connectedCount = 0;
       let failedCount = 0;
-      
+
       for (const chain of unconnectedChains) {
         try {
           console.log(`Connecting to ${chain.chainName}...`);
-          
+
           // Use the interchain-kit connect method
           await chain.connect();
           connectedCount++;
           console.log(`✅ Connected to ${chain.chainName}`);
-          
+
           // Add delay between connections to avoid overwhelming the wallet
-          await new Promise(resolve => setTimeout(resolve, 500));
-          
+          await new Promise((resolve) => setTimeout(resolve, 500));
         } catch (error) {
           failedCount++;
           console.error(`❌ Failed to connect to ${chain.chainName}:`, error);
-          
+
           // Continue with next chain even if this one failed
-          await new Promise(resolve => setTimeout(resolve, 200));
+          await new Promise((resolve) => setTimeout(resolve, 200));
         }
       }
-      
-      console.log(`Connection complete: ${connectedCount} successful, ${failedCount} failed`);
-      
+
+      console.log(
+        `Connection complete: ${connectedCount} successful, ${failedCount} failed`
+      );
+
       if (connectedCount > 0) {
         console.log(`Successfully connected to ${connectedCount} chains!`);
       }
-      
+
       if (failedCount > 0) {
-        console.log(`${failedCount} chains failed to connect. You may need to connect them manually.`);
+        console.log(
+          `${failedCount} chains failed to connect. You may need to connect them manually.`
+        );
       }
-      
     } catch (error) {
       console.error('Connection process failed:', error);
     } finally {
@@ -151,16 +158,17 @@ const WalletConnectButton = () => {
         ) : (
           <div className='flex items-center gap-3 pl-2'>
             {/* Show wallet icon if all chains use the same wallet */}
-            {connectedChains.length > 0 && connectedChains[0].wallet?.walletName && 
-             walletImages[connectedChains[0].wallet.walletName] && (
-              <Image
-                src={walletImages[connectedChains[0].wallet.walletName]}
-                alt={connectedChains[0].wallet.walletName}
-                width={24}
-                height={24}
-                className='h-6 w-6'
-              />
-            )}
+            {connectedChains.length > 0 &&
+              connectedChains[0].wallet?.walletName &&
+              walletImages[connectedChains[0].wallet.walletName] && (
+                <Image
+                  src={walletImages[connectedChains[0].wallet.walletName]}
+                  alt={connectedChains[0].wallet.walletName}
+                  width={24}
+                  height={24}
+                  className='h-6 w-6'
+                />
+              )}
             <p className='rounded bg-gray-100 p-2 font-mono text-sm'>
               {connectedChains.length}/{totalChains} chains
             </p>
@@ -186,15 +194,15 @@ const WalletConnectButton = () => {
               ✕
             </button>
           </div>
-          
+
           {/* Bulk actions */}
           <div className='mb-4 flex gap-2'>
             <button
               onClick={handleConnectAll}
               disabled={isConnecting}
               className={`rounded px-3 py-1 text-sm text-white ${
-                isConnecting 
-                  ? 'bg-gray-400 cursor-not-allowed' 
+                isConnecting
+                  ? 'cursor-not-allowed bg-gray-400'
                   : 'bg-green-500 hover:bg-green-600'
               }`}
             >
@@ -204,8 +212,8 @@ const WalletConnectButton = () => {
               onClick={handleDisconnectAll}
               disabled={isConnecting}
               className={`rounded px-3 py-1 text-sm text-white ${
-                isConnecting 
-                  ? 'bg-gray-400 cursor-not-allowed' 
+                isConnecting
+                  ? 'cursor-not-allowed bg-gray-400'
                   : 'bg-red-500 hover:bg-red-600'
               }`}
             >
@@ -216,10 +224,17 @@ const WalletConnectButton = () => {
           {/* Individual chain connections */}
           <div className='max-h-[90vh] overflow-y-auto'>
             {chainHooks.map((chain) => (
-              <div key={chain.chainName} className='mb-2 flex items-center justify-between rounded border p-2'>
+              <div
+                key={chain.chainName}
+                className='mb-2 flex items-center justify-between rounded border p-2'
+              >
                 <div className='flex items-center gap-2'>
-                  <div className={`h-3 w-3 rounded-full ${chain.address ? 'bg-green-500' : 'bg-gray-300'}`} />
-                  <span className='font-medium capitalize'>{chain.chainName}</span>
+                  <div
+                    className={`h-3 w-3 rounded-full ${chain.address ? 'bg-green-500' : 'bg-gray-300'}`}
+                  />
+                  <span className='font-medium capitalize'>
+                    {chain.chainName}
+                  </span>
                 </div>
                 <div className='flex items-center gap-2'>
                   {chain.address ? (
