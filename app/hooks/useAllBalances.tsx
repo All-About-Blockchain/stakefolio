@@ -72,6 +72,8 @@ export type ChainBalances = {
   }[];
   delegations: {
     validatorAddress: string;
+    validatorName: string;
+    validatorCommission: string;
     shares: string;
     balance: {
       denom: string;
@@ -356,8 +358,10 @@ export function useAllBalances() {
           );
           const delegationsResp =
             await staking.staking.delegatorDelegations(address);
-          const delegations = (delegationsResp.delegationResponses || []).map(
-            (d) => {
+
+          // Fetch validator information for each delegation
+          const delegations = await Promise.all(
+            (delegationsResp.delegationResponses || []).map(async (d) => {
               const meta = getAssetMetaFromLists(assetLists, d.balance.denom);
               const decimals = meta?.decimals ?? 0;
               const displayAmount = formatAmount(d.balance.amount, decimals);
@@ -365,8 +369,36 @@ export function useAllBalances() {
               const price = getUSDPrice(symbol);
               const usdValue = parseFloat(displayAmount) * price;
 
+              // Fetch validator information
+              let validatorName = '';
+              let validatorCommission = '';
+              try {
+                const validatorResp = await staking.staking.validator(
+                  d.delegation?.validatorAddress || ''
+                );
+                if (validatorResp.validator) {
+                  validatorName =
+                    validatorResp.validator.description?.moniker ||
+                    validatorResp.validator.operatorAddress ||
+                    '';
+                  // Commission is stored as a decimal string, convert to percentage
+                  const commissionRate =
+                    validatorResp.validator.commission?.commissionRates?.rate ||
+                    '0';
+                  validatorCommission =
+                    (parseFloat(commissionRate) * 100).toFixed(1) + '%';
+                }
+              } catch (err) {
+                console.warn(
+                  `Failed to fetch validator info for ${d.delegation?.validatorAddress}:`,
+                  err
+                );
+              }
+
               return {
                 validatorAddress: d.delegation?.validatorAddress || '',
+                validatorName,
+                validatorCommission,
                 shares: d.delegation?.shares || '',
                 balance: {
                   denom: d.balance.denom,
@@ -380,7 +412,7 @@ export function useAllBalances() {
                   usdValue,
                 },
               };
-            }
+            })
           );
 
           results.push({

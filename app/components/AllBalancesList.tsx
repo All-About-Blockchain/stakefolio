@@ -45,11 +45,13 @@ export function AllBalancesList() {
         symbol: b.displayDenom,
         chain: chain.chainName,
         amount: parseFloat(b.displayAmount),
-        usdValue: b.usdValue,
         price: b.price,
+        usdValue: b.usdValue,
+        hasPrice: b.price > 0,
         type: 'Balance',
         fullName: `${b.displayName} on ${chain.chainName}`,
-        hasPrice: b.price > 0,
+        validatorName: '',
+        validatorCommission: '',
       }));
 
     const delegationData = chain.delegations
@@ -59,15 +61,33 @@ export function AllBalancesList() {
         symbol: d.balance.displayDenom,
         chain: chain.chainName,
         amount: parseFloat(d.balance.displayAmount),
-        usdValue: d.balance.usdValue,
         price: d.balance.price,
-        type: 'Delegation',
-        fullName: `${d.balance.displayName} Staked on ${chain.chainName}`,
+        usdValue: d.balance.usdValue,
         hasPrice: d.balance.price > 0,
+        type: 'Staked',
+        fullName: `${d.balance.displayName} staked on ${chain.chainName}`,
+        validatorName: d.validatorName,
+        validatorCommission: d.validatorCommission,
       }));
 
     return [...balanceData, ...delegationData];
   });
+
+  // Separate staking data for the staking section
+  const stakingData = all.assets.flatMap((chain) =>
+    chain.delegations
+      .filter((d) => parseFloat(d.balance.displayAmount) > 0)
+      .map((d) => ({
+        chainName: chain.chainName,
+        validatorName: d.validatorName || 'Unknown Validator',
+        validatorAddress: d.validatorAddress,
+        validatorCommission: d.validatorCommission || '0%',
+        stakedAmount: parseFloat(d.balance.displayAmount),
+        symbol: d.balance.displayDenom,
+        usdValue: d.balance.usdValue,
+        hasPrice: d.balance.price > 0,
+      }))
+  );
 
   // Debug logging
   console.log('Available prices:', Object.keys(prices));
@@ -79,6 +99,11 @@ export function AllBalancesList() {
   console.log(
     'Assets without prices:',
     chartData.filter((item) => !item.hasPrice).length
+  );
+  console.log('Staking data:', stakingData);
+  console.log(
+    'Total delegations:',
+    all.assets.reduce((sum, chain) => sum + chain.delegations.length, 0)
   );
 
   // Colors for different assets
@@ -192,6 +217,77 @@ export function AllBalancesList() {
         </div>
       </div>
 
+      {/* Staking Section */}
+      {stakingData.length > 0 && (
+        <div className='rounded-lg bg-white p-6 shadow-lg'>
+          <h3 className='mb-4 text-xl font-semibold text-gray-900'>
+            Your Validators
+          </h3>
+          <div className='overflow-x-auto'>
+            <table className='min-w-full divide-y divide-gray-200'>
+              <thead className='bg-gray-50'>
+                <tr>
+                  <th className='px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500'>
+                    Validator
+                  </th>
+                  <th className='px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500'>
+                    Chain
+                  </th>
+                  <th className='px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500'>
+                    Staked Amount
+                  </th>
+                  <th className='px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500'>
+                    Value
+                  </th>
+                  <th className='px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500'>
+                    Commission
+                  </th>
+                </tr>
+              </thead>
+              <tbody className='divide-y divide-gray-200 bg-white'>
+                {stakingData.map((item, index) => (
+                  <tr key={index} className='hover:bg-gray-50'>
+                    <td className='whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900'>
+                      <div className='flex items-center'>
+                        <div className='mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-gray-200'>
+                          <span className='text-xs font-bold text-gray-600'>
+                            {item.validatorName.charAt(0).toUpperCase()}
+                          </span>
+                        </div>
+                        {item.validatorName}
+                      </div>
+                    </td>
+                    <td className='whitespace-nowrap px-6 py-4 text-sm text-gray-900'>
+                      {item.chainName}
+                    </td>
+                    <td className='whitespace-nowrap px-6 py-4 text-sm text-gray-900'>
+                      <div>
+                        <div className='font-medium'>
+                          {formatNumber(item.stakedAmount)} {item.symbol}
+                        </div>
+                        {item.hasPrice && (
+                          <div className='text-sm text-gray-500'>
+                            {formatCurrency(item.usdValue)}
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                    <td className='whitespace-nowrap px-6 py-4 text-sm font-semibold text-green-600'>
+                      {item.hasPrice ? formatCurrency(item.usdValue) : 'N/A'}
+                    </td>
+                    <td className='whitespace-nowrap px-6 py-4 text-sm text-gray-900'>
+                      <span className='inline-flex rounded-full bg-blue-100 px-2 py-1 text-xs font-semibold text-blue-800'>
+                        {item.validatorCommission}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
       {/* Pie Chart - Portfolio Distribution (only assets with prices) */}
       {assetsWithPrices > 0 && (
         <div className='rounded-lg bg-white p-6 shadow-lg'>
@@ -273,6 +369,9 @@ export function AllBalancesList() {
                   Type
                 </th>
                 <th className='px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500'>
+                  Validator
+                </th>
+                <th className='px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500'>
                   Amount
                 </th>
                 <th className='px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500'>
@@ -302,6 +401,18 @@ export function AllBalancesList() {
                     >
                       {item.type}
                     </span>
+                  </td>
+                  <td className='whitespace-nowrap px-6 py-4 text-sm text-gray-900'>
+                    {item.type === 'Staked' && item.validatorName ? (
+                      <div>
+                        <div className='font-medium'>{item.validatorName}</div>
+                        <div className='text-xs text-gray-500'>
+                          {item.validatorCommission}
+                        </div>
+                      </div>
+                    ) : (
+                      '-'
+                    )}
                   </td>
                   <td className='whitespace-nowrap px-6 py-4 text-sm text-gray-900'>
                     {formatNumber(item.amount)} {item.symbol}
