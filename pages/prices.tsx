@@ -1,9 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Metadata } from 'next';
-
-export const metadata: Metadata = {
-  title: 'Stakefolio | Price Data',
-};
+import Head from 'next/head';
 
 interface PriceData {
   usd: number;
@@ -80,101 +76,118 @@ export default function PricesPage() {
 
   if (loading) {
     return (
-      <div className='flex min-h-screen items-center justify-center'>
-        <div className='text-xl'>Loading price data...</div>
-      </div>
+      <>
+        <Head>
+          <title>Stakefolio | Price Data</title>
+        </Head>
+        <div className='flex min-h-screen items-center justify-center'>
+          <div className='text-xl'>Loading price data...</div>
+        </div>
+      </>
     );
   }
 
   if (error) {
     return (
-      <div className='flex min-h-screen items-center justify-center'>
-        <div className='text-xl text-red-600'>Error: {error}</div>
-      </div>
+      <>
+        <Head>
+          <title>Stakefolio | Price Data</title>
+        </Head>
+        <div className='flex min-h-screen items-center justify-center'>
+          <div className='text-xl text-red-600'>Error: {error}</div>
+        </div>
+      </>
     );
   }
 
   return (
-    <div className='min-h-screen bg-gray-50 py-8'>
-      <div className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
-        <div className='overflow-hidden rounded-lg bg-white shadow-lg'>
-          <div className='border-b border-gray-200 px-6 py-4'>
-            <h1 className='text-2xl font-bold text-gray-900'>
-              Crypto Price Data
-            </h1>
-            <p className='mt-1 text-gray-600'>Live prices from CoinGecko API</p>
-          </div>
-
-          <div className='overflow-x-auto'>
-            <table className='min-w-full divide-y divide-gray-200'>
-              <thead className='bg-gray-50'>
-                <tr>
-                  <th className='px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500'>
-                    Symbol
-                  </th>
-                  <th className='px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500'>
-                    USD Price
-                  </th>
-                  <th className='px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500'>
-                    CAD Price
-                  </th>
-                  <th className='px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500'>
-                    EUR Price
-                  </th>
-                  <th className='px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500'>
-                    Market Cap
-                  </th>
-                  <th className='px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500'>
-                    24h Volume
-                  </th>
-                  <th className='px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500'>
-                    24h Change
-                  </th>
-                  <th className='px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500'>
-                    Last Updated
-                  </th>
-                </tr>
-              </thead>
-              <tbody className='divide-y divide-gray-200 bg-white'>
-                {Object.entries(prices).map(([symbol, data]) => (
-                  <tr key={symbol} className='hover:bg-gray-50'>
-                    <td className='whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900'>
-                      {symbol.toUpperCase()}
-                    </td>
-                    <td className='whitespace-nowrap px-6 py-4 text-sm text-gray-900'>
-                      {formatCurrency(data.usd, 'USD')}
-                    </td>
-                    <td className='whitespace-nowrap px-6 py-4 text-sm text-gray-900'>
-                      {formatCurrency(data.cad, 'CAD')}
-                    </td>
-                    <td className='whitespace-nowrap px-6 py-4 text-sm text-gray-900'>
-                      {formatCurrency(data.eur, 'EUR')}
-                    </td>
-                    <td className='whitespace-nowrap px-6 py-4 text-sm text-gray-900'>
-                      {formatNumber(data.usd_market_cap)}
-                    </td>
-                    <td className='whitespace-nowrap px-6 py-4 text-sm text-gray-900'>
-                      {formatNumber(data.usd_24h_vol)}
-                    </td>
-                    <td className='whitespace-nowrap px-6 py-4 text-sm'>
-                      {formatPercentage(data.usd_24h_change)}
-                    </td>
-                    <td className='whitespace-nowrap px-6 py-4 text-sm text-gray-500'>
-                      {formatDate(data.last_updated_at)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {Object.keys(prices).length === 0 && (
-            <div className='px-6 py-8 text-center text-gray-500'>
-              No price data available. The backend may still be fetching data.
+    <>
+      <Head>
+        <title>Stakefolio | Price Data</title>
+      </Head>
+      <div className='min-h-screen bg-gray-50 py-8'>
+        <div className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
+          <div className='overflow-hidden rounded-lg bg-white shadow-lg'>
+            <div className='border-b border-gray-200 px-6 py-4'>
+              <h1 className='text-2xl font-bold text-gray-900'>
+                Crypto Price Data
+              </h1>
+              <p className='mt-1 text-gray-600'>
+                Live prices from CoinGecko API
+              </p>
             </div>
-          )}
+
+            <div className='overflow-x-auto'>
+              <table className='min-w-full divide-y divide-gray-200'>
+                <thead className='bg-gray-50'>
+                  <tr>
+                    <th className='px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500'>
+                      Symbol
+                    </th>
+                    <th className='px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500'>
+                      USD Price
+                    </th>
+                    <th className='px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500'>
+                      CAD Price
+                    </th>
+                    <th className='px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500'>
+                      EUR Price
+                    </th>
+                    <th className='px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500'>
+                      Market Cap
+                    </th>
+                    <th className='px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500'>
+                      24h Volume
+                    </th>
+                    <th className='px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500'>
+                      24h Change
+                    </th>
+                    <th className='px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500'>
+                      Last Updated
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className='divide-y divide-gray-200 bg-white'>
+                  {Object.entries(prices).map(([symbol, data]) => (
+                    <tr key={symbol} className='hover:bg-gray-50'>
+                      <td className='whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900'>
+                        {symbol.toUpperCase()}
+                      </td>
+                      <td className='whitespace-nowrap px-6 py-4 text-sm text-gray-900'>
+                        {formatCurrency(data.usd, 'USD')}
+                      </td>
+                      <td className='whitespace-nowrap px-6 py-4 text-sm text-gray-900'>
+                        {formatCurrency(data.cad, 'CAD')}
+                      </td>
+                      <td className='whitespace-nowrap px-6 py-4 text-sm text-gray-900'>
+                        {formatCurrency(data.eur, 'EUR')}
+                      </td>
+                      <td className='whitespace-nowrap px-6 py-4 text-sm text-gray-900'>
+                        {formatNumber(data.usd_market_cap)}
+                      </td>
+                      <td className='whitespace-nowrap px-6 py-4 text-sm text-gray-900'>
+                        {formatNumber(data.usd_24h_vol)}
+                      </td>
+                      <td className='whitespace-nowrap px-6 py-4 text-sm'>
+                        {formatPercentage(data.usd_24h_change)}
+                      </td>
+                      <td className='whitespace-nowrap px-6 py-4 text-sm text-gray-500'>
+                        {formatDate(data.last_updated_at)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {Object.keys(prices).length === 0 && (
+              <div className='px-6 py-8 text-center text-gray-500'>
+                No price data available. The backend may still be fetching data.
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

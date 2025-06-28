@@ -7,6 +7,7 @@ import {
 } from '@cosmjs/stargate';
 import { Tendermint34Client } from '@cosmjs/tendermint-rpc';
 import { AssetList, Asset, DenomUnit } from '@chain-registry/types';
+import { usePrices } from './usePrices';
 
 // --- useChainRegistryAssets hook ---
 const CHAIN_REGISTRY_BASE =
@@ -66,6 +67,8 @@ export type ChainBalances = {
     symbol: string;
     decimals: number;
     displayDenom: string;
+    price: number;
+    usdValue: number;
   }[];
   delegations: {
     validatorAddress: string;
@@ -78,6 +81,8 @@ export type ChainBalances = {
       symbol: string;
       decimals: number;
       displayDenom: string;
+      price: number;
+      usdValue: number;
     };
   }[];
 };
@@ -259,6 +264,7 @@ export function useAllBalances() {
   const chainHooks = useAllChains();
   const { assets: registryAssets, loading: registryLoading } =
     useChainRegistryAssets();
+  const { getUSDPrice } = usePrices();
 
   // Only consider connected chains
   const connectedChains = useMemo(
@@ -321,14 +327,21 @@ export function useAllBalances() {
           const balances = balancesRaw.map((b) => {
             const meta = getAssetMetaFromLists(assetLists, b.denom);
             const decimals = meta?.decimals ?? 0;
+            const displayAmount = formatAmount(b.amount, decimals);
+            const symbol = meta?.displayDenom || b.denom;
+            const price = getUSDPrice(symbol);
+            const usdValue = parseFloat(displayAmount) * price;
+
             return {
               denom: b.denom,
               amount: b.amount,
               displayName: meta?.displayName || b.denom,
-              displayAmount: formatAmount(b.amount, decimals),
-              symbol: meta?.displayDenom || b.denom,
+              displayAmount,
+              symbol,
               decimals,
               displayDenom: meta?.displayDenom || b.denom,
+              price,
+              usdValue,
             };
           });
 
@@ -347,6 +360,11 @@ export function useAllBalances() {
             (d) => {
               const meta = getAssetMetaFromLists(assetLists, d.balance.denom);
               const decimals = meta?.decimals ?? 0;
+              const displayAmount = formatAmount(d.balance.amount, decimals);
+              const symbol = meta?.displayDenom || d.balance.denom;
+              const price = getUSDPrice(symbol);
+              const usdValue = parseFloat(displayAmount) * price;
+
               return {
                 validatorAddress: d.delegation?.validatorAddress || '',
                 shares: d.delegation?.shares || '',
@@ -354,10 +372,12 @@ export function useAllBalances() {
                   denom: d.balance.denom,
                   amount: d.balance.amount,
                   displayName: meta?.displayName || d.balance.denom,
-                  displayAmount: formatAmount(d.balance.amount, decimals),
-                  symbol: meta?.displayDenom || d.balance.denom,
+                  displayAmount,
+                  symbol,
                   decimals,
                   displayDenom: meta?.displayDenom || d.balance.denom,
+                  price,
+                  usdValue,
                 },
               };
             }
@@ -403,6 +423,7 @@ export function useAllBalances() {
     registryLoading,
     registryAssets,
     connectedChains,
+    getUSDPrice,
   ]);
 
   return { assets: data, loading };

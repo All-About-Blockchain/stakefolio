@@ -19,6 +19,61 @@ router.get('/prices', (req, res) => {
   res.json(result);
 });
 
+// Get historical price data for all symbols (last 24 hours by default)
+router.get('/prices/history', (req, res) => {
+  const hours = req.query.hours ? parseInt(req.query.hours as string) : 24;
+  const db = openDb();
+  const rows = db
+    .prepare(
+      `SELECT symbol, data, timestamp 
+       FROM prices 
+       WHERE timestamp >= datetime('now', '-${hours} hours')
+       ORDER BY symbol, timestamp DESC`
+    )
+    .all();
+  db.close();
+
+  // Group by symbol and create time series
+  const result: Record<string, any[]> = {};
+  for (const row of rows as {
+    symbol: string;
+    data: string;
+    timestamp: string;
+  }[]) {
+    if (!result[row.symbol]) {
+      result[row.symbol] = [];
+    }
+    result[row.symbol].push({
+      ...JSON.parse(row.data),
+      timestamp: row.timestamp,
+    });
+  }
+  res.json(result);
+});
+
+// Get historical data for a specific symbol
+router.get('/prices/symbol/:symbol', (req, res) => {
+  const { symbol } = req.params;
+  const hours = req.query.hours ? parseInt(req.query.hours as string) : 24;
+  const db = openDb();
+  const rows = db
+    .prepare(
+      `SELECT data, timestamp 
+       FROM prices 
+       WHERE symbol = ? AND timestamp >= datetime('now', '-${hours} hours')
+       ORDER BY timestamp DESC`
+    )
+    .all(symbol);
+  db.close();
+
+  const result = (rows as { data: string; timestamp: string }[]).map((row) => ({
+    ...JSON.parse(row.data),
+    timestamp: row.timestamp,
+  }));
+
+  res.json(result);
+});
+
 router.get('/apys', (req, res) => {
   const db = openDb();
   const rows = db

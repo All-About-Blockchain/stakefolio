@@ -9,7 +9,29 @@ exports.startScheduler = startScheduler;
 const node_cron_1 = __importDefault(require('node-cron'));
 const fetchers_1 = require('./fetchers');
 const db_1 = require('./db');
-const COINGECKO_IDS = ['cosmos', 'osmosis', 'juno-network']; // Add all relevant CoinGecko IDs
+const COINGECKO_IDS = [
+  'cosmos', // ATOM
+  'osmosis', // OSMO
+  'juno-network', // JUNO
+  'injective-protocol', // INJ
+  'celestia', // TIA
+  'stargaze', // STARS
+  'akash-network', // AKT
+  'axelar', // AXL
+  'evmos', // EVMOS
+  'crescent-network', // CRE
+  'comdex', // CMDX
+  'chihuahua-token', // HUAHUA
+  'stride', // STRD
+  'quicksilver', // QCK
+  'kujira', // KUJI
+  'persistence', // XPRT
+  'regen', // REGEN
+  'bitsong', // BTSG
+  'graviton', // GRAV
+  'umee', // UMEE
+  'desmos', // DSM
+];
 const CHAINS = ['cosmos', 'osmosis', 'juno']; // Add all relevant chain names
 const CURRENCIES = ['usd', 'cad', 'eur'];
 function startScheduler() {

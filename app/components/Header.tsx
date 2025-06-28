@@ -11,6 +11,8 @@ const Header = () => {
         </Link>
         <div className='flex gap-4 px-4 pb-[1px]'>
           <Link href='/demo/'>Demo</Link>
+          <Link href='/prices'>Prices</Link>
+          <Link href='/prices/history'>History</Link>
         </div>
       </div>
       <WalletConnectButton />
