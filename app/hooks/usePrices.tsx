@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 
 export interface PriceDataPoint {
   usd: number;
@@ -44,6 +44,7 @@ export function usePrices() {
   const [prices, setPrices] = useState<PriceData>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [lastFetch, setLastFetch] = useState<number>(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -62,6 +63,7 @@ export function usePrices() {
 
         if (!cancelled) {
           setPrices(data);
+          setLastFetch(Date.now());
           setLoading(false);
         }
       } catch (err) {
@@ -75,8 +77,8 @@ export function usePrices() {
 
     fetchPrices();
 
-    // Poll for price updates every 30 seconds
-    const interval = setInterval(fetchPrices, 30000);
+    // Poll for price updates every 5 minutes instead of 30 seconds
+    const interval = setInterval(fetchPrices, 300000);
 
     return () => {
       cancelled = true;
@@ -84,36 +86,40 @@ export function usePrices() {
     };
   }, []);
 
-  // Helper function to get price for a specific symbol
-  const getPrice = (symbol: string): PriceDataPoint | null => {
-    const normalizedSymbol = symbol.toLowerCase();
-    return prices[normalizedSymbol] || null;
-  };
+  // Memoize helper functions to prevent unnecessary re-renders
+  const getPrice = useMemo(() => {
+    return (symbol: string): PriceDataPoint | null => {
+      const normalizedSymbol = symbol.toLowerCase();
+      return prices[normalizedSymbol] || null;
+    };
+  }, [prices]);
 
-  // Helper function to get USD price for a specific symbol
-  const getUSDPrice = (symbol: string): number => {
-    // First try the symbol as-is (for CoinGecko IDs)
-    let price = getPrice(symbol);
-    if (price) return price.usd;
-
-    // If not found, try to map display symbol to CoinGecko ID
-    const coingeckoId = SYMBOL_TO_COINGECKO[symbol.toUpperCase()];
-    if (coingeckoId) {
-      price = getPrice(coingeckoId);
+  const getUSDPrice = useMemo(() => {
+    return (symbol: string): number => {
+      // First try the symbol as-is (for CoinGecko IDs)
+      let price = getPrice(symbol);
       if (price) return price.usd;
-    }
 
-    // If still not found, try lowercase version
-    price = getPrice(symbol.toLowerCase());
-    if (price) return price.usd;
+      // If not found, try to map display symbol to CoinGecko ID
+      const coingeckoId = SYMBOL_TO_COINGECKO[symbol.toUpperCase()];
+      if (coingeckoId) {
+        price = getPrice(coingeckoId);
+        if (price) return price.usd;
+      }
 
-    return 0;
-  };
+      // If still not found, try lowercase version
+      price = getPrice(symbol.toLowerCase());
+      if (price) return price.usd;
+
+      return 0;
+    };
+  }, [getPrice]);
 
   return {
     prices,
     loading,
     error,
+    lastFetch,
     getPrice,
     getUSDPrice,
   };

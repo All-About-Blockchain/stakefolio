@@ -441,8 +441,8 @@ export function useAllBalances() {
     clearTimers();
     debounceTimeout.current = setTimeout(() => {
       fetchAll();
-      // Poll every 30s
-      pollInterval.current = setInterval(fetchAll, 30000);
+      // Poll every 5 minutes instead of 30 seconds
+      pollInterval.current = setInterval(fetchAll, 300000);
     }, 500);
 
     return () => {

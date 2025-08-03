@@ -1,17 +1,19 @@
-import { AllBalancesList } from '@/app/components/AllBalancesList';
 import Head from 'next/head';
+import App from '../app/components/App';
 
-const index = () => {
+export default function Home() {
   return (
     <>
       <Head>
-        <title>Stakefolio | Portfolio Dashboard</title>
+        <title>Stakefolio - Cosmos Portfolio & Staking Guide</title>
+        <meta
+          name='description'
+          content='Track your Cosmos portfolio and learn about staking'
+        />
+        <meta name='viewport' content='width=device-width, initial-scale=1' />
+        <link rel='icon' href='/favicon.ico' />
       </Head>
-      <div className='flex flex-col gap-8 p-8 px-12'>
-        <AllBalancesList />
-      </div>
+      <App />
     </>
   );
-};
-
-export default index;
+}
