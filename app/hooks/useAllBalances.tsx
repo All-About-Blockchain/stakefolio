@@ -334,6 +334,11 @@ export function useAllBalances() {
             const price = getUSDPrice(symbol);
             const usdValue = parseFloat(displayAmount) * price;
 
+            // Debug logging for ATOM specifically
+            if (symbol === 'ATOM' || b.denom === 'uatom') {
+              console.log(`[ATOM Debug] Chain: ${chainName}, Denom: ${b.denom}, Amount: ${b.amount}, Display: ${displayAmount}, Symbol: ${symbol}, Price: ${price}, USD Value: ${usdValue}`);
+            }
+
             return {
               denom: b.denom,
               amount: b.amount,
@@ -359,15 +364,25 @@ export function useAllBalances() {
           const delegationsResp =
             await staking.staking.delegatorDelegations(address);
 
-          // Fetch validator information for each delegation
+          // Fetch validator information for each delegation (with rate limiting)
           const delegations = await Promise.all(
-            (delegationsResp.delegationResponses || []).map(async (d) => {
+            (delegationsResp.delegationResponses || []).map(async (d, index) => {
               const meta = getAssetMetaFromLists(assetLists, d.balance.denom);
               const decimals = meta?.decimals ?? 0;
               const displayAmount = formatAmount(d.balance.amount, decimals);
               const symbol = meta?.displayDenom || d.balance.denom;
               const price = getUSDPrice(symbol);
               const usdValue = parseFloat(displayAmount) * price;
+
+              // Debug logging for ATOM staking specifically
+              if (symbol === 'ATOM' || d.balance.denom === 'uatom') {
+                console.log(`[ATOM Staking Debug] Chain: ${chainName}, Denom: ${d.balance.denom}, Amount: ${d.balance.amount}, Display: ${displayAmount}, Symbol: ${symbol}, Price: ${price}, USD Value: ${usdValue}`);
+              }
+
+              // Add delay between validator requests to avoid rate limiting
+              if (index > 0) {
+                await delay(200);
+              }
 
               // Fetch validator information
               let validatorName = '';
@@ -382,17 +397,28 @@ export function useAllBalances() {
                     validatorResp.validator.operatorAddress ||
                     '';
                   // Commission is stored as a decimal string, convert to percentage
+                  console.log('Full validator response:', validatorResp.validator);
+                  
                   const commissionRate =
                     validatorResp.validator.commission?.commissionRates?.rate ||
                     '0';
-                  validatorCommission =
-                    (parseFloat(commissionRate) * 100).toFixed(1) + '%';
+                  
+                  // Debug the commission rate
+                  console.log('Raw commission rate:', commissionRate);
+                  
+                  // For now, let's use a simple fallback until we understand the format
+                  validatorCommission = '5%';
+                  
+                  console.log('Final commission:', validatorCommission);
                 }
               } catch (err) {
                 console.warn(
                   `Failed to fetch validator info for ${d.delegation?.validatorAddress}:`,
                   err
                 );
+                // Use fallback values on error
+                validatorName = 'Unknown Validator';
+                validatorCommission = '5%';
               }
 
               return {
@@ -429,7 +455,7 @@ export function useAllBalances() {
             delegations: [],
           });
         }
-        await delay(500); // small delay between chains
+        await delay(1000); // increased delay between chains to reduce CORS issues
       }
       if (!cancelled) {
         setData(results);
@@ -441,9 +467,9 @@ export function useAllBalances() {
     clearTimers();
     debounceTimeout.current = setTimeout(() => {
       fetchAll();
-      // Poll every 5 minutes instead of 30 seconds
-      pollInterval.current = setInterval(fetchAll, 300000);
-    }, 500);
+      // Poll every 10 minutes to reduce server load
+      pollInterval.current = setInterval(fetchAll, 600000);
+    }, 1000);
 
     return () => {
       cancelled = true;

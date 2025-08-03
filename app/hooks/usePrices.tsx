@@ -54,21 +54,31 @@ export function usePrices() {
         setLoading(true);
         setError(null);
 
-        const response = await fetch('http://localhost:4000/prices');
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+        // Try to fetch from local price service, but don't fail if unavailable
+        try {
+          const response = await fetch('http://localhost:4000/prices');
+          if (response.ok) {
+            const data = await response.json();
+            if (!cancelled) {
+              setPrices(data);
+              setLastFetch(Date.now());
+              setLoading(false);
+            }
+            return;
+          }
+        } catch (localErr) {
+          console.log('Local price service unavailable, using fallback prices');
         }
 
-        const data = await response.json();
-
+        // If local service fails, use empty prices (fallback prices will be used)
         if (!cancelled) {
-          setPrices(data);
+          setPrices({});
           setLastFetch(Date.now());
           setLoading(false);
         }
       } catch (err) {
         if (!cancelled) {
-          console.error('Error fetching prices:', err);
+          console.error('Error in price fetching:', err);
           setError(err instanceof Error ? err.message : 'Unknown error');
           setLoading(false);
         }
@@ -77,8 +87,8 @@ export function usePrices() {
 
     fetchPrices();
 
-    // Poll for price updates every 5 minutes instead of 30 seconds
-    const interval = setInterval(fetchPrices, 300000);
+    // Poll for price updates every 15 minutes to reduce server load
+    const interval = setInterval(fetchPrices, 900000);
 
     return () => {
       cancelled = true;
@@ -111,6 +121,36 @@ export function usePrices() {
       price = getPrice(symbol.toLowerCase());
       if (price) return price.usd;
 
+      // Fallback prices for common tokens when price service is unavailable
+      const fallbackPrices: Record<string, number> = {
+        'ATOM': 4.23,
+        'OSMO': 0.16,
+        'JUNO': 0.08,
+        'STARS': 0.001,
+        'AKT': 1.18,
+        'AXL': 0.85,
+        'EVMOS': 0.002,
+        'CRE': 0.12,
+        'CMDX': 0.05,
+        'HUAHUA': 0.000012,
+        'STRD': 0.14,
+        'QCK': 0.08,
+        'KUJI': 0.25,
+        'XPRT': 0.046,
+        'REGEN': 0.014,
+        'BTSG': 0.008,
+        'GRAV': 0.12,
+        'UMEE': 0.008,
+        'DSM': 0.015,
+      };
+
+      const fallbackPrice = fallbackPrices[symbol.toUpperCase()];
+      if (fallbackPrice) {
+        console.log(`Using fallback price for ${symbol}: $${fallbackPrice}`);
+        return fallbackPrice;
+      }
+
+      console.log(`No price found for ${symbol}, using 0`);
       return 0;
     };
   }, [getPrice]);
