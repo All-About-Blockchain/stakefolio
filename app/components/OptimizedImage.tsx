@@ -10,13 +10,13 @@ interface OptimizedImageProps {
   fallback?: React.ReactNode;
 }
 
-export function OptimizedImage({ 
-  src, 
-  alt, 
-  width, 
-  height, 
-  className, 
-  fallback 
+export function OptimizedImage({
+  src,
+  alt,
+  width,
+  height,
+  className,
+  fallback,
 }: OptimizedImageProps) {
   const [hasError, setHasError] = useState(false);
 
@@ -34,4 +34,4 @@ export function OptimizedImage({
       onError={() => setHasError(true)}
     />
   );
-} 
+}

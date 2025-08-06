@@ -1,11 +1,11 @@
 import Head from 'next/head';
-import App from '../app/components/App';
+import { Dashboard } from '../app/components/Dashboard';
 
 export default function Home() {
   return (
     <>
       <Head>
-        <title>Stakefolio - Cosmos Portfolio & Staking Guide</title>
+        <title>Dashboard - Stakefolio</title>
         <meta
           name='description'
           content='Track your Cosmos portfolio and learn about staking'
@@ -13,7 +13,11 @@ export default function Home() {
         <meta name='viewport' content='width=device-width, initial-scale=1' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
-      <App />
+      <div className='container mx-auto max-w-7xl px-6 py-8'>
+        <Dashboard
+          onStartOnboarding={() => (window.location.href = '/onboarding')}
+        />
+      </div>
     </>
   );
 }
