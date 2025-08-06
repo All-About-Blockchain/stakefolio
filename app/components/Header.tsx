@@ -144,6 +144,29 @@ const Header = () => {
             Activity
           </Link>
           <Link
+            href='/swap'
+            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 ${
+              isActive('/swap')
+                ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-lg'
+                : 'glass-button border-0 text-gray-600 hover:bg-gray-100'
+            }`}
+          >
+            <svg
+              className='h-4 w-4'
+              fill='none'
+              stroke='currentColor'
+              viewBox='0 0 24 24'
+            >
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth={2}
+                d='M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4'
+              />
+            </svg>
+            Swap
+          </Link>
+          <Link
             href='/prices'
             className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 ${
               isActive('/prices')

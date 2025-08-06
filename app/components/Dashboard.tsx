@@ -157,8 +157,8 @@ export function Dashboard({ onStartOnboarding }: DashboardProps) {
 
   // Convert aggregated assets to array for display
   const aggregatedChartData = Object.values(aggregatedAssets).map((asset) => ({
-    name: asset.symbol,
-    symbol: asset.symbol,
+    name: asset.symbol.toUpperCase(),
+    symbol: asset.symbol.toUpperCase(),
     amount: asset.totalAmount,
     usdValue: asset.totalUsdValue,
     hasPrice: asset.hasPrice,

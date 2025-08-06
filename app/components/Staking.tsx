@@ -448,7 +448,7 @@ export function Staking() {
                       )}
                       <div className='font-semibold text-gray-800'>
                         {balanceVisible
-                          ? `${position.stakedAmount} ${position.symbol}`
+                          ? `${position.stakedAmount} ${position.symbol.toUpperCase()}`
                           : '••••••'}
                       </div>
                     </div>
@@ -479,7 +479,7 @@ export function Staking() {
                     <div>
                       <div className='font-semibold text-blue-600'>
                         {balanceVisible
-                          ? `${((position.stakedAmount * 0.15) / 12).toFixed(3)} ${position.symbol}`
+                          ? `${((position.stakedAmount * 0.15) / 12).toFixed(3)} ${position.symbol.toUpperCase()}`
                           : '••••••'}
                       </div>
                       <div className='text-gray-500'>

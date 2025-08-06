@@ -17,7 +17,7 @@ const AssetTable: React.FC<{ assets: PortfolioAssets[] }> = ({ assets }) => (
       {assets.map((asset, index) => (
         <tr key={index} className='grid w-full grid-cols-6'>
           <td>{asset.chain}</td>
-          <td>{asset.symbol}</td>
+          <td>{asset.symbol.toUpperCase()}</td>
           <td>{asset.balance}</td>
           <td>{asset.apr!.toFixed(2)}%</td>
           <td>${asset.price!.toFixed(2)}</td>
