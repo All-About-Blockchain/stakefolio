@@ -1,6 +1,7 @@
-import { useChain, useWalletManager } from '@interchain-kit/react';
 import React, { useState } from 'react';
 import Image from 'next/image';
+import { useWalletConnection } from '../hooks/useWalletConnection';
+import { useToast } from '../contexts/ToastContext';
 
 const walletImages: Record<string, string> = {
   'keplr-extension': '/wallet/keplr.png',
@@ -10,137 +11,40 @@ const walletImages: Record<string, string> = {
 
 const WalletConnectButton = () => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isConnecting, setIsConnecting] = useState(false);
-  const walletManager = useWalletManager();
-
-  // Call all useChain hooks at the top level
-  const cosmoshub = useChain('cosmoshub');
-  const osmosis = useChain('osmosis');
-  const juno = useChain('juno');
-  const stargaze = useChain('stargaze');
-  const akash = useChain('akash');
-  const axelar = useChain('axelar');
-  const evmos = useChain('evmos');
-  const crescent = useChain('crescent');
-  const comdex = useChain('comdex');
-  const chihuahua = useChain('chihuahua');
-  const stride = useChain('stride');
-  const quicksilver = useChain('quicksilver');
-  const kujira = useChain('kujira');
-  const persistence = useChain('persistence');
-  const regen = useChain('regen');
-  const bitsong = useChain('bitsong');
-  const gravitybridge = useChain('gravitybridge');
-  const umee = useChain('umee');
-  const desmos = useChain('desmos');
-
-  // Combine all chain hooks into an array
-  const chainHooks = [
-    { chainName: 'cosmoshub', ...cosmoshub },
-    { chainName: 'osmosis', ...osmosis },
-    { chainName: 'juno', ...juno },
-    { chainName: 'stargaze', ...stargaze },
-    { chainName: 'akash', ...akash },
-    { chainName: 'axelar', ...axelar },
-    { chainName: 'evmos', ...evmos },
-    { chainName: 'crescent', ...crescent },
-    { chainName: 'comdex', ...comdex },
-    { chainName: 'chihuahua', ...chihuahua },
-    { chainName: 'stride', ...stride },
-    { chainName: 'quicksilver', ...quicksilver },
-    { chainName: 'kujira', ...kujira },
-    { chainName: 'persistence', ...persistence },
-    { chainName: 'regen', ...regen },
-    { chainName: 'bitsong', ...bitsong },
-    { chainName: 'gravitybridge', ...gravitybridge },
-    { chainName: 'umee', ...umee },
-    { chainName: 'desmos', ...desmos },
-  ];
-
-  // Count connected chains
-  const connectedChains = chainHooks.filter((chain) => chain.address);
-  const totalChains = chainHooks.length;
+  const { addToast } = useToast();
+  const {
+    connectionStatuses,
+    isConnecting,
+    summary,
+    connectAll,
+    disconnectAll,
+    retryFailed,
+    connectSingleChain,
+    disconnectSingleChain,
+  } = useWalletConnection();
 
   const handleConnectAll = async () => {
-    // List of problematic chain IDs that don't have proper modular chain info
-    const problematicChainIds = ['crescent-1', 'bitsong-2b'];
-
-    // Get all chains that aren't connected yet and have valid chain info
-    const unconnectedChains = chainHooks.filter(
-      (chain) =>
-        !chain.address &&
-        chain.chain?.chainId &&
-        !problematicChainIds.includes(chain.chain.chainId)
-    );
-
-    if (unconnectedChains.length === 0) {
-      console.log(
-        'No chains to connect - all are already connected or invalid'
-      );
-      return;
+    const result = await connectAll();
+    if (result && result.success > 0) {
+      addToast(`Successfully connected to ${result.success} chains!`, 'success');
     }
-
-    console.log(
-      `Found ${unconnectedChains.length} chains to connect:`,
-      unconnectedChains.map((c) => `${c.chainName} (${c.chain?.chainId})`)
-    );
-
-    setIsConnecting(true);
-
-    try {
-      // Connect to chains sequentially with proper delays
-      let connectedCount = 0;
-      let failedCount = 0;
-
-      for (const chain of unconnectedChains) {
-        try {
-          console.log(`Connecting to ${chain.chainName}...`);
-
-          // Use the interchain-kit connect method
-          await chain.connect();
-          connectedCount++;
-          console.log(`✅ Connected to ${chain.chainName}`);
-
-          // Add delay between connections to avoid overwhelming the wallet
-          await new Promise((resolve) => setTimeout(resolve, 500));
-        } catch (error) {
-          failedCount++;
-          console.error(`❌ Failed to connect to ${chain.chainName}:`, error);
-
-          // Continue with next chain even if this one failed
-          await new Promise((resolve) => setTimeout(resolve, 200));
-        }
-      }
-
-      console.log(
-        `Connection complete: ${connectedCount} successful, ${failedCount} failed`
-      );
-
-      if (connectedCount > 0) {
-        console.log(`Successfully connected to ${connectedCount} chains!`);
-      }
-
-      if (failedCount > 0) {
-        console.log(
-          `${failedCount} chains failed to connect. You may need to connect them manually.`
-        );
-      }
-    } catch (error) {
-      console.error('Connection process failed:', error);
-    } finally {
-      setIsConnecting(false);
+    if (result && result.failed > 0) {
+      addToast(`${result.failed} chains failed to connect. You may need to connect them manually.`, 'warning');
     }
   };
 
   const handleDisconnectAll = async () => {
-    for (const chain of chainHooks) {
-      if (chain.address) {
-        try {
-          await chain.disconnect();
-        } catch (error) {
-          console.error(`Failed to disconnect from ${chain.chainName}:`, error);
-        }
-      }
+    await disconnectAll();
+    addToast('Disconnected from all chains', 'info');
+  };
+
+  const handleRetryFailed = async () => {
+    const result = await retryFailed();
+    if (result && result.success > 0) {
+      addToast(`Successfully retried ${result.success} chains!`, 'success');
+    }
+    if (result && result.failed > 0) {
+      addToast(`${result.failed} chains still failed after retry.`, 'error');
     }
   };
 
@@ -148,7 +52,7 @@ const WalletConnectButton = () => {
     <div className='relative'>
       {/* Main button */}
       <div className='flex h-12 gap-4 rounded-lg border-0 p-1'>
-        {connectedChains.length === 0 ? (
+        {summary.connectedChains === 0 ? (
           <button
             onClick={() => setIsExpanded(!isExpanded)}
             className='glass-button flex items-center gap-2 rounded-lg border-0 px-4 py-2 text-sm font-medium transition-all duration-200 hover:bg-gray-100'
@@ -171,20 +75,32 @@ const WalletConnectButton = () => {
         ) : (
           <div className='flex items-center gap-3 pl-2'>
             {/* Show wallet icon if all chains use the same wallet */}
-            {connectedChains.length > 0 &&
-              connectedChains[0].wallet?.walletName &&
-              walletImages[connectedChains[0].wallet.walletName] && (
+            {summary.connectedChains > 0 &&
+              connectionStatuses.find(s => s.status === 'connected')?.walletName &&
+              walletImages[connectionStatuses.find(s => s.status === 'connected')!.walletName!] && (
                 <Image
-                  src={walletImages[connectedChains[0].wallet.walletName]}
-                  alt={connectedChains[0].wallet.walletName}
+                  src={walletImages[connectionStatuses.find(s => s.status === 'connected')!.walletName!]}
+                  alt={connectionStatuses.find(s => s.status === 'connected')!.walletName!}
                   width={24}
                   height={24}
                   className='h-6 w-6'
                 />
               )}
-            <p className='glass-ultra-light rounded-lg p-2 font-mono text-sm'>
-              {connectedChains.length}/{totalChains} chains
-            </p>
+            <div className='flex items-center gap-2'>
+              <p className='glass-ultra-light rounded-lg p-2 font-mono text-sm'>
+                {summary.connectedChains}/{summary.totalChains} chains
+              </p>
+              {summary.failedChains > 0 && (
+                <div className='flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs text-white'>
+                  {summary.failedChains}
+                </div>
+              )}
+              {summary.connectingChains > 0 && (
+                <div className='flex h-6 w-6 items-center justify-center rounded-full bg-yellow-500 text-xs text-white'>
+                  {summary.connectingChains}
+                </div>
+              )}
+            </div>
             <button
               onClick={() => setIsExpanded(!isExpanded)}
               className='glass-button flex items-center gap-2 rounded-lg border-0 px-4 py-2 text-sm font-medium transition-all duration-200 hover:bg-gray-100'
@@ -216,7 +132,7 @@ const WalletConnectButton = () => {
 
       {/* Expanded dropdown */}
       {isExpanded && (
-        <div className='bright-card ultra-soft-shadow absolute right-0 top-14 z-50 w-[400px] rounded-xl border-0 p-4 shadow-2xl'>
+        <div className='bright-card ultra-soft-shadow absolute right-0 top-14 z-50 w-[450px] rounded-xl border-0 p-4 shadow-2xl'>
           <div className='mb-4 flex justify-between'>
             <h3 className='font-semibold text-gray-800'>Chain Connections</h3>
             <button
@@ -225,6 +141,31 @@ const WalletConnectButton = () => {
             >
               ✕
             </button>
+          </div>
+
+          {/* Connection Summary */}
+          <div className='mb-4 rounded-lg bg-gray-50 p-3'>
+            <div className='flex items-center justify-between text-sm'>
+              <span className='text-gray-600'>Connection Status:</span>
+              <div className='flex items-center gap-2'>
+                <span className='flex items-center gap-1 text-green-600'>
+                  <div className='h-2 w-2 rounded-full bg-green-500'></div>
+                  {summary.connectedChains} connected
+                </span>
+                {summary.failedChains > 0 && (
+                  <span className='flex items-center gap-1 text-red-600'>
+                    <div className='h-2 w-2 rounded-full bg-red-500'></div>
+                    {summary.failedChains} failed
+                  </span>
+                )}
+                {summary.connectingChains > 0 && (
+                  <span className='flex items-center gap-1 text-yellow-600'>
+                    <div className='h-2 w-2 rounded-full bg-yellow-500'></div>
+                    {summary.connectingChains} connecting
+                  </span>
+                )}
+              </div>
+            </div>
           </div>
 
           {/* Bulk actions */}
@@ -253,6 +194,32 @@ const WalletConnectButton = () => {
               </svg>
               {isConnecting ? 'Connecting...' : 'Connect All'}
             </button>
+            {summary.failedChains > 0 && (
+              <button
+                onClick={handleRetryFailed}
+                disabled={isConnecting}
+                className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 ${
+                  isConnecting
+                    ? 'cursor-not-allowed bg-gray-400 text-white'
+                    : 'bg-gradient-to-r from-yellow-500 to-orange-500 text-white shadow-lg hover:shadow-xl'
+                }`}
+              >
+                <svg
+                  className='h-4 w-4'
+                  fill='none'
+                  stroke='currentColor'
+                  viewBox='0 0 24 24'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15'
+                  />
+                </svg>
+                Retry Failed
+              </button>
+            )}
             <button
               onClick={handleDisconnectAll}
               disabled={isConnecting}
@@ -281,27 +248,40 @@ const WalletConnectButton = () => {
 
           {/* Individual chain connections */}
           <div className='max-h-[90vh] overflow-y-auto'>
-            {chainHooks.map((chain) => (
+            {connectionStatuses.map((status, index) => (
               <div
-                key={chain.chainName}
+                key={status.chainName}
                 className='glass-ultra-light mb-2 flex items-center justify-between rounded-lg border-0 p-3'
               >
                 <div className='flex items-center gap-2'>
                   <div
-                    className={`h-3 w-3 rounded-full ${chain.address ? 'bg-green-500' : 'bg-gray-300'}`}
+                    className={`h-3 w-3 rounded-full ${
+                      status.status === 'connected'
+                        ? 'bg-green-500'
+                        : status.status === 'connecting'
+                        ? 'bg-yellow-500 animate-pulse'
+                        : status.status === 'failed'
+                        ? 'bg-red-500'
+                        : 'bg-gray-300'
+                    }`}
                   />
                   <span className='font-medium capitalize text-gray-800'>
-                    {chain.chainName}
+                    {status.chainName}
                   </span>
+                  {status.walletName && (
+                    <span className='text-xs text-gray-500'>
+                      ({status.walletName})
+                    </span>
+                  )}
                 </div>
                 <div className='flex items-center gap-2'>
-                  {chain.address ? (
+                  {status.status === 'connected' ? (
                     <>
                       <span className='text-xs text-gray-500'>
-                        {chain.address.slice(0, 8)}...{chain.address.slice(-6)}
+                        {status.address?.slice(0, 8)}...{status.address?.slice(-6)}
                       </span>
                       <button
-                        onClick={() => chain.disconnect()}
+                        onClick={() => disconnectSingleChain(status.chainName)}
                         className='glass-button flex items-center gap-1 rounded-lg border-0 px-2 py-1 text-xs font-medium transition-all duration-200 hover:bg-gray-100'
                       >
                         <svg
@@ -320,9 +300,39 @@ const WalletConnectButton = () => {
                         Disconnect
                       </button>
                     </>
+                  ) : status.status === 'failed' ? (
+                    <div className='flex items-center gap-2'>
+                      <span className='text-xs text-red-500'>
+                        {status.error || 'Failed'}
+                      </span>
+                      <button
+                        onClick={() => connectSingleChain(status.chainName)}
+                        className='glass-button flex items-center gap-1 rounded-lg border-0 px-2 py-1 text-xs font-medium transition-all duration-200 hover:bg-gray-100'
+                      >
+                        <svg
+                          className='h-3 w-3'
+                          fill='none'
+                          stroke='currentColor'
+                          viewBox='0 0 24 24'
+                        >
+                          <path
+                            strokeLinecap='round'
+                            strokeLinejoin='round'
+                            strokeWidth={2}
+                            d='M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15'
+                          />
+                        </svg>
+                        Retry
+                      </button>
+                    </div>
+                  ) : status.status === 'connecting' ? (
+                    <div className='flex items-center gap-2'>
+                      <div className='h-3 w-3 animate-spin rounded-full border-b-2 border-blue-500'></div>
+                      <span className='text-xs text-blue-500'>Connecting...</span>
+                    </div>
                   ) : (
                     <button
-                      onClick={() => chain.connect()}
+                      onClick={() => connectSingleChain(status.chainName)}
                       className='glass-button flex items-center gap-1 rounded-lg border-0 px-2 py-1 text-xs font-medium transition-all duration-200 hover:bg-gray-100'
                     >
                       <svg

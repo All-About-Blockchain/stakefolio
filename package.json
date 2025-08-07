@@ -10,8 +10,10 @@
     "prettier": "prettier --write --ignore-path .gitignore ."
   },
   "dependencies": {
+    "@chain-registry/types": "^2.0.38",
     "@chain-registry/v2": "^1.71.237",
-    "@cosmjs/stargate": "^0.33.1",
+    "@cosmjs/stargate": "^0.34.0",
+    "@cosmjs/tendermint-rpc": "^0.34.0",
     "@dao-dao/cosmiframe": "^1.0.0",
     "@interchain-kit/core": "^0.3.41",
     "@interchain-kit/cosmostation-extension": "^0.3.41",
@@ -20,6 +22,7 @@
     "@interchain-kit/react": "^0.3.41",
     "@interchain-ui/react": "^1.26.3",
     "@pythnetwork/client": "^2.21.0",
+    "@react-icons/all-files": "^4.1.0",
     "add": "^2.0.6",
     "axios": "^1.6.8",
     "decimal.js": "^10.4.3",
@@ -27,6 +30,7 @@
     "next": "^15.3.4",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-icons": "^5.5.0",
     "recharts": "^3.0.0-beta.2"
   },
   "devDependencies": {

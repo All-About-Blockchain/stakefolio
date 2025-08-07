@@ -1,4 +1,4 @@
-import { StakedAsset } from '@/app/types';
+import { StakedAsset } from '../types';
 import dynamic from 'next/dynamic';
 import React from 'react';
 import { Pie, Cell, ResponsiveContainer } from 'recharts';
@@ -38,6 +38,7 @@ const PortfolioCompositionChart = ({ data }: { data: StakedAsset[] }) => {
             value,
             symbol,
           }) => {
+            if (midAngle === undefined) return null;
             const RADIAN = Math.PI / 180;
             const radius = innerRadius + (outerRadius - innerRadius) * 1.3;
             const x = cx + radius * Math.cos(-midAngle * RADIAN);

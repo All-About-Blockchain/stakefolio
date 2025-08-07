@@ -5,7 +5,7 @@ import {
   setupStakingExtension,
   QueryClient,
 } from '@cosmjs/stargate';
-import { Tendermint34Client } from '@cosmjs/tendermint-rpc';
+import { Tendermint37Client } from '@cosmjs/tendermint-rpc';
 import { AssetList, Asset, DenomUnit } from '@chain-registry/types';
 import { usePrices } from './usePrices';
 
@@ -326,7 +326,7 @@ export function useAllBalances() {
 
           const assetLists = [registryAssets[chainName], assetList];
 
-          const balances = balancesRaw.map((b) => {
+          const balances = balancesRaw.map((b: any) => {
             const meta = getAssetMetaFromLists(assetLists, b.denom);
             const decimals = meta?.decimals ?? 0;
             const displayAmount = formatAmount(b.amount, decimals);
@@ -357,7 +357,7 @@ export function useAllBalances() {
           console.log(
             `[RPC] Connecting to ${rpc} for staking delegations of ${chainName} (${address})`
           );
-          const tmClient = await Tendermint34Client.connect(rpc);
+          const tmClient = await Tendermint37Client.connect(rpc);
           const queryClient = new QueryClient(tmClient);
           const staking = setupStakingExtension(queryClient);
           console.log(
@@ -369,7 +369,7 @@ export function useAllBalances() {
           // Fetch validator information for each delegation (with rate limiting)
           const delegations = await Promise.all(
             (delegationsResp.delegationResponses || []).map(
-              async (d, index) => {
+              async (d: any, index: number) => {
                 const meta = getAssetMetaFromLists(assetLists, d.balance.denom);
                 const decimals = meta?.decimals ?? 0;
                 const displayAmount = formatAmount(d.balance.amount, decimals);
