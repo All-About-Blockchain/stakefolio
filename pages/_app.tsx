@@ -8,9 +8,18 @@ import { leapWallet } from '@interchain-kit/leap-extension';
 import { cosmostationWallet } from '@interchain-kit/cosmostation-extension';
 import { chains, assetLists } from '@chain-registry/v2';
 import { WCWallet } from '@interchain-kit/core';
+import { useEffect } from 'react';
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
-import { ToastProvider, ToastContainer, useToast } from '@/app/contexts/ToastContext';
+import {
+  ToastProvider,
+  ToastContainer,
+  useToast,
+} from '@/app/contexts/ToastContext';
+import { useCosmosWalletDetection } from '@/app/hooks/useCosmosWalletDetection';
+import { OnboardingLayout } from '@/app/components/onboarding/OnboardingLayout';
+import { WelcomeStep } from '@/app/components/onboarding/WelcomeStep';
+import { useRouter } from 'next/router';
 
 // Filter chains you want to support
 const chainNames = [
@@ -45,8 +54,38 @@ const walletConnect = new WCWallet(undefined, {
   },
 });
 
-function AppContent({ Component, pageProps }: { Component: AppProps['Component']; pageProps: AppProps['pageProps'] }) {
+function AppContent({
+  Component,
+  pageProps,
+}: {
+  Component: AppProps['Component'];
+  pageProps: AppProps['pageProps'];
+}) {
   const { toasts, removeToast } = useToast();
+  const router = useRouter();
+  const { isChecked, hasAnyWallet } = useCosmosWalletDetection();
+
+  // Redirect to onboarding route to fully separate tutorial when no wallet is available
+  useEffect(() => {
+    if (isChecked && !hasAnyWallet && router.pathname !== '/onboarding') {
+      router.replace('/onboarding');
+    }
+  }, [isChecked, hasAnyWallet, router]);
+
+  // When on onboarding route, render the onboarding app (no main header/footer)
+  if (router.pathname === '/onboarding') {
+    return (
+      <>
+        <Component {...pageProps} />
+        <ToastContainer toasts={toasts} onRemoveToast={removeToast} />
+      </>
+    );
+  }
+
+  // Avoid flicker of advanced UI while detection is pending or redirecting
+  if (!isChecked || !hasAnyWallet) {
+    return null;
+  }
 
   return (
     <div className='relative min-h-screen overflow-hidden'>

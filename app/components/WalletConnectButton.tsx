@@ -26,10 +26,16 @@ const WalletConnectButton = () => {
   const handleConnectAll = async () => {
     const result = await connectAll();
     if (result && result.success > 0) {
-      addToast(`Successfully connected to ${result.success} chains!`, 'success');
+      addToast(
+        `Successfully connected to ${result.success} chains!`,
+        'success'
+      );
     }
     if (result && result.failed > 0) {
-      addToast(`${result.failed} chains failed to connect. You may need to connect them manually.`, 'warning');
+      addToast(
+        `${result.failed} chains failed to connect. You may need to connect them manually.`,
+        'warning'
+      );
     }
   };
 
@@ -76,11 +82,23 @@ const WalletConnectButton = () => {
           <div className='flex items-center gap-3 pl-2'>
             {/* Show wallet icon if all chains use the same wallet */}
             {summary.connectedChains > 0 &&
-              connectionStatuses.find(s => s.status === 'connected')?.walletName &&
-              walletImages[connectionStatuses.find(s => s.status === 'connected')!.walletName!] && (
+              connectionStatuses.find((s) => s.status === 'connected')
+                ?.walletName &&
+              walletImages[
+                connectionStatuses.find((s) => s.status === 'connected')!
+                  .walletName!
+              ] && (
                 <Image
-                  src={walletImages[connectionStatuses.find(s => s.status === 'connected')!.walletName!]}
-                  alt={connectionStatuses.find(s => s.status === 'connected')!.walletName!}
+                  src={
+                    walletImages[
+                      connectionStatuses.find((s) => s.status === 'connected')!
+                        .walletName!
+                    ]
+                  }
+                  alt={
+                    connectionStatuses.find((s) => s.status === 'connected')!
+                      .walletName!
+                  }
                   width={24}
                   height={24}
                   className='h-6 w-6'
@@ -259,10 +277,10 @@ const WalletConnectButton = () => {
                       status.status === 'connected'
                         ? 'bg-green-500'
                         : status.status === 'connecting'
-                        ? 'bg-yellow-500 animate-pulse'
-                        : status.status === 'failed'
-                        ? 'bg-red-500'
-                        : 'bg-gray-300'
+                          ? 'animate-pulse bg-yellow-500'
+                          : status.status === 'failed'
+                            ? 'bg-red-500'
+                            : 'bg-gray-300'
                     }`}
                   />
                   <span className='font-medium capitalize text-gray-800'>
@@ -278,7 +296,8 @@ const WalletConnectButton = () => {
                   {status.status === 'connected' ? (
                     <>
                       <span className='text-xs text-gray-500'>
-                        {status.address?.slice(0, 8)}...{status.address?.slice(-6)}
+                        {status.address?.slice(0, 8)}...
+                        {status.address?.slice(-6)}
                       </span>
                       <button
                         onClick={() => disconnectSingleChain(status.chainName)}
@@ -328,7 +347,9 @@ const WalletConnectButton = () => {
                   ) : status.status === 'connecting' ? (
                     <div className='flex items-center gap-2'>
                       <div className='h-3 w-3 animate-spin rounded-full border-b-2 border-blue-500'></div>
-                      <span className='text-xs text-blue-500'>Connecting...</span>
+                      <span className='text-xs text-blue-500'>
+                        Connecting...
+                      </span>
                     </div>
                   ) : (
                     <button

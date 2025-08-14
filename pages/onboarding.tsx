@@ -1,16 +1,24 @@
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { useCosmosWalletDetection } from '@/app/hooks/useCosmosWalletDetection';
+import { useChain } from '@interchain-kit/react';
 import { WelcomeStep } from '../app/components/onboarding/WelcomeStep';
 import { BlockchainEducationStep } from '../app/components/onboarding/BlockchainEducationStep';
+import { WalletSetup } from '../app/components/onboarding/WalletSetup';
 import {
   OnboardingLayout,
   OnboardingStep,
 } from '../app/components/onboarding/OnboardingLayout';
 import { ArrowLeft } from 'lucide-react';
+import { useToast } from '@/app/contexts/ToastContext';
 
 export default function OnboardingPage() {
   const router = useRouter();
+  const { hasAnyWallet } = useCosmosWalletDetection();
+  const interchain = useChain('cosmoshub');
+  const connectedAddress = interchain?.address || null;
+  const { addToast } = useToast();
   const [currentStep, setCurrentStep] = useState<OnboardingStep>('welcome');
   const [completedSteps, setCompletedSteps] = useState<Set<OnboardingStep>>(
     new Set()
@@ -31,6 +39,11 @@ export default function OnboardingPage() {
 
   const goToNextStep = () => {
     const nextIndex = currentStepIndex + 1;
+    const walletGateIndex = steps.indexOf('fund-onramp');
+    if (!hasAnyWallet && nextIndex >= walletGateIndex) {
+      addToast('Please connect or install a wallet to continue.', 'warning');
+      return;
+    }
     if (nextIndex < steps.length) {
       setCompletedSteps((prev) => new Set([...prev, currentStep]));
       setCurrentStep(steps[nextIndex]);
@@ -49,6 +62,12 @@ export default function OnboardingPage() {
   };
 
   const goToStep = (step: OnboardingStep) => {
+    const walletGateIndex = steps.indexOf('fund-onramp');
+    const targetIndex = steps.indexOf(step);
+    if (!hasAnyWallet && targetIndex >= walletGateIndex) {
+      addToast('Please connect or install a wallet to continue.', 'warning');
+      return;
+    }
     setCurrentStep(step);
   };
 
@@ -69,28 +88,7 @@ export default function OnboardingPage() {
         );
       case 'wallet-creation':
         return (
-          <div className='space-y-6 text-center'>
-            <h2 className='text-3xl font-bold text-gray-800'>
-              Create Your Wallet
-            </h2>
-            <p className='text-gray-600'>
-              This step will guide you through wallet creation...
-            </p>
-            <div className='flex justify-between pt-8'>
-              <button
-                onClick={goToPreviousStep}
-                className='glass-button rounded-lg border-0 px-6 py-3'
-              >
-                Previous
-              </button>
-              <button
-                onClick={goToNextStep}
-                className='rounded-lg border-0 bg-gradient-to-r from-purple-500 to-blue-500 px-6 py-3 text-white'
-              >
-                Next
-              </button>
-            </div>
-          </div>
+          <WalletSetup onPrevious={goToPreviousStep} onNext={goToNextStep} />
         );
       case 'fund-onramp':
         return (
@@ -230,17 +228,20 @@ export default function OnboardingPage() {
         totalSteps={steps.length}
         completedSteps={completedSteps}
         onStepClick={goToStep}
+        connectedAddress={connectedAddress}
       >
-        {/* Back to Dashboard Button */}
-        <div className='mb-4'>
-          <button
-            onClick={returnToDashboard}
-            className='glass-button flex items-center gap-2 rounded-lg border-0 px-4 py-2'
-          >
-            <ArrowLeft className='h-4 w-4' />
-            Back to Dashboard
-          </button>
-        </div>
+        {/* Back to Dashboard Button (only when a wallet is detected) */}
+        {hasAnyWallet && (
+          <div className='mb-4'>
+            <button
+              onClick={returnToDashboard}
+              className='glass-button flex items-center gap-2 rounded-lg border-0 px-4 py-2'
+            >
+              <ArrowLeft className='h-4 w-4' />
+              Back to Dashboard
+            </button>
+          </div>
+        )}
 
         {renderCurrentStep()}
       </OnboardingLayout>

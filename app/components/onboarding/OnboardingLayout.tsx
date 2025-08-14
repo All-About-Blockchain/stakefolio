@@ -18,6 +18,7 @@ interface OnboardingLayoutProps {
   totalSteps: number;
   completedSteps: Set<OnboardingStep>;
   onStepClick: (step: OnboardingStep) => void;
+  connectedAddress?: string | null;
 }
 
 const stepLabels: Record<OnboardingStep, string> = {
@@ -38,6 +39,7 @@ export function OnboardingLayout({
   totalSteps,
   completedSteps,
   onStepClick,
+  connectedAddress,
 }: OnboardingLayoutProps) {
   const steps: OnboardingStep[] = [
     'welcome',
@@ -72,8 +74,15 @@ export function OnboardingLayout({
             <h1 className='bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-3xl font-bold text-transparent'>
               Cosmos Staking Guide
             </h1>
-            <div className='text-sm text-gray-600'>
-              Step {currentStepIndex + 1} of {totalSteps}
+            <div className='flex items-center gap-4'>
+              {connectedAddress && (
+                <div className='rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700'>
+                  {connectedAddress}
+                </div>
+              )}
+              <div className='text-sm text-gray-600'>
+                Step {currentStepIndex + 1} of {totalSteps}
+              </div>
             </div>
           </div>
 
