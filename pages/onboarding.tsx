@@ -2,10 +2,11 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useCosmosWalletDetection } from '@/app/hooks/useCosmosWalletDetection';
-import { useChain } from '@interchain-kit/react';
+import { useWallet } from '@/app/contexts/WalletContext';
 import { WelcomeStep } from '../app/components/onboarding/WelcomeStep';
 import { BlockchainEducationStep } from '../app/components/onboarding/BlockchainEducationStep';
 import { WalletSetup } from '../app/components/onboarding/WalletSetup';
+import { RampWidget } from '../app/components/onboarding/RampWidget';
 import {
   OnboardingLayout,
   OnboardingStep,
@@ -16,8 +17,7 @@ import { useToast } from '@/app/contexts/ToastContext';
 export default function OnboardingPage() {
   const router = useRouter();
   const { hasAnyWallet } = useCosmosWalletDetection();
-  const interchain = useChain('cosmoshub');
-  const connectedAddress = interchain?.address || null;
+  const { address: connectedAddress } = useWallet();
   const { addToast } = useToast();
   const [currentStep, setCurrentStep] = useState<OnboardingStep>('welcome');
   const [completedSteps, setCompletedSteps] = useState<Set<OnboardingStep>>(
@@ -92,24 +92,18 @@ export default function OnboardingPage() {
         );
       case 'fund-onramp':
         return (
-          <div className='space-y-6 text-center'>
-            <h2 className='text-3xl font-bold text-gray-800'>
-              Fund Your Wallet
-            </h2>
-            <p className='text-gray-600'>
-              Learn how to acquire tokens for staking...
-            </p>
+          <div className='space-y-6'>
+            <div className='text-center'>
+              <h2 className='text-3xl font-bold text-gray-800'>Fund Your Wallet</h2>
+              <p className='text-gray-600'>Buy crypto with Ramp and get ready to stake.</p>
+            </div>
+            <div className='flex justify-center'>
+            </div>
             <div className='flex justify-between pt-8'>
-              <button
-                onClick={goToPreviousStep}
-                className='glass-button rounded-lg border-0 px-6 py-3'
-              >
+              <button onClick={goToPreviousStep} className='glass-button rounded-lg border-0 px-6 py-3'>
                 Previous
               </button>
-              <button
-                onClick={goToNextStep}
-                className='rounded-lg border-0 bg-gradient-to-r from-purple-500 to-blue-500 px-6 py-3 text-white'
-              >
+              <button onClick={goToNextStep} className='rounded-lg border-0 bg-gradient-to-r from-purple-500 to-blue-500 px-6 py-3 text-white'>
                 Next
               </button>
             </div>
@@ -230,19 +224,6 @@ export default function OnboardingPage() {
         onStepClick={goToStep}
         connectedAddress={connectedAddress}
       >
-        {/* Back to Dashboard Button (only when a wallet is detected) */}
-        {hasAnyWallet && (
-          <div className='mb-4'>
-            <button
-              onClick={returnToDashboard}
-              className='glass-button flex items-center gap-2 rounded-lg border-0 px-4 py-2'
-            >
-              <ArrowLeft className='h-4 w-4' />
-              Back to Dashboard
-            </button>
-          </div>
-        )}
-
         {renderCurrentStep()}
       </OnboardingLayout>
     </>

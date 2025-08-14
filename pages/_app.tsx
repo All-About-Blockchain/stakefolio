@@ -2,57 +2,15 @@ import type { AppProps } from 'next/app';
 import '@/app/globals.css';
 import '@interchain-ui/react/styles';
 
-import { ChainProvider, InterchainWalletModal } from '@interchain-kit/react';
-import { keplrWallet } from '@interchain-kit/keplr-extension';
-import { leapWallet } from '@interchain-kit/leap-extension';
-import { cosmostationWallet } from '@interchain-kit/cosmostation-extension';
-import { chains, assetLists } from '@chain-registry/v2';
-import { WCWallet } from '@interchain-kit/core';
 import { useEffect } from 'react';
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
-import {
-  ToastProvider,
-  ToastContainer,
-  useToast,
-} from '@/app/contexts/ToastContext';
-import { useCosmosWalletDetection } from '@/app/hooks/useCosmosWalletDetection';
-import { OnboardingLayout } from '@/app/components/onboarding/OnboardingLayout';
-import { WelcomeStep } from '@/app/components/onboarding/WelcomeStep';
+import { ToastProvider, ToastContainer, useToast } from '@/app/contexts/ToastContext';
+import { WalletProvider } from '@/app/contexts/WalletContext';
+import { useWallet } from '@/app/contexts/WalletContext';
 import { useRouter } from 'next/router';
 
-// Filter chains you want to support
-const chainNames = [
-  'cosmoshub',
-  'osmosis',
-  'juno',
-  'stargaze',
-  'akash',
-  'axelar',
-  'evmos',
-  'crescent',
-  'comdex',
-  'chihuahua',
-  'stride',
-  'quicksilver',
-  'kujira',
-  'persistence',
-  'regen',
-  'bitsong',
-  'gravitybridge',
-  'umee',
-  'desmos',
-];
-const filteredChains = chains.filter((c) => chainNames.includes(c.chainName));
-
-const walletConnect = new WCWallet(undefined, {
-  metadata: {
-    name: 'Stakefolio',
-    description: 'Your Cosmos staking portfolio',
-    url: 'https://stakefol.io',
-    icons: ['https://stakefol.io/icon.png'],
-  },
-});
+// Removed Interchain Kit integrations; using native extension APIs
 
 function AppContent({
   Component,
@@ -63,14 +21,14 @@ function AppContent({
 }) {
   const { toasts, removeToast } = useToast();
   const router = useRouter();
-  const { isChecked, hasAnyWallet } = useCosmosWalletDetection();
+  const { address } = useWallet();
 
-  // Redirect to onboarding route to fully separate tutorial when no wallet is available
+  // Redirect to onboarding when not connected
   useEffect(() => {
-    if (isChecked && !hasAnyWallet && router.pathname !== '/onboarding') {
+    if (!address && router.pathname !== '/onboarding') {
       router.replace('/onboarding');
     }
-  }, [isChecked, hasAnyWallet, router]);
+  }, [address, router]);
 
   // When on onboarding route, render the onboarding app (no main header/footer)
   if (router.pathname === '/onboarding') {
@@ -82,8 +40,8 @@ function AppContent({
     );
   }
 
-  // Avoid flicker of advanced UI while detection is pending or redirecting
-  if (!isChecked || !hasAnyWallet) {
+  // Avoid flicker of advanced UI while redirecting
+  if (!address) {
     return null;
   }
 
@@ -124,15 +82,10 @@ function AppContent({
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <ChainProvider
-      chains={filteredChains}
-      assetLists={assetLists}
-      wallets={[keplrWallet, leapWallet, cosmostationWallet]}
-      walletModal={InterchainWalletModal as any}
-    >
-      <ToastProvider>
+    <ToastProvider>
+      <WalletProvider>
         <AppContent Component={Component} pageProps={pageProps} />
-      </ToastProvider>
-    </ChainProvider>
+      </WalletProvider>
+    </ToastProvider>
   );
 }
