@@ -1,5 +1,4 @@
 import { useEffect, useState, useMemo, useRef } from 'react';
-import { useChain } from '@interchain-kit/react';
 import {
   StargateClient,
   setupStakingExtension,
@@ -8,6 +7,8 @@ import {
 import { Tendermint37Client } from '@cosmjs/tendermint-rpc';
 import { AssetList, Asset, DenomUnit } from '@chain-registry/types';
 import { usePrices } from './usePrices';
+import { useWallet } from '@/app/contexts/WalletContext';
+import { CHAIN_CONFIG } from '@/app/config/chains';
 
 // --- useChainRegistryAssets hook ---
 const CHAIN_REGISTRY_BASE =
@@ -89,145 +90,6 @@ export type ChainBalances = {
   }[];
 };
 
-function useAllChains() {
-  // Hooks must be called in the same order on every render
-  const c1 = useChain('cosmoshub');
-  const c2 = useChain('osmosis');
-  const c3 = useChain('juno');
-  const c4 = useChain('stargaze');
-  const c5 = useChain('akash');
-  const c6 = useChain('axelar');
-  const c7 = useChain('evmos');
-  const c8 = useChain('crescent');
-  const c9 = useChain('comdex');
-  const c10 = useChain('chihuahua');
-  const c12 = useChain('stride');
-  const c13 = useChain('quicksilver');
-  const c14 = useChain('kujira');
-  const c15 = useChain('persistence');
-  const c16 = useChain('regen');
-  const c17 = useChain('bitsong');
-  const c18 = useChain('gravitybridge');
-  const c19 = useChain('umee');
-  const c20 = useChain('desmos');
-  return [
-    {
-      chainName: 'cosmoshub',
-      address: c1.address,
-      chain: c1.chain,
-      assetList: c1.assetList,
-    },
-    {
-      chainName: 'osmosis',
-      address: c2.address,
-      chain: c2.chain,
-      assetList: c2.assetList,
-    },
-    {
-      chainName: 'juno',
-      address: c3.address,
-      chain: c3.chain,
-      assetList: c3.assetList,
-    },
-    {
-      chainName: 'stargaze',
-      address: c4.address,
-      chain: c4.chain,
-      assetList: c4.assetList,
-    },
-    {
-      chainName: 'akash',
-      address: c5.address,
-      chain: c5.chain,
-      assetList: c5.assetList,
-    },
-    {
-      chainName: 'axelar',
-      address: c6.address,
-      chain: c6.chain,
-      assetList: c6.assetList,
-    },
-    {
-      chainName: 'evmos',
-      address: c7.address,
-      chain: c7.chain,
-      assetList: c7.assetList,
-    },
-    {
-      chainName: 'crescent',
-      address: c8.address,
-      chain: c8.chain,
-      assetList: c8.assetList,
-    },
-    {
-      chainName: 'comdex',
-      address: c9.address,
-      chain: c9.chain,
-      assetList: c9.assetList,
-    },
-    {
-      chainName: 'chihuahua',
-      address: c10.address,
-      chain: c10.chain,
-      assetList: c10.assetList,
-    },
-    {
-      chainName: 'stride',
-      address: c12.address,
-      chain: c12.chain,
-      assetList: c12.assetList,
-    },
-    {
-      chainName: 'quicksilver',
-      address: c13.address,
-      chain: c13.chain,
-      assetList: c13.assetList,
-    },
-    {
-      chainName: 'kujira',
-      address: c14.address,
-      chain: c14.chain,
-      assetList: c14.assetList,
-    },
-    {
-      chainName: 'persistence',
-      address: c15.address,
-      chain: c15.chain,
-      assetList: c15.assetList,
-    },
-    {
-      chainName: 'regen',
-      address: c16.address,
-      chain: c16.chain,
-      assetList: c16.assetList,
-    },
-    {
-      chainName: 'bitsong',
-      address: c17.address,
-      chain: c17.chain,
-      assetList: c17.assetList,
-    },
-    {
-      chainName: 'gravitybridge',
-      address: c18.address,
-      chain: c18.chain,
-      assetList: c18.assetList,
-    },
-    {
-      chainName: 'umee',
-      address: c19.address,
-      chain: c19.chain,
-      assetList: c19.assetList,
-    },
-    {
-      chainName: 'desmos',
-      address: c20.address,
-      chain: c20.chain,
-      assetList: c20.assetList,
-    },
-  ];
-}
-
 function getAssetMetaFromLists(
   assetLists: (AssetList | null | undefined)[],
   denom: string
@@ -263,36 +125,34 @@ function formatAmount(amount: string, decimals: number) {
 export function useAllBalances() {
   const [data, setData] = useState<ChainBalances[]>([]);
   const [loading, setLoading] = useState(true);
-  const chainHooks = useAllChains();
+  const { address } = useWallet();
   const { assets: registryAssets, loading: registryLoading } =
     useChainRegistryAssets();
   const { getUSDPrice } = usePrices();
 
-  // Only consider connected chains
+  // Only consider chains if we have an address
   const connectedChains = useMemo(
-    () => chainHooks.filter((c) => c.address && c.chain),
-    [chainHooks]
+    () => (address ? CHAIN_CONFIG : []),
+    [address]
   );
 
   // Debounce: Only fetch after 500ms of no address changes
-  const addressesDep = useMemo(
-    () => connectedChains.map((c) => c.address).join(','),
-    [connectedChains]
-  );
-  const chainIdsDep = useMemo(
-    () => connectedChains.map((c) => c.chain?.chainId).join(','),
-    [connectedChains]
-  );
+  const addressesDep = useMemo(() => address || '', [address]);
 
-  const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
-  const pollInterval = useRef<NodeJS.Timeout | null>(null);
+  const debounceTimeout = useRef<number | null>(null);
+  const pollInterval = useRef<number | null>(null);
 
   function delay(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   useEffect(() => {
-    if (registryLoading) return;
+    if (registryLoading || !address) {
+      setData([]);
+      setLoading(false);
+      return;
+    }
+
     let cancelled = false;
 
     function clearTimers() {
@@ -303,18 +163,8 @@ export function useAllBalances() {
     async function fetchAll() {
       setLoading(true);
       const results: ChainBalances[] = [];
-      for (const { chainName, address, chain, assetList } of connectedChains) {
+      for (const { chainName, rpc } of connectedChains) {
         try {
-          const rpc = chain.apis?.rpc?.[0]?.address;
-          if (!rpc) {
-            results.push({
-              chainName,
-              address,
-              balances: [],
-              delegations: [],
-            });
-            continue;
-          }
           console.log(
             `[RPC] Connecting to ${rpc} for balances of ${chainName} (${address})`
           );
@@ -322,9 +172,9 @@ export function useAllBalances() {
           console.log(
             `[RPC] Fetching all balances for ${address} on ${chainName}`
           );
-          const balancesRaw = Array.from(await client.getAllBalances(address));
+          const balancesRaw = Array.from(await client.getAllBalances(address!));
 
-          const assetLists = [registryAssets[chainName], assetList];
+          const assetLists = [registryAssets[chainName]];
 
           const balances = balancesRaw.map((b: any) => {
             const meta = getAssetMetaFromLists(assetLists, b.denom);
@@ -363,8 +213,9 @@ export function useAllBalances() {
           console.log(
             `[RPC] Fetching delegator delegations for ${address} on ${chainName}`
           );
-          const delegationsResp =
-            await staking.staking.delegatorDelegations(address);
+          const delegationsResp = await staking.staking.delegatorDelegations(
+            address!
+          );
 
           // Fetch validator information for each delegation (with rate limiting)
           const delegations = await Promise.all(
@@ -452,14 +303,15 @@ export function useAllBalances() {
 
           results.push({
             chainName,
-            address,
+            address: address!,
             balances,
             delegations,
           });
         } catch (err) {
+          console.warn(`Failed to fetch data for ${chainName}:`, err);
           results.push({
             chainName,
-            address,
+            address: address!,
             balances: [],
             delegations: [],
           });
@@ -474,10 +326,10 @@ export function useAllBalances() {
 
     // Debounce fetchAll
     clearTimers();
-    debounceTimeout.current = setTimeout(() => {
+    debounceTimeout.current = window.setTimeout(() => {
       fetchAll();
       // Poll every 10 minutes to reduce server load
-      pollInterval.current = setInterval(fetchAll, 600000);
+      pollInterval.current = window.setInterval(fetchAll, 600000);
     }, 1000);
 
     return () => {
@@ -486,11 +338,11 @@ export function useAllBalances() {
     };
   }, [
     addressesDep,
-    chainIdsDep,
     registryLoading,
     registryAssets,
     connectedChains,
     getUSDPrice,
+    address,
   ]);
 
   return { assets: data, loading };

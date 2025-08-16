@@ -6,13 +6,14 @@ import { useWallet } from '@/app/contexts/WalletContext';
 import { WelcomeStep } from '../app/components/onboarding/WelcomeStep';
 import { BlockchainEducationStep } from '../app/components/onboarding/BlockchainEducationStep';
 import { WalletSetup } from '../app/components/onboarding/WalletSetup';
-import { RampWidget } from '../app/components/onboarding/RampWidget';
+import { OnRampWidget } from '../app/components/onboarding/OnRampWidget';
 import {
   OnboardingLayout,
   OnboardingStep,
 } from '../app/components/onboarding/OnboardingLayout';
 import { ArrowLeft } from 'lucide-react';
 import { useToast } from '@/app/contexts/ToastContext';
+import { TransakModal } from '@/app/components/onboarding/TransakModal';
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -23,6 +24,20 @@ export default function OnboardingPage() {
   const [completedSteps, setCompletedSteps] = useState<Set<OnboardingStep>>(
     new Set()
   );
+  const [showTransakModal, setShowTransakModal] = useState(false);
+
+  const handleOrderSuccessful = (
+    orderData: any,
+    provider: 'ramp' | 'transak'
+  ) => {
+    console.log(`${provider} order successful:`, orderData);
+    alert(`${provider} order completed successfully!`);
+  };
+
+  const handleWidgetClose = (provider: 'ramp' | 'transak') => {
+    console.log(`${provider} widget closed`);
+    setShowTransakModal(false);
+  };
 
   const steps: OnboardingStep[] = [
     'welcome',
@@ -98,11 +113,18 @@ export default function OnboardingPage() {
                 Fund Your Wallet
               </h2>
               <p className='text-gray-600'>
-                Buy crypto with Ramp and get ready to stake.
+                Buy crypto with Transak and get ready to stake.
               </p>
             </div>
             <div className='flex justify-center'>
-              <RampWidget variant='embedded-desktop' />
+              <div className='text-center'>
+                <button
+                  onClick={() => setShowTransakModal(true)}
+                  className='rounded-lg bg-green-600 px-6 py-3 text-white transition-colors hover:bg-green-700'
+                >
+                  Open Transak Modal
+                </button>
+              </div>
             </div>
             <div className='flex justify-between pt-8'>
               <button
@@ -237,6 +259,21 @@ export default function OnboardingPage() {
       >
         {renderCurrentStep()}
       </OnboardingLayout>
+
+      {/* Transak Modal */}
+      <TransakModal
+        isOpen={showTransakModal}
+        onClose={() => setShowTransakModal(false)}
+        defaultCryptoCurrency='ATOM'
+        defaultFiatCurrency='USD'
+        walletAddress={connectedAddress || undefined}
+        cryptoCurrencyList={['ATOM']}
+        fiatCurrencyList={['USD', 'CAD', 'EUR', 'GBP']}
+        onOrderSuccessful={(orderData) =>
+          handleOrderSuccessful(orderData, 'transak')
+        }
+        onWidgetClose={() => handleWidgetClose('transak')}
+      />
     </>
   );
 }

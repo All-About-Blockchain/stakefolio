@@ -73,6 +73,7 @@ export function SkipWidget() {
     }
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const findRoutes = async () => {
     if (!fromToken || !toToken || !amount) return;
 
@@ -101,7 +102,7 @@ export function SkipWidget() {
     if (fromToken && toToken && amount) {
       findRoutes();
     }
-  }, [fromToken, toToken, amount]);
+  }, [fromToken, toToken, amount, findRoutes]);
 
   if (!isConnected) {
     return (

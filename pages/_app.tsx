@@ -27,12 +27,12 @@ function AppContent({
   const router = useRouter();
   const { address } = useWallet();
 
-  // Redirect to onboarding when not connected
-  useEffect(() => {
-    if (!address && router.pathname !== '/onboarding') {
-      router.replace('/onboarding');
-    }
-  }, [address, router]);
+  // Redirect to onboarding when not connected - DISABLED FOR NOW
+  // useEffect(() => {
+  //   if (!address && router.pathname !== '/onboarding') {
+  //     router.replace('/onboarding');
+  //   }
+  // }, [address, router]);
 
   // When on onboarding route, render the onboarding app (no main header/footer)
   if (router.pathname === '/onboarding') {
@@ -44,10 +44,10 @@ function AppContent({
     );
   }
 
-  // Avoid flicker of advanced UI while redirecting
-  if (!address) {
-    return null;
-  }
+  // Avoid flicker of advanced UI while redirecting - DISABLED FOR NOW
+  // if (!address) {
+  //   return null;
+  // }
 
   return (
     <div className='relative min-h-screen overflow-hidden'>
