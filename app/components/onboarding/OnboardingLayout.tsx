@@ -48,10 +48,10 @@ export function OnboardingLayout({
     'blockchain-education',
     'wallet-creation',
     'fund-onramp',
-    'wallet-management',
-    'swapping',
-    'validator-selection',
     'staking',
+    'validator-selection',
+    'swapping',
+    'wallet-management',
   ];
 
   return (

@@ -245,6 +245,7 @@ export function RampWidget({
     finalSwapAsset,
     userAddress,
     finalDefaultAsset,
+    onClose,
   ]);
 
   // For modal variant, don't render a container

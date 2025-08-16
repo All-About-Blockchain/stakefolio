@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   ArrowRight,
   RefreshCw,
@@ -65,13 +65,14 @@ export function SkipWidget() {
     return fallbackIcons[symbol] || fallbackIcons['ATOM'];
   };
 
-  const connectWallet = async () => {
+  // Memoize connectWallet to prevent infinite loops
+  const connectWallet = useCallback(async () => {
     try {
       await connectToSkip();
     } catch (err) {
       console.error('Failed to connect:', err);
     }
-  };
+  }, [connectToSkip]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const findRoutes = async () => {
@@ -104,6 +105,14 @@ export function SkipWidget() {
     }
   }, [fromToken, toToken, amount, findRoutes]);
 
+  // Auto-connect to Skip when wallet is available
+  useEffect(() => {
+    if (walletBalances.length > 0 && !isConnected && !isLoading) {
+      // Auto-connect to Skip Protocol when wallet is available
+      connectWallet();
+    }
+  }, [walletBalances.length, isConnected, isLoading, connectWallet]);
+
   if (!isConnected) {
     return (
       <div className='glass-ultra-light rounded-xl p-6'>
@@ -113,7 +122,7 @@ export function SkipWidget() {
             <span className='font-semibold text-gray-800'>Skip Protocol</span>
           </div>
           <span className='rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600'>
-            Disconnected
+            {isLoading ? 'Connecting...' : 'Disconnected'}
           </span>
         </div>
 
@@ -123,26 +132,23 @@ export function SkipWidget() {
             Skip Protocol Widget
           </h3>
           <p className='mb-4 text-sm text-gray-600'>
-            {walletBalances.length === 0
-              ? 'Connect your wallet first to use the Skip Protocol widget'
-              : 'Connect to Skip Protocol to use cross-chain swaps'}
+            {isLoading
+              ? 'Connecting to Skip Protocol...'
+              : walletBalances.length === 0
+                ? 'Connect your wallet first to use the Skip Protocol widget'
+                : 'Connect to Skip Protocol to use cross-chain swaps'}
           </p>
-          <button
-            onClick={connectWallet}
-            disabled={isLoading || walletBalances.length === 0}
-            className='rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 px-6 py-2 text-white transition-all duration-200 hover:shadow-lg disabled:opacity-50'
-          >
-            {isLoading ? (
-              <div className='flex items-center gap-2'>
-                <RefreshCw className='h-4 w-4 animate-spin' />
-                Connecting...
-              </div>
-            ) : walletBalances.length === 0 ? (
-              'Connect Wallet First'
-            ) : (
-              'Connect to Skip'
-            )}
-          </button>
+          {!isLoading && (
+            <button
+              onClick={connectWallet}
+              disabled={walletBalances.length === 0}
+              className='rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 px-6 py-2 text-white transition-all duration-200 hover:shadow-lg disabled:opacity-50'
+            >
+              {walletBalances.length === 0
+                ? 'Connect Wallet First'
+                : 'Connect to Skip'}
+            </button>
+          )}
         </div>
       </div>
     );
@@ -186,9 +192,14 @@ export function SkipWidget() {
           <div className='h-6 w-6 rounded-full bg-gradient-to-r from-blue-500 to-purple-500'></div>
           <span className='font-semibold text-gray-800'>Skip Protocol</span>
         </div>
-        <span className='rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-800'>
-          Connected
-        </span>
+        <div className='flex items-center gap-2'>
+          <span className='rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-800'>
+            Connected
+          </span>
+          <span className='text-xs text-gray-500'>
+            {userAddress.slice(0, 8)}...{userAddress.slice(-6)}
+          </span>
+        </div>
       </div>
 
       {/* Token Selection */}
