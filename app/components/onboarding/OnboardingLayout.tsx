@@ -19,6 +19,7 @@ interface OnboardingLayoutProps {
   completedSteps: Set<OnboardingStep>;
   onStepClick: (step: OnboardingStep) => void;
   connectedAddress?: string | null;
+  isTransitioning?: boolean;
 }
 
 const stepLabels: Record<OnboardingStep, string> = {
@@ -40,6 +41,7 @@ export function OnboardingLayout({
   completedSteps,
   onStepClick,
   connectedAddress,
+  isTransitioning = false,
 }: OnboardingLayoutProps) {
   const steps: OnboardingStep[] = [
     'welcome',
@@ -71,7 +73,7 @@ export function OnboardingLayout({
         {/* Progress Header */}
         <div className='mb-8'>
           <div className='mb-6 flex items-center justify-between'>
-            <h1 className='bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-3xl font-bold text-transparent'>
+            <h1 className='bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text py-4 text-3xl font-bold text-transparent'>
               Cosmos Staking Guide
             </h1>
             <div className='flex items-center gap-4'>
@@ -106,13 +108,15 @@ export function OnboardingLayout({
               return (
                 <button
                   key={step}
-                  onClick={() => isClickable && onStepClick(step)}
-                  disabled={!isClickable}
+                  onClick={() =>
+                    isClickable && !isTransitioning && onStepClick(step)
+                  }
+                  disabled={!isClickable || isTransitioning}
                   className={`flex flex-col items-center gap-2 transition-all duration-300 ${
-                    isClickable
+                    isClickable && !isTransitioning
                       ? 'cursor-pointer hover:scale-105'
                       : 'cursor-not-allowed opacity-50'
-                  }`}
+                  } ${isTransitioning ? 'pointer-events-none' : ''}`}
                 >
                   <div
                     className={`flex h-10 w-10 items-center justify-center rounded-full ${
@@ -147,7 +151,11 @@ export function OnboardingLayout({
         </div>
 
         {/* Content */}
-        <div className='glass-card luxury-shadow-light rounded-xl border-0 p-8'>
+        <div
+          className={`glass-card luxury-shadow-light rounded-xl border-0 p-8 transition-opacity duration-300 ${
+            isTransitioning ? 'opacity-75' : 'opacity-100'
+          }`}
+        >
           {children}
         </div>
       </div>
