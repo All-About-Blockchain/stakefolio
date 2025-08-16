@@ -5,7 +5,11 @@ import '@interchain-ui/react/styles';
 import { useEffect } from 'react';
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
-import { ToastProvider, ToastContainer, useToast } from '@/app/contexts/ToastContext';
+import {
+  ToastProvider,
+  ToastContainer,
+  useToast,
+} from '@/app/contexts/ToastContext';
 import { WalletProvider } from '@/app/contexts/WalletContext';
 import { useWallet } from '@/app/contexts/WalletContext';
 import { useRouter } from 'next/router';

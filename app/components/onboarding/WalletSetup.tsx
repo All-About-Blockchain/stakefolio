@@ -13,7 +13,15 @@ import { useWallet } from '@/app/contexts/WalletContext';
 export function WalletSetup({ onPrevious, onNext }: WalletSetupProps) {
   const { addToast } = useToast();
   const { isChecked, detectedWallets } = useCosmosWalletDetection();
-  const { address: connectedAddress, connectedWallet, isConnecting, connectKeplr, connectCosmostation, connectLeap, disconnect } = useWallet();
+  const {
+    address: connectedAddress,
+    connectedWallet,
+    isConnecting,
+    connectKeplr,
+    connectCosmostation,
+    connectLeap,
+    disconnect,
+  } = useWallet();
 
   const keplrInstalled = useMemo(
     () => detectedWallets.includes('keplr'),
@@ -36,7 +44,11 @@ export function WalletSetup({ onPrevious, onNext }: WalletSetupProps) {
 
   const continueWithWallet = () => {
     if (connectedAddress) onNext();
-    else addToast('Please connect a wallet for the selected chain to continue.', 'warning');
+    else
+      addToast(
+        'Please connect a wallet for the selected chain to continue.',
+        'warning'
+      );
   };
 
   return (
@@ -56,8 +68,10 @@ export function WalletSetup({ onPrevious, onNext }: WalletSetupProps) {
           {/* Keplr */}
           <button
             type='button'
-            onClick={keplrInstalled ? connectKeplr : () => open('https://keplr.app')}
-            className={`rounded-xl border p-6 text-left transition-all hover:scale-[1.01] focus:outline-none focus:ring-2 ${(connectedAddress && connectedWallet==='keplr') ? 'border-emerald-300 ring-emerald-300/50' : 'border-gray-100 focus:ring-purple-500'}`}
+            onClick={
+              keplrInstalled ? connectKeplr : () => open('https://keplr.app')
+            }
+            className={`rounded-xl border p-6 text-left transition-all hover:scale-[1.01] focus:outline-none focus:ring-2 ${connectedAddress && connectedWallet === 'keplr' ? 'border-emerald-300 ring-emerald-300/50' : 'border-gray-100 focus:ring-purple-500'}`}
           >
             <div className='text-center'>
               <img
@@ -76,19 +90,33 @@ export function WalletSetup({ onPrevious, onNext }: WalletSetupProps) {
             </ul>
             <div className='flex w-full gap-3'>
               {keplrInstalled ? (
-                <button 
-                  onClick={(e) => { e.stopPropagation(); connectKeplr(); }} 
-                  disabled={isConnecting || (connectedWallet === 'keplr' && !!connectedAddress)} 
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    connectKeplr();
+                  }}
+                  disabled={
+                    isConnecting ||
+                    (connectedWallet === 'keplr' && !!connectedAddress)
+                  }
                   className={`w-full rounded px-4 py-2 text-center text-sm ${
-                    connectedWallet === 'keplr' && connectedAddress 
-                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+                    connectedWallet === 'keplr' && connectedAddress
+                      ? 'cursor-not-allowed bg-gray-300 text-gray-500'
                       : 'bg-gradient-to-r from-purple-500 to-blue-500 text-white'
                   }`}
                 >
-                  {connectedWallet === 'keplr' && connectedAddress ? 'Connected' : 'Connect'}
+                  {connectedWallet === 'keplr' && connectedAddress
+                    ? 'Connected'
+                    : 'Connect'}
                 </button>
               ) : (
-                <button onClick={(e) => { e.stopPropagation(); open('https://keplr.app'); }} className='w-full glass-button rounded px-4 py-2 text-center text-sm'>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    open('https://keplr.app');
+                  }}
+                  className='glass-button w-full rounded px-4 py-2 text-center text-sm'
+                >
                   <Download className='mr-1 inline h-3 w-3' /> Install
                 </button>
               )}
@@ -99,8 +127,12 @@ export function WalletSetup({ onPrevious, onNext }: WalletSetupProps) {
           {/* Cosmostation */}
           <button
             type='button'
-            onClick={cosmostationInstalled ? connectCosmostation : () => open('https://cosmostation.io/wallet')}
-            className={`rounded-xl border p-6 text-left transition-all hover:scale-[1.01] focus:outline-none focus:ring-2 ${(connectedAddress && connectedWallet==='cosmostation') ? 'border-emerald-300 ring-emerald-300/50' : 'border-gray-100 focus:ring-purple-500'}`}
+            onClick={
+              cosmostationInstalled
+                ? connectCosmostation
+                : () => open('https://cosmostation.io/wallet')
+            }
+            className={`rounded-xl border p-6 text-left transition-all hover:scale-[1.01] focus:outline-none focus:ring-2 ${connectedAddress && connectedWallet === 'cosmostation' ? 'border-emerald-300 ring-emerald-300/50' : 'border-gray-100 focus:ring-purple-500'}`}
           >
             <div className='text-center'>
               <img
@@ -119,19 +151,33 @@ export function WalletSetup({ onPrevious, onNext }: WalletSetupProps) {
             </ul>
             <div className='flex w-full gap-3'>
               {cosmostationInstalled ? (
-                <button 
-                  onClick={(e) => { e.stopPropagation(); connectCosmostation(); }} 
-                  disabled={isConnecting || (connectedWallet === 'cosmostation' && !!connectedAddress)} 
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    connectCosmostation();
+                  }}
+                  disabled={
+                    isConnecting ||
+                    (connectedWallet === 'cosmostation' && !!connectedAddress)
+                  }
                   className={`w-full rounded px-4 py-2 text-center text-sm ${
-                    connectedWallet === 'cosmostation' && connectedAddress 
-                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+                    connectedWallet === 'cosmostation' && connectedAddress
+                      ? 'cursor-not-allowed bg-gray-300 text-gray-500'
                       : 'bg-gradient-to-r from-purple-500 to-blue-500 text-white'
                   }`}
                 >
-                  {connectedWallet === 'cosmostation' && connectedAddress ? 'Connected' : 'Connect'}
+                  {connectedWallet === 'cosmostation' && connectedAddress
+                    ? 'Connected'
+                    : 'Connect'}
                 </button>
               ) : (
-                <button onClick={(e) => { e.stopPropagation(); open('https://cosmostation.io/wallet'); }} className='w-full glass-button rounded px-4 py-2 text-center text-sm'>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    open('https://cosmostation.io/wallet');
+                  }}
+                  className='glass-button w-full rounded px-4 py-2 text-center text-sm'
+                >
                   <Download className='mr-1 inline h-3 w-3' /> Install
                 </button>
               )}
@@ -142,8 +188,12 @@ export function WalletSetup({ onPrevious, onNext }: WalletSetupProps) {
           {/* Leap */}
           <button
             type='button'
-            onClick={leapInstalled ? connectLeap : () => open('https://www.leapwallet.io/cosmos')}
-            className={`rounded-xl border p-6 text-left transition-all hover:scale-[1.01] focus:outline-none focus:ring-2 ${(connectedAddress && connectedWallet==='leap') ? 'border-emerald-300 ring-emerald-300/50' : 'border-gray-100 focus:ring-purple-500'}`}
+            onClick={
+              leapInstalled
+                ? connectLeap
+                : () => open('https://www.leapwallet.io/cosmos')
+            }
+            className={`rounded-xl border p-6 text-left transition-all hover:scale-[1.01] focus:outline-none focus:ring-2 ${connectedAddress && connectedWallet === 'leap' ? 'border-emerald-300 ring-emerald-300/50' : 'border-gray-100 focus:ring-purple-500'}`}
           >
             <div className='text-center'>
               <img
@@ -162,19 +212,33 @@ export function WalletSetup({ onPrevious, onNext }: WalletSetupProps) {
             </ul>
             <div className='flex w-full gap-3'>
               {leapInstalled ? (
-                <button 
-                  onClick={(e) => { e.stopPropagation(); connectLeap(); }} 
-                  disabled={isConnecting || (connectedWallet === 'leap' && !!connectedAddress)} 
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    connectLeap();
+                  }}
+                  disabled={
+                    isConnecting ||
+                    (connectedWallet === 'leap' && !!connectedAddress)
+                  }
                   className={`w-full rounded px-4 py-2 text-center text-sm ${
-                    connectedWallet === 'leap' && connectedAddress 
-                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+                    connectedWallet === 'leap' && connectedAddress
+                      ? 'cursor-not-allowed bg-gray-300 text-gray-500'
                       : 'bg-gradient-to-r from-purple-500 to-blue-500 text-white'
                   }`}
                 >
-                  {connectedWallet === 'leap' && connectedAddress ? 'Connected' : 'Connect'}
+                  {connectedWallet === 'leap' && connectedAddress
+                    ? 'Connected'
+                    : 'Connect'}
                 </button>
               ) : (
-                <button onClick={(e) => { e.stopPropagation(); open('https://www.leapwallet.io/cosmos'); }} className='w-full glass-button rounded px-4 py-2 text-center text-sm'>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    open('https://www.leapwallet.io/cosmos');
+                  }}
+                  className='glass-button w-full rounded px-4 py-2 text-center text-sm'
+                >
                   <Download className='mr-1 inline h-3 w-3' /> Install
                 </button>
               )}
@@ -184,8 +248,15 @@ export function WalletSetup({ onPrevious, onNext }: WalletSetupProps) {
         </div>
         {connectedAddress && (
           <div className='mt-4 flex items-center justify-center gap-3 text-xs text-gray-600'>
-            <span>Connected: <span className='font-mono'>{connectedAddress}</span></span>
-            <button onClick={disconnect} className='glass-button rounded px-3 py-1'>Disconnect</button>
+            <span>
+              Connected: <span className='font-mono'>{connectedAddress}</span>
+            </span>
+            <button
+              onClick={disconnect}
+              className='glass-button rounded px-3 py-1'
+            >
+              Disconnect
+            </button>
           </div>
         )}
       </div>
@@ -201,11 +272,17 @@ export function WalletSetup({ onPrevious, onNext }: WalletSetupProps) {
         )}
 
       <div className='flex items-center justify-between'>
-        <button onClick={onPrevious} className='glass-button rounded-lg px-6 py-3'>
+        <button
+          onClick={onPrevious}
+          className='glass-button rounded-lg px-6 py-3'
+        >
           Previous
         </button>
         <div className='flex items-center gap-3'>
-          <button onClick={() => window.location.assign('/')} className='glass-button rounded-lg px-6 py-3'>
+          <button
+            onClick={() => window.location.assign('/')}
+            className='glass-button rounded-lg px-6 py-3'
+          >
             Skip to Dashboard
           </button>
           <button

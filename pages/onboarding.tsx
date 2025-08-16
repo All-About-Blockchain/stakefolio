@@ -94,16 +94,27 @@ export default function OnboardingPage() {
         return (
           <div className='space-y-6'>
             <div className='text-center'>
-              <h2 className='text-3xl font-bold text-gray-800'>Fund Your Wallet</h2>
-              <p className='text-gray-600'>Buy crypto with Ramp and get ready to stake.</p>
+              <h2 className='text-3xl font-bold text-gray-800'>
+                Fund Your Wallet
+              </h2>
+              <p className='text-gray-600'>
+                Buy crypto with Ramp and get ready to stake.
+              </p>
             </div>
             <div className='flex justify-center'>
+              <RampWidget variant='embedded-desktop' />
             </div>
             <div className='flex justify-between pt-8'>
-              <button onClick={goToPreviousStep} className='glass-button rounded-lg border-0 px-6 py-3'>
+              <button
+                onClick={goToPreviousStep}
+                className='glass-button rounded-lg border-0 px-6 py-3'
+              >
                 Previous
               </button>
-              <button onClick={goToNextStep} className='rounded-lg border-0 bg-gradient-to-r from-purple-500 to-blue-500 px-6 py-3 text-white'>
+              <button
+                onClick={goToNextStep}
+                className='rounded-lg border-0 bg-gradient-to-r from-purple-500 to-blue-500 px-6 py-3 text-white'
+              >
                 Next
               </button>
             </div>

@@ -1,4 +1,11 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
 type WalletId = 'keplr' | 'cosmostation' | 'leap' | null;
 
@@ -27,7 +34,10 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     try {
       const raw = window.localStorage.getItem(STORAGE_KEY);
       if (raw) {
-        const { wallet, address: storedAddress } = JSON.parse(raw) as { wallet: WalletId; address?: string };
+        const { wallet, address: storedAddress } = JSON.parse(raw) as {
+          wallet: WalletId;
+          address?: string;
+        };
         if (wallet && storedAddress) {
           setConnectedWallet(wallet);
           setAddress(storedAddress);
@@ -38,7 +48,10 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
 
   const persist = useCallback((wallet: WalletId, addr: string | null) => {
     try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ wallet, address: addr }));
+      window.localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({ wallet, address: addr })
+      );
     } catch {}
   }, []);
 
@@ -71,7 +84,10 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     try {
       const w = window as any;
       if (!w.cosmostation?.cosmos) throw new Error('Cosmostation not detected');
-      const res = await w.cosmostation.cosmos.request({ method: 'cos_requestAccount', params: { chainName: DEFAULT_CHAIN } });
+      const res = await w.cosmostation.cosmos.request({
+        method: 'cos_requestAccount',
+        params: { chainName: DEFAULT_CHAIN },
+      });
       const addr: string | null = res?.address || res?.bech32Address || null;
       setConnectedWallet('cosmostation');
       if (addr) setAddress(addr);
@@ -111,20 +127,29 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     persist(null, null);
   }, [persist]);
 
-  const value = useMemo<WalletContextValue>(() => ({
-    address,
-    connectedWallet,
-    isConnecting,
-    connectKeplr,
-    connectCosmostation,
-    connectLeap,
-    disconnect,
-  }), [address, connectedWallet, isConnecting, connectKeplr, connectCosmostation, connectLeap, disconnect]);
+  const value = useMemo<WalletContextValue>(
+    () => ({
+      address,
+      connectedWallet,
+      isConnecting,
+      connectKeplr,
+      connectCosmostation,
+      connectLeap,
+      disconnect,
+    }),
+    [
+      address,
+      connectedWallet,
+      isConnecting,
+      connectKeplr,
+      connectCosmostation,
+      connectLeap,
+      disconnect,
+    ]
+  );
 
   return (
-    <WalletContext.Provider value={value}>
-      {children}
-    </WalletContext.Provider>
+    <WalletContext.Provider value={value}>{children}</WalletContext.Provider>
   );
 }
 
@@ -133,6 +158,3 @@ export function useWallet() {
   if (!ctx) throw new Error('useWallet must be used within WalletProvider');
   return ctx;
 }
-
-
-
