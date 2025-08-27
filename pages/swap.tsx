@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import { useState } from 'react';
 import { ArrowRight, RefreshCw, Settings, Info } from 'lucide-react';
-import { SkipWidget } from '../app/components/SkipWidget';
+import { SkipGoWidget } from '../app/components/SkipGoWidget';
 import { useDenomLogos } from '../app/hooks/useDenomLogos';
 import { useAllBalances } from '../app/hooks/useAllBalances';
 
@@ -261,11 +261,11 @@ export default function SwapPage() {
               </button>
             </div>
 
-            {/* Skip.go Widget Integration */}
+            {/* Skip Go Widget Integration */}
             <div className='bright-card ultra-soft-shadow rounded-xl border-0 p-6'>
               <h2 className='mb-6 flex items-center gap-2 text-xl font-semibold text-gray-800'>
                 <Info className='h-5 w-5 text-blue-500' />
-                Skip Protocol Widget
+                Skip Protocol (Go) Widget
               </h2>
 
               <div className='mb-4'>
@@ -276,7 +276,7 @@ export default function SwapPage() {
               </div>
 
               {/* Skip Widget Component */}
-              <SkipWidget />
+              <SkipGoWidget />
             </div>
           </div>
 

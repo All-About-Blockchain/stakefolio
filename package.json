@@ -19,6 +19,8 @@
     "@pythnetwork/client": "^2.21.0",
     "@ramp-network/ramp-instant-sdk": "^6.0.3",
     "@react-icons/all-files": "^4.1.0",
+    "@skip-go/widget": "^3.14.7",
+    "@tanstack/react-query": "^5.85.5",
     "@transak/transak-sdk": "^3.2.1",
     "add": "^2.0.6",
     "axios": "^1.6.8",
@@ -28,7 +30,9 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-icons": "^5.5.0",
-    "recharts": "^3.0.0-beta.2"
+    "recharts": "^3.0.0-beta.2",
+    "viem": "^2.36.0",
+    "wagmi": "^2.16.8"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",

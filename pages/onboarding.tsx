@@ -12,6 +12,7 @@ import {
 } from '../app/components/onboarding/OnboardingLayout';
 import { useToast } from '@/app/contexts/ToastContext';
 import { TransakModal } from '@/app/components/onboarding/TransakModal';
+import { SkipGoWidget } from '@/app/components/SkipGoWidget';
 
 // ATOM Balance Display Component
 function ATOMBalanceDisplay({ address }: { address: string | null }) {
@@ -931,6 +932,20 @@ export default function OnboardingPage() {
                     in your wallet
                   </p>
                 </div>
+              </div>
+            </div>
+
+            {/* Try It: Skip Protocol (Go) Widget */}
+            <div className='glass-card space-y-4 rounded-lg p-6'>
+              <h3 className='text-lg font-semibold text-gray-800'>
+                🚀 Try It: Swap with Skip Protocol
+              </h3>
+              <p className='text-sm text-gray-700'>
+                Use the embedded Skip Go widget to explore real cross-chain swap routes.
+                Connect your wallet to simulate or perform a small test swap.
+              </p>
+              <div className='mt-2'>
+                <SkipGoWidget />
               </div>
             </div>
 
