@@ -1,8 +1,9 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useCosmosWalletDetection } from '@/app/hooks/useCosmosWalletDetection';
 import { useToast } from '@/app/contexts/ToastContext';
-import { Download } from 'lucide-react';
+import { Download, Zap } from 'lucide-react';
 import { useWalletConnection } from '@/app/hooks/useWalletConnection';
+import { QuickWalletSetup } from './QuickWalletSetup';
 
 interface WalletSetupProps {
   onPrevious: () => void;
@@ -20,6 +21,7 @@ export function WalletSetup({ onPrevious, onNext }: WalletSetupProps) {
     disconnectAll,
     connectSingleChain,
   } = useWalletConnection();
+  const [showQuickWallet, setShowQuickWallet] = useState(false);
 
   // Get the first connected wallet info
   const connectedWallet = connectionStatuses.find(
@@ -65,12 +67,21 @@ export function WalletSetup({ onPrevious, onNext }: WalletSetupProps) {
       );
   };
 
+  if (showQuickWallet) {
+    return (
+      <QuickWalletSetup
+        onComplete={onNext}
+        onBack={() => setShowQuickWallet(false)}
+      />
+    );
+  }
+
   return (
     <div className='space-y-8 text-left'>
       <div>
         <h2 className='text-3xl font-bold text-gray-800'>Set Up Your Wallet</h2>
         <p className='mt-2 text-lg text-gray-600'>
-          Choose a wallet extension and connect to continue.
+          Choose a wallet option to get started quickly.
         </p>
       </div>
 
@@ -78,7 +89,40 @@ export function WalletSetup({ onPrevious, onNext }: WalletSetupProps) {
         <div className='mb-6 text-center text-lg font-semibold text-gray-800'>
           Choose Your Wallet
         </div>
-        <div className='grid gap-6 md:grid-cols-3'>
+        <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-4'>
+          {/* Quick Wallet */}
+          <button
+            type='button'
+            onClick={() => setShowQuickWallet(true)}
+            className={`rounded-xl border p-6 text-left transition-all hover:scale-[1.01] focus:outline-none focus:ring-2 ${connectedAddress && connectedWalletName === 'browser' ? 'border-emerald-300 ring-emerald-300/50' : 'border-gray-100 focus:ring-purple-500'}`}
+          >
+            <div className='text-center'>
+              <div className='mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-blue-500'>
+                <Zap className='h-6 w-6 text-white' />
+              </div>
+              <div className='mb-1 text-base font-semibold text-gray-800'>
+                Quick Wallet
+              </div>
+            </div>
+            <ul className='mb-4 list-disc space-y-1 pl-5 text-xs text-gray-600'>
+              <li>Create wallet instantly</li>
+              <li>No extension required</li>
+              <li>Perfect for beginners</li>
+            </ul>
+            <div className='flex w-full gap-3'>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowQuickWallet(true);
+                }}
+                disabled={isConnecting}
+                className='w-full rounded bg-gradient-to-r from-purple-500 to-blue-500 px-4 py-2 text-center text-sm text-white transition-all hover:scale-105'
+              >
+                Get Started
+              </button>
+            </div>
+          </button>
+
           {/* Keplr */}
           <button
             type='button'

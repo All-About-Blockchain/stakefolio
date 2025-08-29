@@ -1,43 +1,60 @@
 import { useState } from 'react';
-import { CreditCard, Zap, TrendingUp, Shield } from 'lucide-react';
+import {
+  CreditCard,
+  Zap,
+  TrendingUp,
+  Shield,
+  ExternalLink,
+} from 'lucide-react';
+import { TransakModal } from './TransakModal';
+import { useWallet } from '../../contexts/WalletContext';
 
 interface OnRampWidgetProps {
   onComplete: () => void;
 }
 
 export function OnRampWidget({ onComplete }: OnRampWidgetProps) {
+  const { address } = useWallet();
   const [amount, setAmount] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [showTransak, setShowTransak] = useState(false);
   const [step, setStep] = useState<'input' | 'processing' | 'complete'>(
     'input'
   );
 
   const handleBuyATOM = async () => {
+    if (!address) {
+      alert('Please connect your wallet first');
+      return;
+    }
+
     if (!amount || parseFloat(amount) <= 0) {
       alert('Please enter a valid amount');
       return;
     }
 
+    // Open Transak modal
+    setShowTransak(true);
+  };
+
+  const handleTransakOrderCreated = (orderData: any) => {
+    console.log('Transak order created:', orderData);
     setIsProcessing(true);
     setStep('processing');
+  };
 
-    try {
-      // Simulate the buying and auto-staking process
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+  const handleTransakOrderSuccessful = (orderData: any) => {
+    console.log('Transak order successful:', orderData);
+    setShowTransak(false);
+    setStep('complete');
+    setIsProcessing(false);
+  };
 
-      // In reality, this would:
-      // 1. Open the on-ramp widget (Transak/Ramp)
-      // 2. User completes the purchase
-      // 3. ATOM is automatically converted to stATOM via Stride
-      // 4. User receives stATOM in their wallet
-
-      setStep('complete');
-    } catch (error) {
-      alert('Purchase failed. Please try again.');
-      setStep('input');
-    } finally {
-      setIsProcessing(false);
-    }
+  const handleTransakError = (error: any) => {
+    console.error('Transak error:', error);
+    alert('Purchase failed. Please try again.');
+    setShowTransak(false);
+    setIsProcessing(false);
   };
 
   const formatCurrency = (value: number) => {
@@ -66,9 +83,9 @@ export function OnRampWidget({ onComplete }: OnRampWidgetProps) {
         </p>
         <div className='mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-purple-500'></div>
         <div className='mt-4 space-y-2 text-sm text-gray-500'>
-          <p>✓ Processing payment</p>
-          <p>✓ Buying ATOM</p>
-          <p>⏳ Converting to stATOM</p>
+          <p>✓ Payment processed via Transak</p>
+          <p>✓ ATOM purchased successfully</p>
+          <p>⏳ Converting to stATOM via Stride</p>
           <p>⏳ Adding to your wallet</p>
         </div>
       </div>
@@ -85,8 +102,8 @@ export function OnRampWidget({ onComplete }: OnRampWidgetProps) {
           Success! You&apos;re Now Earning Rewards
         </h3>
         <p className='mb-6 text-gray-600'>
-          Your ATOM has been automatically staked and you&apos;re earning 8.5%
-          APR
+          Your ATOM purchase via Transak has been completed and automatically
+          staked. You&apos;re now earning 8.5% APR
         </p>
         <div className='mb-6 space-y-3 rounded-lg bg-emerald-50 p-4'>
           <div className='flex items-center justify-between'>
@@ -128,8 +145,19 @@ export function OnRampWidget({ onComplete }: OnRampWidgetProps) {
           Buy ATOM & Auto-Stake
         </h3>
         <p className='text-gray-600'>
-          Purchase ATOM and automatically earn staking rewards
+          Purchase ATOM via Transak and automatically earn staking rewards
         </p>
+        {!address && (
+          <div className='mt-4 rounded-lg bg-amber-50 p-3'>
+            <p className='text-sm text-amber-700'>
+              <ExternalLink className='mr-1 inline h-4 w-4' />
+              Please connect your wallet first to purchase ATOM
+            </p>
+            <p className='mt-2 text-xs text-amber-600'>
+              You can create a quick wallet or connect an extension wallet
+            </p>
+          </div>
+        )}
       </div>
 
       <div className='space-y-6'>
@@ -188,20 +216,45 @@ export function OnRampWidget({ onComplete }: OnRampWidgetProps) {
         {/* Buy Button */}
         <button
           onClick={handleBuyATOM}
-          disabled={!amount || parseFloat(amount) <= 0 || isProcessing}
+          disabled={
+            !address || !amount || parseFloat(amount) <= 0 || isProcessing
+          }
           className={`w-full rounded-lg px-6 py-4 text-lg font-semibold text-white transition-all ${
-            !amount || parseFloat(amount) <= 0 || isProcessing
+            !address || !amount || parseFloat(amount) <= 0 || isProcessing
               ? 'cursor-not-allowed bg-gray-300'
               : 'bg-gradient-to-r from-purple-500 to-blue-500 hover:scale-105 hover:shadow-lg'
           }`}
         >
-          {isProcessing ? 'Processing...' : 'Buy & Auto-Stake ATOM'}
+          {!address
+            ? 'Connect Wallet First'
+            : isProcessing
+              ? 'Processing...'
+              : 'Buy & Auto-Stake ATOM'}
         </button>
+
+        {!address && (
+          <p className='text-center text-sm text-amber-600'>
+            Please connect your wallet to purchase ATOM
+          </p>
+        )}
 
         <p className='text-center text-xs text-gray-500'>
           Powered by Transak • Secure payment processing
         </p>
       </div>
+
+      {/* Transak Modal */}
+      <TransakModal
+        isOpen={showTransak}
+        onClose={() => setShowTransak(false)}
+        defaultCryptoCurrency='ATOM'
+        defaultFiatCurrency='USD'
+        walletAddress={address || undefined}
+        cryptoCurrencyList={['ATOM']}
+        onOrderCreated={handleTransakOrderCreated}
+        onOrderSuccessful={handleTransakOrderSuccessful}
+        onError={handleTransakError}
+      />
     </div>
   );
 }

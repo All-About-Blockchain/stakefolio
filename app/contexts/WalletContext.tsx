@@ -7,7 +7,7 @@ import React, {
   useState,
 } from 'react';
 
-type WalletId = 'keplr' | 'cosmostation' | 'leap' | null;
+type WalletId = 'keplr' | 'cosmostation' | 'leap' | 'browser' | null;
 
 interface WalletContextValue {
   address: string | null;
@@ -16,6 +16,7 @@ interface WalletContextValue {
   connectKeplr: () => Promise<void>;
   connectCosmostation: () => Promise<void>;
   connectLeap: () => Promise<void>;
+  connectBrowserWallet: (address: string) => Promise<void>;
   disconnect: () => Promise<void>;
 }
 
@@ -121,6 +122,20 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     }
   }, [persist]);
 
+  const connectBrowserWallet = useCallback(
+    async (browserAddress: string) => {
+      setIsConnecting(true);
+      try {
+        setConnectedWallet('browser');
+        setAddress(browserAddress);
+        persist('browser', browserAddress);
+      } finally {
+        setIsConnecting(false);
+      }
+    },
+    [persist]
+  );
+
   const disconnect = useCallback(async () => {
     setConnectedWallet(null);
     setAddress(null);
@@ -135,6 +150,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       connectKeplr,
       connectCosmostation,
       connectLeap,
+      connectBrowserWallet,
       disconnect,
     }),
     [
@@ -144,6 +160,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       connectKeplr,
       connectCosmostation,
       connectLeap,
+      connectBrowserWallet,
       disconnect,
     ]
   );
