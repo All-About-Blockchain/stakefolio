@@ -93,11 +93,13 @@ export function OnRampWidget({
   onError,
 }: OnRampWidgetProps) {
   const { connectionStatuses } = useWalletConnection();
-  
+
   // Get the first connected wallet address
-  const connectedWallet = connectionStatuses.find(s => s.status === 'connected');
+  const connectedWallet = connectionStatuses.find(
+    (s) => s.status === 'connected'
+  );
   const connectedAddress = connectedWallet?.address || null;
-  
+
   const [selectedProvider, setSelectedProvider] =
     useState<Provider>(defaultProvider);
   const [showWidget, setShowWidget] = useState(false);

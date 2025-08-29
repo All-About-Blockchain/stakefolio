@@ -22,7 +22,9 @@ export function WalletSetup({ onPrevious, onNext }: WalletSetupProps) {
   } = useWalletConnection();
 
   // Get the first connected wallet info
-  const connectedWallet = connectionStatuses.find(s => s.status === 'connected');
+  const connectedWallet = connectionStatuses.find(
+    (s) => s.status === 'connected'
+  );
   const connectedAddress = connectedWallet?.address;
   const connectedWalletName = connectedWallet?.walletName;
 
@@ -81,7 +83,9 @@ export function WalletSetup({ onPrevious, onNext }: WalletSetupProps) {
           <button
             type='button'
             onClick={
-              keplrInstalled ? () => handleConnectWallet('keplr') : () => open('https://keplr.app')
+              keplrInstalled
+                ? () => handleConnectWallet('keplr')
+                : () => open('https://keplr.app')
             }
             className={`rounded-xl border p-6 text-left transition-all hover:scale-[1.01] focus:outline-none focus:ring-2 ${connectedAddress && connectedWalletName === 'keplr' ? 'border-emerald-300 ring-emerald-300/50' : 'border-gray-100 focus:ring-purple-500'}`}
           >
@@ -170,7 +174,8 @@ export function WalletSetup({ onPrevious, onNext }: WalletSetupProps) {
                   }}
                   disabled={
                     isConnecting ||
-                    (connectedWalletName === 'cosmostation' && !!connectedAddress)
+                    (connectedWalletName === 'cosmostation' &&
+                      !!connectedAddress)
                   }
                   className={`w-full rounded px-4 py-2 text-center text-sm ${
                     connectedWalletName === 'cosmostation' && connectedAddress

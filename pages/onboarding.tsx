@@ -941,8 +941,9 @@ export default function OnboardingPage() {
                 🚀 Try It: Swap with Skip Protocol
               </h3>
               <p className='text-sm text-gray-700'>
-                Use the embedded Skip Go widget to explore real cross-chain swap routes.
-                Connect your wallet to simulate or perform a small test swap.
+                Use the embedded Skip Go widget to explore real cross-chain swap
+                routes. Connect your wallet to simulate or perform a small test
+                swap.
               </p>
               <div className='mt-2'>
                 <SkipGoWidget />
