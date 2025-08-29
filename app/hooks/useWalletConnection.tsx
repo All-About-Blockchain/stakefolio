@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { chains } from '@chain-registry/v2';
+import { CHAIN_CONFIG } from '@/app/config/chains';
 
 export interface ConnectionStatus {
   chainName: string;
@@ -30,7 +30,7 @@ export const useWalletConnection = () => {
 
   // Initialize connection statuses for all chains
   useEffect(() => {
-    const initialStatuses: ConnectionStatus[] = chains.map((chain) => ({
+    const initialStatuses: ConnectionStatus[] = CHAIN_CONFIG.map((chain) => ({
       chainName: chain.chainName,
       status: 'disconnected',
     }));

@@ -1,4 +1,4 @@
-// Chain configuration - define RPC endpoints and chain IDs
+// Chain configuration - simplified to only support CosmosHub and Stride for liquid staking
 export const CHAIN_CONFIG = [
   {
     chainName: 'cosmoshub',
@@ -6,91 +6,67 @@ export const CHAIN_CONFIG = [
     chainId: 'cosmoshub-4',
   },
   {
-    chainName: 'osmosis',
-    rpc: 'https://rpc.osmosis.zone:26657',
-    chainId: 'osmosis-1',
-  },
-  {
-    chainName: 'juno',
-    rpc: 'https://rpc.juno.strange.love:26657',
-    chainId: 'juno-1',
-  },
-  {
-    chainName: 'stargaze',
-    rpc: 'https://rpc.stargaze-apis.com:26657',
-    chainId: 'stargaze-1',
-  },
-  {
-    chainName: 'akash',
-    rpc: 'https://rpc.akash.forbole.com:26657',
-    chainId: 'akashnet-2',
-  },
-  {
-    chainName: 'axelar',
-    rpc: 'https://rpc-axelar.imperator.co:26657',
-    chainId: 'axelar-dojo-1',
-  },
-  {
-    chainName: 'evmos',
-    rpc: 'https://tendermint.bd.evmos.org:26657',
-    chainId: 'evmos_9001-2',
-  },
-  {
-    chainName: 'crescent',
-    rpc: 'https://mainnet.crescent.network:26657',
-    chainId: 'crescent-1',
-  },
-  {
-    chainName: 'comdex',
-    rpc: 'https://rpc.comdex.one:26657',
-    chainId: 'comdex-1',
-  },
-  {
-    chainName: 'chihuahua',
-    rpc: 'https://rpc.chihuahua.wtf:26657',
-    chainId: 'chihuahua-1',
-  },
-  {
     chainName: 'stride',
     rpc: 'https://stride-rpc.polkachu.com:26657',
     chainId: 'stride-1',
   },
-  {
-    chainName: 'quicksilver',
-    rpc: 'https://rpc.quicksilver.zone:26657',
-    chainId: 'quicksilver-2',
-  },
-  {
-    chainName: 'kujira',
-    rpc: 'https://rpc.kaiyo.kujira.setten.io:26657',
-    chainId: 'kaiyo-1',
-  },
-  {
-    chainName: 'persistence',
-    rpc: 'https://rpc.core.persistence.one:26657',
-    chainId: 'core-1',
-  },
-  {
-    chainName: 'regen',
-    rpc: 'https://rpc.regen.network:26657',
-    chainId: 'regen-1',
-  },
-  {
-    chainName: 'bitsong',
-    rpc: 'https://rpc-bitsong.itastakers.com:26657',
-    chainId: 'bitsong-2b',
-  },
-  {
-    chainName: 'gravitybridge',
-    rpc: 'https://gravitychain.io:26657',
-    chainId: 'gravity-bridge-3',
-  },
-  { chainName: 'umee', rpc: 'https://rpc.umee.cc:26657', chainId: 'umee-1' },
-  {
-    chainName: 'desmos',
-    rpc: 'https://rpc.mainnet.desmos.network:26657',
-    chainId: 'desmos-mainnet',
-  },
 ];
 
 export type ChainConfig = (typeof CHAIN_CONFIG)[0];
+
+// Liquid staking token configuration
+export const LIQUID_STAKING_TOKENS = {
+  stATOM: {
+    symbol: 'stATOM',
+    name: 'Stride Liquid Staked ATOM',
+    denom: 'stuatom',
+    baseToken: 'ATOM',
+    baseDenom: 'uatom',
+    chain: 'cosmoshub',
+    logo: 'https://raw.githubusercontent.com/cosmos/chain-registry/master/stride/images/statom.png',
+    apr: 0.085, // 8.5% APR
+  },
+  stOSMO: {
+    symbol: 'stOSMO',
+    name: 'Stride Liquid Staked OSMO',
+    denom: 'stuosmo',
+    baseToken: 'OSMO',
+    baseDenom: 'uosmo',
+    chain: 'cosmoshub',
+    logo: 'https://raw.githubusercontent.com/cosmos/chain-registry/master/stride/images/stosmo.png',
+    apr: 0.092, // 9.2% APR
+  },
+  stJUNO: {
+    symbol: 'stJUNO',
+    name: 'Stride Liquid Staked JUNO',
+    denom: 'stujuno',
+    baseToken: 'JUNO',
+    baseDenom: 'ujuno',
+    chain: 'cosmoshub',
+    logo: 'https://raw.githubusercontent.com/cosmos/chain-registry/master/stride/images/stjuno.png',
+    apr: 0.078, // 7.8% APR
+  },
+  stSTARS: {
+    symbol: 'stSTARS',
+    name: 'Stride Liquid Staked STARS',
+    denom: 'stustars',
+    baseToken: 'STARS',
+    baseDenom: 'ustars',
+    chain: 'cosmoshub',
+    logo: 'https://raw.githubusercontent.com/cosmos/chain-registry/master/stride/images/ststars.png',
+    apr: 0.082, // 8.2% APR
+  },
+  stSCRT: {
+    symbol: 'stSCRT',
+    name: 'Stride Liquid Staked SCRT',
+    denom: 'stuscrt',
+    baseToken: 'SCRT',
+    baseDenom: 'uscrt',
+    chain: 'cosmoshub',
+    logo: 'https://raw.githubusercontent.com/cosmos/chain-registry/master/stride/images/stscrt.png',
+    apr: 0.075, // 7.5% APR
+  },
+};
+
+export type LiquidStakingToken =
+  (typeof LIQUID_STAKING_TOKENS)[keyof typeof LIQUID_STAKING_TOKENS];

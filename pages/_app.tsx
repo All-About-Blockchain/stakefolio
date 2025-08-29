@@ -11,7 +11,6 @@ import {
   useToast,
 } from '@/app/contexts/ToastContext';
 import { WalletProvider } from '@/app/contexts/WalletContext';
-import { useWallet } from '@/app/contexts/WalletContext';
 import { useRouter } from 'next/router';
 
 // Removed Interchain Kit integrations; using native extension APIs
@@ -25,7 +24,6 @@ function AppContent({
 }) {
   const { toasts, removeToast } = useToast();
   const router = useRouter();
-  const { address } = useWallet();
 
   // Redirect to onboarding when not connected - DISABLED FOR NOW
   // useEffect(() => {

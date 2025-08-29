@@ -1,21 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAllBalances } from '../hooks/useAllBalances';
 import { usePrices } from '../hooks/usePrices';
-import { useDenomLogos } from '../hooks/useDenomLogos';
-import {
-  PieChart,
-  Pie,
-  Cell,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-} from 'recharts';
+import { LIQUID_STAKING_TOKENS } from '../config/chains';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import {
   Wallet,
   TrendingUp,
@@ -25,12 +12,13 @@ import {
   Coins,
   Zap,
   Shield,
+  ArrowRight,
 } from 'lucide-react';
+import Link from 'next/link';
 
 export function Portfolio() {
   const all = useAllBalances();
   const { prices, loading: pricesLoading } = usePrices();
-  const { getLogo: getDenomLogo } = useDenomLogos();
   const [balanceVisible, setBalanceVisible] = useState(true);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
@@ -53,107 +41,59 @@ export function Portfolio() {
     );
   }
 
-  // Prepare data for charts - aggregate by denom across all chains
-  const chartData = all.assets.flatMap((chain) => {
-    const balanceData = chain.balances
-      .filter((b) => parseFloat(b.displayAmount) > 0)
-      .map((b) => ({
-        name: `${b.displayDenom} (${chain.chainName})`,
-        symbol: b.displayDenom,
-        chain: chain.chainName,
-        amount: parseFloat(b.displayAmount),
-        price: b.price,
-        usdValue: b.usdValue,
-        hasPrice: b.price > 0,
-        type: 'Balance',
-        fullName: `${b.displayName} on ${chain.chainName}`,
-      }));
-
-    const delegationData = chain.delegations
-      .filter((d) => parseFloat(d.balance.displayAmount) > 0)
-      .map((d) => ({
-        name: `${d.balance.displayDenom} Staked (${chain.chainName})`,
-        symbol: d.balance.displayDenom,
-        chain: chain.chainName,
-        amount: parseFloat(d.balance.displayAmount),
-        price: d.balance.price,
-        usdValue: d.balance.usdValue,
-        hasPrice: d.balance.price > 0,
-        type: 'Staked',
-        fullName: `${d.balance.displayName} staked on ${chain.chainName}`,
-      }));
-
-    return [...balanceData, ...delegationData];
-  });
-
-  // Aggregate assets by denom across all chains
-  const aggregatedAssets = chartData.reduce(
-    (acc, item) => {
-      const key = item.symbol;
-      if (!acc[key]) {
-        acc[key] = {
-          symbol: item.symbol,
-          totalAmount: 0,
-          totalUsdValue: 0,
-          chains: new Set<string>(),
-          hasPrice: false,
-          type: item.type,
-          logo: getDenomLogo(item.symbol),
-        };
-      }
-      acc[key].totalAmount += item.amount;
-      acc[key].totalUsdValue += item.usdValue;
-      acc[key].chains.add(item.chain);
-      if (item.hasPrice) {
-        acc[key].hasPrice = true;
-      }
-      return acc;
-    },
-    {} as Record<
-      string,
-      {
-        symbol: string;
-        totalAmount: number;
-        totalUsdValue: number;
-        chains: Set<string>;
-        hasPrice: boolean;
-        type: string;
-        logo: string | null;
-      }
-    >
+  // Get CosmosHub balances
+  const cosmosHubData = all.assets.find(
+    (chain) => chain.chainName === 'cosmoshub'
   );
 
-  // Convert aggregated assets to array for display
-  const aggregatedChartData = Object.values(aggregatedAssets).map((asset) => ({
-    name: asset.symbol.toUpperCase(),
-    symbol: asset.symbol.toUpperCase(),
-    amount: asset.totalAmount,
-    usdValue: asset.totalUsdValue,
-    hasPrice: asset.hasPrice,
-    type: asset.type,
-    chains: Array.from(asset.chains),
-    logo: asset.logo,
-  }));
+  // Filter for liquid staking tokens and ATOM
+  const liquidStakingAssets =
+    cosmosHubData?.balances.filter((balance) => {
+      const isATOM = balance.symbol === 'ATOM';
+      const isLiquidStaking = Object.values(LIQUID_STAKING_TOKENS).some(
+        (token) =>
+          token.denom === balance.denom || token.symbol === balance.symbol
+      );
+      return isATOM || isLiquidStaking;
+    }) || [];
+
+  // Prepare chart data
+  const chartData = liquidStakingAssets
+    .filter((asset) => parseFloat(asset.displayAmount) > 0)
+    .map((asset) => {
+      const tokenInfo = Object.values(LIQUID_STAKING_TOKENS).find(
+        (token) => token.denom === asset.denom || token.symbol === asset.symbol
+      );
+
+      return {
+        name: asset.symbol,
+        symbol: asset.symbol,
+        amount: parseFloat(asset.displayAmount),
+        price: asset.price,
+        usdValue: asset.usdValue,
+        hasPrice: asset.price > 0,
+        apr: tokenInfo?.apr || 0,
+        logo:
+          tokenInfo?.logo || asset.symbol === 'ATOM'
+            ? 'https://raw.githubusercontent.com/cosmos/chain-registry/master/cosmoshub/images/atom.png'
+            : null,
+        type: tokenInfo ? 'Liquid Staked' : 'Available',
+      };
+    });
 
   // Calculate totals
-  const totalValue = aggregatedChartData.reduce(
-    (sum, item) => sum + item.usdValue,
-    0
-  );
-  const totalStakedValue = all.assets
-    .flatMap((chain) => chain.delegations)
-    .reduce((sum, d) => sum + d.balance.usdValue, 0);
+  const totalValue = chartData.reduce((sum, item) => sum + item.usdValue, 0);
+  const totalStakedValue = chartData
+    .filter((item) => item.type === 'Liquid Staked')
+    .reduce((sum, item) => sum + item.usdValue, 0);
   const totalAvailableValue = totalValue - totalStakedValue;
 
-  // Mock performance data
-  const performanceData = [
-    { date: 'Jan', value: 2100 },
-    { date: 'Feb', value: 2250 },
-    { date: 'Mar', value: 2180 },
-    { date: 'Apr', value: 2380 },
-    { date: 'May', value: 2420 },
-    { date: 'Jun', value: 2459 },
-  ];
+  // Calculate weighted average APR
+  const weightedAPR =
+    chartData.length > 0
+      ? chartData.reduce((sum, item) => sum + item.usdValue * item.apr, 0) /
+        totalValue
+      : 0;
 
   const COLORS = [
     '#8b5cf6',
@@ -205,9 +145,9 @@ export function Portfolio() {
           <p className='text-sm text-gray-500'>
             {balanceVisible ? data.amount.toFixed(2) : '••••••'} {data.symbol}
           </p>
-          {data.chains && data.chains.length > 1 && (
-            <p className='mt-1 text-xs text-blue-500'>
-              Across {data.chains.length} chains
+          {data.apr > 0 && (
+            <p className='mt-1 text-xs text-emerald-600'>
+              APR: {(data.apr * 100).toFixed(1)}%
             </p>
           )}
         </div>
@@ -224,23 +164,32 @@ export function Portfolio() {
           <div>
             <h2 className='flex items-center gap-3 text-2xl font-semibold text-gray-800'>
               <BarChart3 className='h-6 w-6 text-purple-500' />
-              Portfolio Breakdown
+              Liquid Staking Portfolio
             </h2>
             <p className='mt-2 text-lg text-gray-600'>
-              Detailed analysis of your cryptocurrency holdings
+              Your staked assets on CosmosHub
             </p>
           </div>
-          <button
-            onClick={() => setBalanceVisible(!balanceVisible)}
-            className='glass-button flex items-center gap-2 rounded-lg border-0 px-4 py-2'
-          >
-            {balanceVisible ? (
-              <EyeOff className='h-4 w-4' />
-            ) : (
-              <Eye className='h-4 w-4' />
-            )}
-            {balanceVisible ? 'Hide' : 'Show'}
-          </button>
+          <div className='flex items-center gap-3'>
+            <button
+              onClick={() => setBalanceVisible(!balanceVisible)}
+              className='glass-button flex items-center gap-2 rounded-lg border-0 px-4 py-2'
+            >
+              {balanceVisible ? (
+                <EyeOff className='h-4 w-4' />
+              ) : (
+                <Eye className='h-4 w-4' />
+              )}
+              {balanceVisible ? 'Hide' : 'Show'}
+            </button>
+            <Link
+              href='/swap'
+              className='flex items-center gap-2 rounded-lg bg-gradient-to-r from-purple-500 to-blue-500 px-4 py-2 text-white transition-all hover:scale-105 hover:shadow-lg'
+            >
+              <Zap className='h-4 w-4' />
+              Swap Assets
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -296,10 +245,10 @@ export function Portfolio() {
               <Zap className='h-6 w-6 text-white' />
             </div>
             <div>
-              <div className='text-sm text-gray-600'>DeFi Value</div>
+              <div className='text-sm text-gray-600'>Avg APR</div>
               <div className='text-xl font-bold text-gray-800'>
                 {balanceVisible
-                  ? formatCurrency(totalValue * 0.017)
+                  ? `${(weightedAPR * 100).toFixed(1)}%`
                   : '••••••••'}
               </div>
             </div>
@@ -315,150 +264,90 @@ export function Portfolio() {
             <PieChart className='h-5 w-5 text-purple-500' />
             Asset Distribution
           </h3>
-          <div className='h-80'>
-            <ResponsiveContainer width='100%' height='100%'>
-              <PieChart>
-                <Pie
-                  data={aggregatedChartData.filter((item) => item.hasPrice)}
-                  cx='50%'
-                  cy='50%'
-                  innerRadius={60}
-                  outerRadius={120}
-                  paddingAngle={3}
-                  dataKey='usdValue'
-                >
-                  {aggregatedChartData
-                    .filter((item) => item.hasPrice)
-                    .map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={COLORS[index % COLORS.length]}
-                      />
-                    ))}
-                </Pie>
-                <Tooltip content={<CustomTooltip />} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
+          {chartData.length > 0 ? (
+            <div className='h-80'>
+              <ResponsiveContainer width='100%' height='100%'>
+                <PieChart>
+                  <Pie
+                    data={chartData.filter((item) => item.hasPrice)}
+                    cx='50%'
+                    cy='50%'
+                    innerRadius={60}
+                    outerRadius={120}
+                    paddingAngle={3}
+                    dataKey='usdValue'
+                  >
+                    {chartData
+                      .filter((item) => item.hasPrice)
+                      .map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
+                      ))}
+                  </Pie>
+                  <Tooltip content={<CustomTooltip />} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          ) : (
+            <div className='flex h-80 items-center justify-center'>
+              <div className='text-center text-gray-500'>
+                <Shield className='mx-auto mb-4 h-12 w-12' />
+                <p>No liquid staking assets found</p>
+                <p className='text-sm'>
+                  Connect your wallet to see your portfolio
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Performance Chart */}
+        {/* Quick Actions */}
         <div className='bright-card ultra-soft-shadow rounded-xl border-0 p-6'>
           <h3 className='mb-6 flex items-center gap-2 text-xl font-semibold text-gray-800'>
-            <TrendingUp className='h-5 w-5 text-emerald-500' />
-            Portfolio Performance
+            <Zap className='h-5 w-5 text-emerald-500' />
+            Quick Actions
           </h3>
-          <div className='h-80'>
-            <ResponsiveContainer width='100%' height='100%'>
-              <LineChart data={performanceData}>
-                <Line
-                  type='monotone'
-                  dataKey='value'
-                  stroke='url(#gradient)'
-                  strokeWidth={3}
-                  dot={false}
-                />
-                <defs>
-                  <linearGradient id='gradient' x1='0' y1='0' x2='1' y2='0'>
-                    <stop offset='0%' stopColor='#8B5CF6' />
-                    <stop offset='100%' stopColor='#3B82F6' />
-                  </linearGradient>
-                </defs>
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </div>
-
-      {/* Asset Type Distribution per Chain */}
-      <div className='bright-card ultra-soft-shadow rounded-xl border-0 p-6'>
-        <h3 className='mb-6 flex items-center gap-2 text-xl font-semibold text-gray-800'>
-          <Shield className='h-5 w-5 text-blue-500' />
-          Asset Type Distribution per Chain
-        </h3>
-        <div className='space-y-3'>
-          {all.assets
-            .filter((chain) => {
-              const chainTotal =
-                chain.balances.reduce((sum, b) => sum + b.usdValue, 0) +
-                chain.delegations.reduce(
-                  (sum, d) => sum + d.balance.usdValue,
-                  0
-                );
-              return chainTotal > 0;
-            })
-            .sort((a, b) => {
-              const aTotal =
-                a.balances.reduce((sum, b) => sum + b.usdValue, 0) +
-                a.delegations.reduce((sum, d) => sum + d.balance.usdValue, 0);
-              const bTotal =
-                b.balances.reduce((sum, b) => sum + b.usdValue, 0) +
-                b.delegations.reduce((sum, d) => sum + d.balance.usdValue, 0);
-              return bTotal - aTotal;
-            })
-            .map((chain) => {
-              const chainTotal =
-                chain.balances.reduce((sum, b) => sum + b.usdValue, 0) +
-                chain.delegations.reduce(
-                  (sum, d) => sum + d.balance.usdValue,
-                  0
-                );
-              const percentage =
-                totalValue > 0 ? (chainTotal / totalValue) * 100 : 0;
-
-              return (
-                <div
-                  key={chain.chainName}
-                  className='glass-ultra-light rounded-xl p-4'
-                >
-                  <div className='flex items-center justify-between'>
-                    <div className='flex items-center gap-3'>
-                      {getDenomLogo(chain.chainName) ? (
-                        <img
-                          src={getDenomLogo(chain.chainName)!}
-                          alt={chain.chainName}
-                          className='h-8 w-8 rounded-full object-cover'
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                            const fallback =
-                              target.nextElementSibling as HTMLElement;
-                            if (fallback) fallback.style.display = 'flex';
-                          }}
-                        />
-                      ) : null}
-                      <div
-                        className={`flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-purple-400 to-blue-400 text-sm font-bold text-white ${
-                          getDenomLogo(chain.chainName) ? 'hidden' : 'flex'
-                        }`}
-                      >
-                        {chain.chainName.charAt(0).toUpperCase()}
-                      </div>
-                      <div>
-                        <div className='font-semibold text-gray-800'>
-                          {chain.chainName.charAt(0).toUpperCase() +
-                            chain.chainName.slice(1)}
-                        </div>
-                        <div className='text-sm text-gray-600'>
-                          {balanceVisible
-                            ? formatCurrency(chainTotal)
-                            : '••••••••'}
-                        </div>
-                      </div>
-                    </div>
-                    <div className='text-right'>
-                      <div className='text-lg font-bold text-gray-800'>
-                        {percentage.toFixed(2)}%
-                      </div>
-                      <div className='text-sm text-gray-600'>
-                        {chain.balances.length + chain.delegations.length}{' '}
-                        assets
-                      </div>
-                    </div>
+          <div className='space-y-4'>
+            <Link
+              href='/onboarding'
+              className='flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-all hover:border-purple-500 hover:shadow-md'
+            >
+              <div className='flex items-center gap-3'>
+                <div className='flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-blue-500'>
+                  <TrendingUp className='h-5 w-5 text-white' />
+                </div>
+                <div>
+                  <div className='font-semibold text-gray-800'>
+                    Buy & Stake ATOM
+                  </div>
+                  <div className='text-sm text-gray-500'>
+                    Start earning rewards
                   </div>
                 </div>
-              );
-            })}
+              </div>
+              <ArrowRight className='h-5 w-5 text-gray-400' />
+            </Link>
+
+            <Link
+              href='/swap'
+              className='flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-all hover:border-purple-500 hover:shadow-md'
+            >
+              <div className='flex items-center gap-3'>
+                <div className='flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-emerald-500 to-cyan-500'>
+                  <Zap className='h-5 w-5 text-white' />
+                </div>
+                <div>
+                  <div className='font-semibold text-gray-800'>Swap Assets</div>
+                  <div className='text-sm text-gray-500'>
+                    Optimize your portfolio
+                  </div>
+                </div>
+              </div>
+              <ArrowRight className='h-5 w-5 text-gray-400' />
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -466,74 +355,83 @@ export function Portfolio() {
       <div className='bright-card ultra-soft-shadow rounded-xl border-0 p-6'>
         <h3 className='mb-6 flex items-center gap-2 text-xl font-semibold text-gray-800'>
           <Coins className='h-5 w-5 text-amber-500' />
-          Portfolio Breakdown by Tokens
+          Your Assets
         </h3>
-        <div className='space-y-3'>
-          {aggregatedChartData
-            .filter((item) => item.hasPrice && item.usdValue > 0)
-            .sort((a, b) => b.usdValue - a.usdValue)
-            .map((token, index) => {
-              const percentage =
-                totalValue > 0 ? (token.usdValue / totalValue) * 100 : 0;
+        {chartData.length > 0 ? (
+          <div className='space-y-3'>
+            {chartData
+              .filter((item) => item.hasPrice && item.usdValue > 0)
+              .sort((a, b) => b.usdValue - a.usdValue)
+              .map((token, index) => {
+                const percentage =
+                  totalValue > 0 ? (token.usdValue / totalValue) * 100 : 0;
 
-              return (
-                <div
-                  key={token.symbol}
-                  className='glass-ultra-light rounded-xl p-4'
-                >
-                  <div className='flex items-center justify-between'>
-                    <div className='flex items-center gap-3'>
-                      {token.logo ? (
-                        <img
-                          src={token.logo}
-                          alt={token.symbol}
-                          className='h-8 w-8 rounded-full object-cover'
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                            const fallback =
-                              target.nextElementSibling as HTMLElement;
-                            if (fallback) fallback.style.display = 'flex';
-                          }}
-                        />
-                      ) : null}
-                      <div
-                        className={`h-8 w-8 rounded-full shadow-sm ${
-                          token.logo ? 'hidden' : 'block'
-                        }`}
-                        style={{
-                          backgroundColor: COLORS[index % COLORS.length],
-                        }}
-                      ></div>
-                      <div>
-                        <div className='font-semibold text-gray-800'>
-                          {token.symbol}
-                          {token.chains.length > 1 && (
-                            <span className='ml-2 text-sm text-gray-500'>
-                              (Across {token.chains.length} chains)
+                return (
+                  <div
+                    key={token.symbol}
+                    className='glass-ultra-light rounded-xl p-4'
+                  >
+                    <div className='flex items-center justify-between'>
+                      <div className='flex items-center gap-3'>
+                        {token.logo ? (
+                          <img
+                            src={token.logo}
+                            alt={token.symbol}
+                            className='h-8 w-8 rounded-full object-cover'
+                          />
+                        ) : (
+                          <div
+                            className='h-8 w-8 rounded-full shadow-sm'
+                            style={{
+                              backgroundColor: COLORS[index % COLORS.length],
+                            }}
+                          ></div>
+                        )}
+                        <div>
+                          <div className='font-semibold text-gray-800'>
+                            {token.symbol}
+                            <span
+                              className={`ml-2 rounded-full px-2 py-1 text-xs ${
+                                token.type === 'Liquid Staked'
+                                  ? 'bg-emerald-100 text-emerald-700'
+                                  : 'bg-blue-100 text-blue-700'
+                              }`}
+                            >
+                              {token.type}
                             </span>
-                          )}
+                          </div>
+                          <div className='text-sm text-gray-600'>
+                            {balanceVisible
+                              ? formatCurrency(token.usdValue)
+                              : '••••••••'}
+                          </div>
+                        </div>
+                      </div>
+                      <div className='text-right'>
+                        <div className='text-lg font-bold text-gray-800'>
+                          {percentage.toFixed(2)}%
                         </div>
                         <div className='text-sm text-gray-600'>
-                          {balanceVisible
-                            ? formatCurrency(token.usdValue)
-                            : '••••••••'}
+                          {formatNumber(token.amount)} {token.symbol}
                         </div>
-                      </div>
-                    </div>
-                    <div className='text-right'>
-                      <div className='text-lg font-bold text-gray-800'>
-                        {percentage.toFixed(2)}%
-                      </div>
-                      <div className='text-sm text-gray-600'>
-                        {formatNumber(token.amount)} {token.symbol}
+                        {token.apr > 0 && (
+                          <div className='text-xs text-emerald-600'>
+                            {(token.apr * 100).toFixed(1)}% APR
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-        </div>
+                );
+              })}
+          </div>
+        ) : (
+          <div className='py-8 text-center text-gray-500'>
+            <Shield className='mx-auto mb-4 h-12 w-12' />
+            <p>No assets found</p>
+            <p className='text-sm'>Start by buying and staking ATOM</p>
+          </div>
+        )}
       </div>
     </div>
   );

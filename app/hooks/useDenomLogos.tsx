@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { AssetList, Asset } from '@chain-registry/types';
 
 const CHAIN_REGISTRY_BASE =
   'https://raw.githubusercontent.com/cosmos/chain-registry/master';
@@ -55,9 +54,9 @@ export function useDenomLogos() {
               );
               if (!response.ok) return;
 
-              const assetList: AssetList = await response.json();
+              const assetList: any = await response.json();
 
-              assetList.assets?.forEach((asset: Asset) => {
+              assetList.assets?.forEach((asset: any) => {
                 // Try different logo URI properties
                 const logoUrl = asset.logoURIs?.png;
 
