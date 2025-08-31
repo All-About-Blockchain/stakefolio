@@ -1,7 +1,22 @@
 import React from 'react';
 
+export type OnboardingStep =
+  | 'welcome'
+  | 'blockchain-education'
+  | 'wallet-creation'
+  | 'fund-onramp'
+  | 'wallet-management'
+  | 'swapping'
+  | 'validator-selection'
+  | 'staking';
+
 interface OnboardingLayoutProps {
   children: React.ReactNode;
+  currentStep?: OnboardingStep;
+  currentStepIndex?: number;
+  totalSteps?: number;
+  completedSteps?: Set<OnboardingStep>;
+  onStepClick?: (step: OnboardingStep) => void;
 }
 
 export function OnboardingLayout({ children }: OnboardingLayoutProps) {

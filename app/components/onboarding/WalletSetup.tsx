@@ -42,6 +42,22 @@ export function WalletSetup({ onPrevious, onNext }: WalletSetupProps) {
     () => detectedWallets.includes('leap'),
     [detectedWallets]
   );
+  const okxInstalled = useMemo(
+    () => detectedWallets.includes('okx'),
+    [detectedWallets]
+  );
+  const metamaskInstalled = useMemo(
+    () => detectedWallets.includes('metamask'),
+    [detectedWallets]
+  );
+  const stationInstalled = useMemo(
+    () => detectedWallets.includes('station'),
+    [detectedWallets]
+  );
+  const xdefiInstalled = useMemo(
+    () => detectedWallets.includes('xdefi'),
+    [detectedWallets]
+  );
 
   const open = (url: string) => {
     try {
@@ -89,7 +105,7 @@ export function WalletSetup({ onPrevious, onNext }: WalletSetupProps) {
         <div className='mb-6 text-center text-lg font-semibold text-gray-800'>
           Choose Your Wallet
         </div>
-        <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-4'>
+        <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
           {/* Quick Wallet */}
           <button
             type='button'
@@ -306,6 +322,246 @@ export function WalletSetup({ onPrevious, onNext }: WalletSetupProps) {
               )}
             </div>
           </button>
+
+          {/* OKX Wallet */}
+          <button
+            type='button'
+            onClick={
+              okxInstalled
+                ? () => handleConnectWallet('okx')
+                : () => open('https://www.okx.com/web3')
+            }
+            className={`rounded-xl border p-6 text-left transition-all hover:scale-[1.01] focus:outline-none focus:ring-2 ${connectedAddress && connectedWalletName === 'okx' ? 'border-emerald-300 ring-emerald-300/50' : 'border-gray-100 focus:ring-purple-500'}`}
+          >
+            <div className='text-center'>
+              <img
+                src='/wallet/okx.png'
+                alt='OKX Wallet'
+                className='mx-auto mb-3 h-12 w-12'
+              />
+              <div className='mb-1 text-base font-semibold text-gray-800'>
+                OKX Wallet
+              </div>
+            </div>
+            <ul className='mb-4 list-disc space-y-1 pl-5 text-xs text-gray-600'>
+              <li>Multi-chain DeFi wallet</li>
+              <li>Built-in exchange features</li>
+              <li>Advanced trading tools</li>
+            </ul>
+            <div className='flex w-full gap-3'>
+              {okxInstalled ? (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleConnectWallet('okx');
+                  }}
+                  disabled={
+                    isConnecting ||
+                    (connectedWalletName === 'okx' && !!connectedAddress)
+                  }
+                  className={`w-full rounded px-4 py-2 text-center text-sm ${
+                    connectedWalletName === 'okx' && connectedAddress
+                      ? 'cursor-not-allowed bg-gray-300 text-gray-500'
+                      : 'bg-gradient-to-r from-purple-500 to-blue-500 text-white'
+                  }`}
+                >
+                  {connectedWalletName === 'okx' && connectedAddress
+                    ? 'Connected'
+                    : 'Connect'}
+                </button>
+              ) : (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    open('https://www.okx.com/web3');
+                  }}
+                  className='flex w-full items-center justify-center gap-2 rounded bg-gray-100 px-4 py-2 text-sm text-gray-700 hover:bg-gray-200'
+                >
+                  <Download className='h-4 w-4' />
+                  Install
+                </button>
+              )}
+            </div>
+          </button>
+
+          {/* MetaMask */}
+          <button
+            type='button'
+            onClick={
+              metamaskInstalled
+                ? () => handleConnectWallet('metamask')
+                : () => open('https://metamask.io')
+            }
+            className={`rounded-xl border p-6 text-left transition-all hover:scale-[1.01] focus:outline-none focus:ring-2 ${connectedAddress && connectedWalletName === 'metamask' ? 'border-emerald-300 ring-emerald-300/50' : 'border-gray-100 focus:ring-purple-500'}`}
+          >
+            <div className='text-center'>
+              <img
+                src='/wallet/metamask.png'
+                alt='MetaMask'
+                className='mx-auto mb-3 h-12 w-12'
+              />
+              <div className='mb-1 text-base font-semibold text-gray-800'>
+                MetaMask
+              </div>
+            </div>
+            <ul className='mb-4 list-disc space-y-1 pl-5 text-xs text-gray-600'>
+              <li>Popular Ethereum wallet</li>
+              <li>Wide ecosystem support</li>
+              <li>Easy to use interface</li>
+            </ul>
+            <div className='flex w-full gap-3'>
+              {metamaskInstalled ? (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleConnectWallet('metamask');
+                  }}
+                  disabled={
+                    isConnecting ||
+                    (connectedWalletName === 'metamask' && !!connectedAddress)
+                  }
+                  className={`w-full rounded px-4 py-2 text-center text-sm ${
+                    connectedWalletName === 'metamask' && connectedAddress
+                      ? 'cursor-not-allowed bg-gray-300 text-gray-500'
+                      : 'bg-gradient-to-r from-purple-500 to-blue-500 text-white'
+                  }`}
+                >
+                  {connectedWalletName === 'metamask' && connectedAddress
+                    ? 'Connected'
+                    : 'Connect'}
+                </button>
+              ) : (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    open('https://metamask.io');
+                  }}
+                  className='flex w-full items-center justify-center gap-2 rounded bg-gray-100 px-4 py-2 text-sm text-gray-700 hover:bg-gray-200'
+                >
+                  <Download className='h-4 w-4' />
+                  Install
+                </button>
+              )}
+            </div>
+          </button>
+
+          {/* Station Wallet */}
+          <button
+            type='button'
+            onClick={
+              stationInstalled
+                ? () => handleConnectWallet('station')
+                : () => open('https://station.terra.money')
+            }
+            className={`rounded-xl border p-6 text-left transition-all hover:scale-[1.01] focus:outline-none focus:ring-2 ${connectedAddress && connectedWalletName === 'station' ? 'border-emerald-300 ring-emerald-300/50' : 'border-gray-100 focus:ring-purple-500'}`}
+          >
+            <div className='text-center'>
+              <div className='mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-orange-500 to-red-500'>
+                <span className='text-lg font-bold text-white'>S</span>
+              </div>
+              <div className='mb-1 text-base font-semibold text-gray-800'>
+                Station
+              </div>
+            </div>
+            <ul className='mb-4 list-disc space-y-1 pl-5 text-xs text-gray-600'>
+              <li>Terra ecosystem wallet</li>
+              <li>Built-in DeFi features</li>
+              <li>Governance ready</li>
+            </ul>
+            <div className='flex w-full gap-3'>
+              {stationInstalled ? (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleConnectWallet('station');
+                  }}
+                  disabled={
+                    isConnecting ||
+                    (connectedWalletName === 'station' && !!connectedAddress)
+                  }
+                  className={`w-full rounded px-4 py-2 text-center text-sm ${
+                    connectedWalletName === 'station' && connectedAddress
+                      ? 'cursor-not-allowed bg-gray-300 text-gray-500'
+                      : 'bg-gradient-to-r from-purple-500 to-blue-500 text-white'
+                  }`}
+                >
+                  {connectedWalletName === 'station' && connectedAddress
+                    ? 'Connected'
+                    : 'Connect'}
+                </button>
+              ) : (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    open('https://station.terra.money');
+                  }}
+                  className='flex w-full items-center justify-center gap-2 rounded bg-gray-100 px-4 py-2 text-sm text-gray-700 hover:bg-gray-200'
+                >
+                  <Download className='h-4 w-4' />
+                  Install
+                </button>
+              )}
+            </div>
+          </button>
+
+          {/* XDEFI Wallet */}
+          <button
+            type='button'
+            onClick={
+              xdefiInstalled
+                ? () => handleConnectWallet('xdefi')
+                : () => open('https://xdefi.io')
+            }
+            className={`rounded-xl border p-6 text-left transition-all hover:scale-[1.01] focus:outline-none focus:ring-2 ${connectedAddress && connectedWalletName === 'xdefi' ? 'border-emerald-300 ring-emerald-300/50' : 'border-gray-100 focus:ring-purple-500'}`}
+          >
+            <div className='text-center'>
+              <div className='mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-500'>
+                <span className='text-lg font-bold text-white'>X</span>
+              </div>
+              <div className='mb-1 text-base font-semibold text-gray-800'>
+                XDEFI
+              </div>
+            </div>
+            <ul className='mb-4 list-disc space-y-1 pl-5 text-xs text-gray-600'>
+              <li>Cross-chain DeFi wallet</li>
+              <li>Multi-chain support</li>
+              <li>Advanced portfolio tracking</li>
+            </ul>
+            <div className='flex w-full gap-3'>
+              {xdefiInstalled ? (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleConnectWallet('xdefi');
+                  }}
+                  disabled={
+                    isConnecting ||
+                    (connectedWalletName === 'xdefi' && !!connectedAddress)
+                  }
+                  className={`w-full rounded px-4 py-2 text-center text-sm ${
+                    connectedWalletName === 'xdefi' && connectedAddress
+                      ? 'cursor-not-allowed bg-gray-300 text-gray-500'
+                      : 'bg-gradient-to-r from-purple-500 to-blue-500 text-white'
+                  }`}
+                >
+                  {connectedWalletName === 'xdefi' && connectedAddress
+                    ? 'Connected'
+                    : 'Connect'}
+                </button>
+              ) : (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    open('https://xdefi.io');
+                  }}
+                  className='flex w-full items-center justify-center gap-2 rounded bg-gray-100 px-4 py-2 text-sm text-gray-700 hover:bg-gray-200'
+                >
+                  <Download className='h-4 w-4' />
+                  Install
+                </button>
+              )}
+            </div>
+          </button>
         </div>
         {connectedAddress && (
           <div className='mt-4 flex items-center justify-center gap-3 text-xs text-gray-600'>
@@ -325,10 +581,15 @@ export function WalletSetup({ onPrevious, onNext }: WalletSetupProps) {
       {isChecked &&
         !keplrInstalled &&
         !cosmostationInstalled &&
-        !leapInstalled && (
+        !leapInstalled &&
+        !okxInstalled &&
+        !metamaskInstalled &&
+        !stationInstalled &&
+        !xdefiInstalled && (
           <div className='rounded-lg bg-amber-50 p-4 text-amber-800'>
-            No wallets detected. Please install a Cosmos wallet extension to
-            continue. We recommend starting with Keplr for the best experience.
+            No wallets detected. Please install a wallet extension to continue.
+            We recommend starting with Keplr for the best Cosmos experience, or
+            try our Quick Wallet for instant access.
           </div>
         )}
 

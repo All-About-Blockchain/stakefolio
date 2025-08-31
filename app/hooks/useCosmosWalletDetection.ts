@@ -27,6 +27,22 @@ export function useCosmosWalletDetection(): WalletDetectionResult {
       if ((window as any).cosmostation) {
         found.push('cosmostation');
       }
+      // OKX Wallet injects window.okxwallet
+      if ((window as any).okxwallet) {
+        found.push('okx');
+      }
+      // MetaMask injects window.ethereum
+      if ((window as any).ethereum) {
+        found.push('metamask');
+      }
+      // Station Wallet (Terra) injects window.station
+      if ((window as any).station) {
+        found.push('station');
+      }
+      // XDEFI Wallet injects window.xfi
+      if ((window as any).xfi) {
+        found.push('xdefi');
+      }
     } catch {
       // ignore detection errors
     }

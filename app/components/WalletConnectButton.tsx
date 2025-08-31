@@ -10,6 +10,8 @@ const walletImages: Record<string, string> = {
   'keplr-extension': '/wallet/keplr.png',
   'leap-extension': '/wallet/leap.png',
   'cosmostation-extension': '/wallet/cosmostation.png',
+  'okx-extension': '/wallet/okx.png',
+  'metamask-extension': '/wallet/metamask.png',
 };
 
 const WalletConnectButton = () => {
@@ -23,6 +25,10 @@ const WalletConnectButton = () => {
     connectKeplr,
     connectCosmostation,
     connectLeap,
+    connectOkx,
+    connectMetaMask,
+    connectStation,
+    connectXdefi,
     disconnect,
   } = useWallet();
   const { wallets: browserWallets, activeWallet } = useBrowserWallet();
@@ -38,7 +44,14 @@ const WalletConnectButton = () => {
   };
 
   const handleConnectExtension = async (
-    walletType: 'keplr' | 'cosmostation' | 'leap'
+    walletType:
+      | 'keplr'
+      | 'cosmostation'
+      | 'leap'
+      | 'okx'
+      | 'metamask'
+      | 'station'
+      | 'xdefi'
   ) => {
     try {
       switch (walletType) {
@@ -50,6 +63,9 @@ const WalletConnectButton = () => {
           break;
         case 'leap':
           await connectLeap();
+          break;
+        case 'okx':
+          await connectOkx();
           break;
       }
       addToast(`${walletType} wallet connected successfully!`, 'success');
@@ -104,6 +120,10 @@ const WalletConnectButton = () => {
     if (connectedWallet === 'keplr') return 'Keplr';
     if (connectedWallet === 'cosmostation') return 'Cosmostation';
     if (connectedWallet === 'leap') return 'Leap';
+    if (connectedWallet === 'okx') return 'OKX Wallet';
+    if (connectedWallet === 'metamask') return 'MetaMask';
+    if (connectedWallet === 'station') return 'Station';
+    if (connectedWallet === 'xdefi') return 'XDEFI';
     return 'Wallet';
   };
 
@@ -330,6 +350,28 @@ const WalletConnectButton = () => {
                       <p className='text-sm font-medium text-gray-800'>Leap</p>
                       <p className='text-xs text-gray-500'>
                         Modern Cosmos wallet
+                      </p>
+                    </div>
+                  </button>
+
+                  {/* OKX Wallet */}
+                  <button
+                    onClick={() => handleConnectExtension('okx')}
+                    className='flex w-full items-center gap-3 rounded-lg border border-gray-200 p-3 text-left transition-all hover:border-purple-300 hover:bg-purple-50'
+                  >
+                    <Image
+                      src='/wallet/okx.png'
+                      alt='OKX Wallet'
+                      width={32}
+                      height={32}
+                      className='h-8 w-8'
+                    />
+                    <div>
+                      <p className='text-sm font-medium text-gray-800'>
+                        OKX Wallet
+                      </p>
+                      <p className='text-xs text-gray-500'>
+                        Multi-chain DeFi wallet
                       </p>
                     </div>
                   </button>

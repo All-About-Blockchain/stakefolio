@@ -10,10 +10,22 @@ import { TransakModal } from './TransakModal';
 import { useWallet } from '../../contexts/WalletContext';
 
 interface OnRampWidgetProps {
-  onComplete: () => void;
+  onComplete?: () => void;
+  showProviderSelector?: boolean;
+  rampChainName?: string;
+  transakDefaultCryptoCurrency?: string;
+  onOrderSuccessful?: (orderData: any, provider: 'ramp' | 'transak') => void;
+  onWidgetClose?: (provider: 'ramp' | 'transak') => void;
 }
 
-export function OnRampWidget({ onComplete }: OnRampWidgetProps) {
+export function OnRampWidget({
+  onComplete,
+  showProviderSelector = false,
+  rampChainName = 'cosmoshub',
+  transakDefaultCryptoCurrency = 'ATOM',
+  onOrderSuccessful,
+  onWidgetClose,
+}: OnRampWidgetProps) {
   const { address } = useWallet();
   const [amount, setAmount] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
