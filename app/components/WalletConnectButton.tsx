@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { Zap, ChevronDown } from 'lucide-react';
+import { ChevronDown, Shield, LogOut, Settings } from 'lucide-react';
 import { useWallet } from '../contexts/WalletContext';
-import { useBrowserWallet } from '../hooks/useBrowserWallet';
 import { useToast } from '../contexts/ToastContext';
-import { QuickWalletSetup } from './onboarding/QuickWalletSetup';
 
 const walletImages: Record<string, string> = {
   'keplr-extension': '/wallet/keplr.png',
@@ -16,42 +14,22 @@ const walletImages: Record<string, string> = {
 
 const WalletConnectButton = () => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [showQuickWallet, setShowQuickWallet] = useState(false);
   const { addToast } = useToast();
   const {
     address,
     connectedWallet,
-    connectBrowserWallet,
+    isProMode,
+    toggleProMode,
+    connectPrivy,
     connectKeplr,
     connectCosmostation,
     connectLeap,
     connectOkx,
-    connectMetaMask,
-    connectStation,
-    connectXdefi,
     disconnect,
   } = useWallet();
-  const { wallets: browserWallets, activeWallet } = useBrowserWallet();
-
-  const handleConnectBrowserWallet = async (walletAddress: string) => {
-    try {
-      await connectBrowserWallet(walletAddress);
-      addToast('Browser wallet connected successfully!', 'success');
-      setIsExpanded(false);
-    } catch (error) {
-      addToast('Failed to connect browser wallet', 'error');
-    }
-  };
 
   const handleConnectExtension = async (
-    walletType:
-      | 'keplr'
-      | 'cosmostation'
-      | 'leap'
-      | 'okx'
-      | 'metamask'
-      | 'station'
-      | 'xdefi'
+    walletType: 'keplr' | 'cosmostation' | 'leap' | 'okx'
   ) => {
     try {
       switch (walletType) {
@@ -75,6 +53,11 @@ const WalletConnectButton = () => {
     }
   };
 
+  const handleConnectPrivy = () => {
+    connectPrivy();
+    setIsExpanded(false);
+  };
+
   const handleDisconnect = async () => {
     try {
       await disconnect();
@@ -85,17 +68,11 @@ const WalletConnectButton = () => {
     }
   };
 
-  const handleQuickWalletComplete = () => {
-    setShowQuickWallet(false);
-    setIsExpanded(false);
-    addToast('Quick wallet connected successfully!', 'success');
-  };
-
   const getWalletIcon = () => {
-    if (connectedWallet === 'browser') {
+    if (connectedWallet === 'privy') {
       return (
-        <div className='flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-blue-500'>
-          <Zap className='h-3 w-3 text-white' />
+        <div className='flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-r from-violet-500 to-purple-600'>
+          <Shield className='h-3 w-3 text-white' />
         </div>
       );
     }
@@ -116,7 +93,7 @@ const WalletConnectButton = () => {
   };
 
   const getWalletName = () => {
-    if (connectedWallet === 'browser') return 'Quick Wallet';
+    if (connectedWallet === 'privy') return 'Privy Wallet';
     if (connectedWallet === 'keplr') return 'Keplr';
     if (connectedWallet === 'cosmostation') return 'Cosmostation';
     if (connectedWallet === 'leap') return 'Leap';
@@ -129,18 +106,6 @@ const WalletConnectButton = () => {
 
   return (
     <div className='relative'>
-      {/* Quick Wallet Setup Modal */}
-      {showQuickWallet && (
-        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'>
-          <div className='relative w-full max-w-md rounded-xl bg-white p-6 shadow-2xl'>
-            <QuickWalletSetup
-              onComplete={handleQuickWalletComplete}
-              onBack={() => setShowQuickWallet(false)}
-            />
-          </div>
-        </div>
-      )}
-
       {/* Main button */}
       <div className='flex h-12 gap-4 rounded-lg border-0 p-1'>
         {!address ? (
@@ -189,7 +154,7 @@ const WalletConnectButton = () => {
         <div className='bright-card ultra-soft-shadow absolute right-0 top-14 z-50 w-[400px] rounded-xl border-0 p-4 shadow-2xl'>
           <div className='mb-4 flex justify-between'>
             <h3 className='font-semibold text-gray-800'>
-              {address ? 'Wallet Options' : 'Choose Wallet'}
+              {address ? 'Wallet Options' : 'Connect Wallet'}
             </h3>
             <button
               onClick={() => setIsExpanded(false)}
@@ -216,167 +181,176 @@ const WalletConnectButton = () => {
                 </div>
               </div>
 
+              {/* Pro Mode Toggle */}
+              <div className='flex items-center justify-between rounded-lg border border-gray-200 p-3'>
+                <div className='flex items-center gap-2'>
+                  <Settings className='h-4 w-4 text-gray-500' />
+                  <span className='text-sm font-medium text-gray-700'>
+                    Pro Mode
+                  </span>
+                </div>
+                <button
+                  onClick={toggleProMode}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    isProMode ? 'bg-purple-500' : 'bg-gray-300'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      isProMode ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+              </div>
+
               <button
                 onClick={handleDisconnect}
-                className='w-full rounded-lg bg-red-500 px-4 py-3 font-medium text-white transition-colors hover:bg-red-600'
+                className='flex w-full items-center justify-center gap-2 rounded-lg bg-red-500 px-4 py-3 font-medium text-white transition-colors hover:bg-red-600'
               >
+                <LogOut className='h-4 w-4' />
                 Disconnect Wallet
               </button>
             </div>
           ) : (
             /* Wallet connection options */
             <div className='space-y-4'>
-              {/* Browser Wallet Section */}
+              {/* Primary: Privy Login */}
               <div>
-                <h4 className='mb-3 text-sm font-semibold text-gray-700'>
-                  Quick Wallet
-                </h4>
-
-                {/* Existing Browser Wallets */}
-                {browserWallets.length > 0 && (
-                  <div className='mb-3 space-y-2'>
-                    {browserWallets.map((wallet) => (
-                      <div
-                        key={wallet.address}
-                        className='flex items-center justify-between rounded-lg border border-gray-200 p-3'
-                      >
-                        <div className='flex items-center gap-3'>
-                          <div className='flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-blue-500'>
-                            <Zap className='h-4 w-4 text-white' />
-                          </div>
-                          <div>
-                            <p className='text-sm font-medium text-gray-800'>
-                              {wallet.name}
-                            </p>
-                            <p className='font-mono text-xs text-gray-500'>
-                              {wallet.address.slice(0, 8)}...
-                              {wallet.address.slice(-6)}
-                            </p>
-                          </div>
-                        </div>
-                        <button
-                          onClick={() =>
-                            handleConnectBrowserWallet(wallet.address)
-                          }
-                          className='rounded bg-gradient-to-r from-purple-500 to-blue-500 px-3 py-1 text-xs font-medium text-white transition-all hover:scale-105'
-                        >
-                          Connect
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* Create New Quick Wallet */}
                 <button
-                  onClick={() => setShowQuickWallet(true)}
-                  className='flex w-full items-center gap-3 rounded-lg border border-gray-200 p-3 text-left transition-all hover:border-purple-300 hover:bg-purple-50'
+                  onClick={handleConnectPrivy}
+                  className='flex w-full items-center gap-3 rounded-lg bg-gradient-to-r from-violet-500 to-purple-600 p-4 text-left text-white transition-all hover:scale-[1.01] hover:shadow-lg'
                 >
-                  <div className='flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-blue-500'>
-                    <Zap className='h-4 w-4 text-white' />
+                  <div className='flex h-10 w-10 items-center justify-center rounded-full bg-white/20'>
+                    <Shield className='h-5 w-5 text-white' />
                   </div>
                   <div>
-                    <p className='text-sm font-medium text-gray-800'>
-                      Create Quick Wallet
-                    </p>
-                    <p className='text-xs text-gray-500'>
-                      Generate wallet instantly
+                    <p className='font-semibold'>Connect with Privy</p>
+                    <p className='text-sm text-white/80'>
+                      Email, social, or wallet
                     </p>
                   </div>
                 </button>
               </div>
 
-              {/* Extension Wallets Section */}
-              <div>
-                <h4 className='mb-3 text-sm font-semibold text-gray-700'>
-                  Extension Wallets
-                </h4>
-                <div className='space-y-2'>
-                  {/* Keplr */}
-                  <button
-                    onClick={() => handleConnectExtension('keplr')}
-                    className='flex w-full items-center gap-3 rounded-lg border border-gray-200 p-3 text-left transition-all hover:border-purple-300 hover:bg-purple-50'
-                  >
-                    <Image
-                      src='/wallet/keplr.png'
-                      alt='Keplr'
-                      width={32}
-                      height={32}
-                      className='h-8 w-8'
-                    />
-                    <div>
-                      <p className='text-sm font-medium text-gray-800'>Keplr</p>
-                      <p className='text-xs text-gray-500'>
-                        Most popular Cosmos wallet
-                      </p>
-                    </div>
-                  </button>
-
-                  {/* Cosmostation */}
-                  <button
-                    onClick={() => handleConnectExtension('cosmostation')}
-                    className='flex w-full items-center gap-3 rounded-lg border border-gray-200 p-3 text-left transition-all hover:border-purple-300 hover:bg-purple-50'
-                  >
-                    <Image
-                      src='/wallet/cosmostation.png'
-                      alt='Cosmostation'
-                      width={32}
-                      height={32}
-                      className='h-8 w-8'
-                    />
-                    <div>
-                      <p className='text-sm font-medium text-gray-800'>
-                        Cosmostation
-                      </p>
-                      <p className='text-xs text-gray-500'>
-                        Mobile-first experience
-                      </p>
-                    </div>
-                  </button>
-
-                  {/* Leap */}
-                  <button
-                    onClick={() => handleConnectExtension('leap')}
-                    className='flex w-full items-center gap-3 rounded-lg border border-gray-200 p-3 text-left transition-all hover:border-purple-300 hover:bg-purple-50'
-                  >
-                    <Image
-                      src='/wallet/leap.png'
-                      alt='Leap'
-                      width={32}
-                      height={32}
-                      className='h-8 w-8'
-                    />
-                    <div>
-                      <p className='text-sm font-medium text-gray-800'>Leap</p>
-                      <p className='text-xs text-gray-500'>
-                        Modern Cosmos wallet
-                      </p>
-                    </div>
-                  </button>
-
-                  {/* OKX Wallet */}
-                  <button
-                    onClick={() => handleConnectExtension('okx')}
-                    className='flex w-full items-center gap-3 rounded-lg border border-gray-200 p-3 text-left transition-all hover:border-purple-300 hover:bg-purple-50'
-                  >
-                    <Image
-                      src='/wallet/okx.png'
-                      alt='OKX Wallet'
-                      width={32}
-                      height={32}
-                      className='h-8 w-8'
-                    />
-                    <div>
-                      <p className='text-sm font-medium text-gray-800'>
-                        OKX Wallet
-                      </p>
-                      <p className='text-xs text-gray-500'>
-                        Multi-chain DeFi wallet
-                      </p>
-                    </div>
-                  </button>
+              {/* Pro Mode Toggle */}
+              <div className='flex items-center justify-between rounded-lg border border-gray-200 p-3'>
+                <div className='flex items-center gap-2'>
+                  <Settings className='h-4 w-4 text-gray-500' />
+                  <span className='text-sm text-gray-600'>
+                    Show extension wallets
+                  </span>
                 </div>
+                <button
+                  onClick={toggleProMode}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    isProMode ? 'bg-purple-500' : 'bg-gray-300'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      isProMode ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
               </div>
+
+              {/* Extension Wallets (Pro Mode only) */}
+              {isProMode && (
+                <div>
+                  <h4 className='mb-3 text-sm font-semibold text-gray-700'>
+                    Extension Wallets
+                  </h4>
+                  <div className='space-y-2'>
+                    {/* Keplr */}
+                    <button
+                      onClick={() => handleConnectExtension('keplr')}
+                      className='flex w-full items-center gap-3 rounded-lg border border-gray-200 p-3 text-left transition-all hover:border-purple-300 hover:bg-purple-50'
+                    >
+                      <Image
+                        src='/wallet/keplr.png'
+                        alt='Keplr'
+                        width={32}
+                        height={32}
+                        className='h-8 w-8'
+                      />
+                      <div>
+                        <p className='text-sm font-medium text-gray-800'>
+                          Keplr
+                        </p>
+                        <p className='text-xs text-gray-500'>
+                          Most popular Cosmos wallet
+                        </p>
+                      </div>
+                    </button>
+
+                    {/* Cosmostation */}
+                    <button
+                      onClick={() => handleConnectExtension('cosmostation')}
+                      className='flex w-full items-center gap-3 rounded-lg border border-gray-200 p-3 text-left transition-all hover:border-purple-300 hover:bg-purple-50'
+                    >
+                      <Image
+                        src='/wallet/cosmostation.png'
+                        alt='Cosmostation'
+                        width={32}
+                        height={32}
+                        className='h-8 w-8'
+                      />
+                      <div>
+                        <p className='text-sm font-medium text-gray-800'>
+                          Cosmostation
+                        </p>
+                        <p className='text-xs text-gray-500'>
+                          Mobile-first experience
+                        </p>
+                      </div>
+                    </button>
+
+                    {/* Leap */}
+                    <button
+                      onClick={() => handleConnectExtension('leap')}
+                      className='flex w-full items-center gap-3 rounded-lg border border-gray-200 p-3 text-left transition-all hover:border-purple-300 hover:bg-purple-50'
+                    >
+                      <Image
+                        src='/wallet/leap.png'
+                        alt='Leap'
+                        width={32}
+                        height={32}
+                        className='h-8 w-8'
+                      />
+                      <div>
+                        <p className='text-sm font-medium text-gray-800'>
+                          Leap
+                        </p>
+                        <p className='text-xs text-gray-500'>
+                          Modern Cosmos wallet
+                        </p>
+                      </div>
+                    </button>
+
+                    {/* OKX Wallet */}
+                    <button
+                      onClick={() => handleConnectExtension('okx')}
+                      className='flex w-full items-center gap-3 rounded-lg border border-gray-200 p-3 text-left transition-all hover:border-purple-300 hover:bg-purple-50'
+                    >
+                      <Image
+                        src='/wallet/okx.png'
+                        alt='OKX Wallet'
+                        width={32}
+                        height={32}
+                        className='h-8 w-8'
+                      />
+                      <div>
+                        <p className='text-sm font-medium text-gray-800'>
+                          OKX Wallet
+                        </p>
+                        <p className='text-xs text-gray-500'>
+                          Multi-chain DeFi wallet
+                        </p>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

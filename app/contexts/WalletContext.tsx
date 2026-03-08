@@ -6,12 +6,13 @@ import React, {
   useMemo,
   useState,
 } from 'react';
+import { usePrivy } from '@privy-io/react-auth';
 
 type WalletId =
+  | 'privy'
   | 'keplr'
   | 'cosmostation'
   | 'leap'
-  | 'browser'
   | 'okx'
   | 'metamask'
   | 'station'
@@ -22,6 +23,11 @@ interface WalletContextValue {
   address: string | null;
   connectedWallet: WalletId;
   isConnecting: boolean;
+  isProMode: boolean;
+  toggleProMode: () => void;
+  // Privy (primary)
+  connectPrivy: () => void;
+  // Extension wallets (pro mode only)
   connectKeplr: () => Promise<void>;
   connectCosmostation: () => Promise<void>;
   connectLeap: () => Promise<void>;
@@ -29,7 +35,6 @@ interface WalletContextValue {
   connectMetaMask: () => Promise<void>;
   connectStation: () => Promise<void>;
   connectXdefi: () => Promise<void>;
-  connectBrowserWallet: (address: string) => Promise<void>;
   disconnect: () => Promise<void>;
 }
 
@@ -37,13 +42,91 @@ const WalletContext = createContext<WalletContextValue | undefined>(undefined);
 
 const DEFAULT_CHAIN = 'cosmoshub';
 const STORAGE_KEY = 'stakefolio:wallet-session';
+const PRO_MODE_KEY = 'stakefolio:pro-mode';
 
 export function WalletProvider({ children }: { children: React.ReactNode }) {
-  const [address, setAddress] = useState<string | null>(null);
+  const [extensionAddress, setExtensionAddress] = useState<string | null>(null);
+  const [privyAddress, setPrivyAddress] = useState<string | null>(null);
   const [connectedWallet, setConnectedWallet] = useState<WalletId>(null);
   const [isConnecting, setIsConnecting] = useState(false);
+  const [isProMode, setIsProMode] = useState(false);
 
-  // Restore last session (best-effort; extensions may still require user action)
+  const { login, logout, authenticated, ready, user } = usePrivy();
+
+  // Load pro mode preference from localStorage
+  useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem(PRO_MODE_KEY);
+      if (stored === 'true') setIsProMode(true);
+    } catch {}
+  }, []);
+
+  const toggleProMode = useCallback(() => {
+    setIsProMode((prev) => {
+      const next = !prev;
+      try {
+        window.localStorage.setItem(PRO_MODE_KEY, String(next));
+      } catch {}
+      return next;
+    });
+  }, []);
+
+  // Helper: extract EVM wallet address from Privy user's linked accounts
+  const getPrivyWalletAddress = useCallback(
+    (privyUser: typeof user): string | null => {
+      if (!privyUser?.linkedAccounts) return null;
+      // Find the first EVM wallet in linked accounts
+      const walletAccount = privyUser.linkedAccounts.find(
+        (account: any) =>
+          account.type === 'wallet' && account.chainType === 'ethereum'
+      ) as any;
+      if (walletAccount?.address) return walletAccount.address;
+      // Fallback: any wallet account
+      const anyWallet = privyUser.linkedAccounts.find(
+        (account: any) => account.type === 'wallet'
+      ) as any;
+      return anyWallet?.address || null;
+    },
+    []
+  );
+
+  // Sync Privy auth state → wallet context
+  useEffect(() => {
+    if (!ready) return;
+
+    if (authenticated && user) {
+      // Only auto-set if not already connected via extension wallet
+      if (connectedWallet && connectedWallet !== 'privy') return;
+
+      const walletAddr = getPrivyWalletAddress(user);
+      if (walletAddr) {
+        setConnectedWallet('privy');
+        setPrivyAddress(walletAddr);
+        setExtensionAddress(null);
+      } else {
+        // User is authenticated but no wallet yet — still mark as privy connected
+        // (embedded wallet may be creating asynchronously)
+        setConnectedWallet('privy');
+        setPrivyAddress(null);
+        setExtensionAddress(null);
+      }
+    } else if (!authenticated && connectedWallet === 'privy') {
+      // User logged out of Privy
+      setConnectedWallet(null);
+      setPrivyAddress(null);
+      setExtensionAddress(null);
+    }
+  }, [ready, authenticated, user, connectedWallet, getPrivyWalletAddress]);
+
+  // Derive the effective address
+  const address = useMemo(() => {
+    if (connectedWallet === 'privy') {
+      return privyAddress;
+    }
+    return extensionAddress;
+  }, [connectedWallet, privyAddress, extensionAddress]);
+
+  // Restore extension wallet session
   useEffect(() => {
     try {
       const raw = window.localStorage.getItem(STORAGE_KEY);
@@ -52,9 +135,10 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
           wallet: WalletId;
           address?: string;
         };
-        if (wallet && storedAddress) {
+        // Only restore non-privy sessions (Privy handles its own persistence)
+        if (wallet && wallet !== 'privy' && storedAddress) {
           setConnectedWallet(wallet);
-          setAddress(storedAddress);
+          setExtensionAddress(storedAddress);
         }
       }
     } catch {}
@@ -69,6 +153,12 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     } catch {}
   }, []);
 
+  // --- Privy connection ---
+  const connectPrivy = useCallback(() => {
+    login();
+  }, [login]);
+
+  // --- Extension wallet connections (pro mode) ---
   const connectKeplr = useCallback(async () => {
     setIsConnecting(true);
     try {
@@ -86,7 +176,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
         addr = accounts?.[0]?.address || null;
       }
       setConnectedWallet('keplr');
-      if (addr) setAddress(addr);
+      if (addr) setExtensionAddress(addr);
       persist('keplr', addr);
     } finally {
       setIsConnecting(false);
@@ -104,7 +194,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       });
       const addr: string | null = res?.address || res?.bech32Address || null;
       setConnectedWallet('cosmostation');
-      if (addr) setAddress(addr);
+      if (addr) setExtensionAddress(addr);
       persist('cosmostation', addr);
     } finally {
       setIsConnecting(false);
@@ -128,7 +218,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
         addr = accounts?.[0]?.address || null;
       }
       setConnectedWallet('leap');
-      if (addr) setAddress(addr);
+      if (addr) setExtensionAddress(addr);
       persist('leap', addr);
     } finally {
       setIsConnecting(false);
@@ -140,17 +230,13 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     try {
       const w = window as any;
       if (!w.okxwallet) throw new Error('OKX Wallet not detected');
-
-      // Request account access
       const accounts = await w.okxwallet.request({
         method: 'eth_requestAccounts',
       });
       if (accounts && accounts.length > 0) {
-        // For Cosmos chains, we might need to use a different method
-        // This is a basic implementation - may need adjustment for specific Cosmos support
         const addr = accounts[0];
         setConnectedWallet('okx');
-        setAddress(addr);
+        setExtensionAddress(addr);
         persist('okx', addr);
       }
     } finally {
@@ -163,17 +249,13 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     try {
       const w = window as any;
       if (!w.ethereum) throw new Error('MetaMask not detected');
-
-      // Request account access
       const accounts = await w.ethereum.request({
         method: 'eth_requestAccounts',
       });
       if (accounts && accounts.length > 0) {
-        // For Cosmos chains, we might need to use a different method
-        // This is a basic implementation - may need adjustment for specific Cosmos support
         const addr = accounts[0];
         setConnectedWallet('metamask');
-        setAddress(addr);
+        setExtensionAddress(addr);
         persist('metamask', addr);
       }
     } finally {
@@ -186,12 +268,10 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     try {
       const w = window as any;
       if (!w.station) throw new Error('Station Wallet not detected');
-
-      // Request connection to Terra chain
       const result = await w.station.connect();
       if (result && result.address) {
         setConnectedWallet('station');
-        setAddress(result.address);
+        setExtensionAddress(result.address);
         persist('station', result.address);
       }
     } finally {
@@ -204,16 +284,13 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     try {
       const w = window as any;
       if (!w.xfi) throw new Error('XDEFI Wallet not detected');
-
-      // Request connection
       const result = await w.xfi.request({
         method: 'cosmos_requestAccount',
         params: { chainName: DEFAULT_CHAIN },
       });
-
       if (result && result.address) {
         setConnectedWallet('xdefi');
-        setAddress(result.address);
+        setExtensionAddress(result.address);
         persist('xdefi', result.address);
       }
     } finally {
@@ -221,31 +298,23 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     }
   }, [persist]);
 
-  const connectBrowserWallet = useCallback(
-    async (browserAddress: string) => {
-      setIsConnecting(true);
-      try {
-        setConnectedWallet('browser');
-        setAddress(browserAddress);
-        persist('browser', browserAddress);
-      } finally {
-        setIsConnecting(false);
-      }
-    },
-    [persist]
-  );
-
   const disconnect = useCallback(async () => {
+    if (connectedWallet === 'privy') {
+      await logout();
+    }
     setConnectedWallet(null);
-    setAddress(null);
+    setExtensionAddress(null);
     persist(null, null);
-  }, [persist]);
+  }, [connectedWallet, logout, persist]);
 
   const value = useMemo<WalletContextValue>(
     () => ({
       address,
       connectedWallet,
       isConnecting,
+      isProMode,
+      toggleProMode,
+      connectPrivy,
       connectKeplr,
       connectCosmostation,
       connectLeap,
@@ -253,13 +322,15 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       connectMetaMask,
       connectStation,
       connectXdefi,
-      connectBrowserWallet,
       disconnect,
     }),
     [
       address,
       connectedWallet,
       isConnecting,
+      isProMode,
+      toggleProMode,
+      connectPrivy,
       connectKeplr,
       connectCosmostation,
       connectLeap,
@@ -267,7 +338,6 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       connectMetaMask,
       connectStation,
       connectXdefi,
-      connectBrowserWallet,
       disconnect,
     ]
   );

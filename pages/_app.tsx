@@ -2,7 +2,7 @@ import type { AppProps } from 'next/app';
 import '@/app/globals.css';
 import '@interchain-ui/react/styles';
 
-import { useEffect } from 'react';
+import { PrivyProvider } from '@privy-io/react-auth';
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
 import {
@@ -12,8 +12,6 @@ import {
 } from '@/app/contexts/ToastContext';
 import { WalletProvider } from '@/app/contexts/WalletContext';
 import { useRouter } from 'next/router';
-
-// Removed Interchain Kit integrations; using native extension APIs
 
 function AppContent({
   Component,
@@ -25,13 +23,6 @@ function AppContent({
   const { toasts, removeToast } = useToast();
   const router = useRouter();
 
-  // Redirect to onboarding when not connected - DISABLED FOR NOW
-  // useEffect(() => {
-  //   if (!address && router.pathname !== '/onboarding') {
-  //     router.replace('/onboarding');
-  //   }
-  // }, [address, router]);
-
   // When on onboarding route, render the onboarding app (no main header/footer)
   if (router.pathname === '/onboarding') {
     return (
@@ -41,11 +32,6 @@ function AppContent({
       </>
     );
   }
-
-  // Avoid flicker of advanced UI while redirecting - DISABLED FOR NOW
-  // if (!address) {
-  //   return null;
-  // }
 
   return (
     <div className='relative min-h-screen overflow-hidden'>
@@ -84,10 +70,27 @@ function AppContent({
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <ToastProvider>
-      <WalletProvider>
-        <AppContent Component={Component} pageProps={pageProps} />
-      </WalletProvider>
-    </ToastProvider>
+    <PrivyProvider
+      appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || ''}
+      clientId={process.env.NEXT_PUBLIC_PRIVY_CLIENT_ID || ''}
+      config={{
+        embeddedWallets: {
+          ethereum: {
+            createOnLogin: 'all-users',
+          },
+        },
+        appearance: {
+          walletChainType: 'ethereum-only',
+          theme: 'light',
+          accentColor: '#8B5CF6',
+        },
+      }}
+    >
+      <ToastProvider>
+        <WalletProvider>
+          <AppContent Component={Component} pageProps={pageProps} />
+        </WalletProvider>
+      </ToastProvider>
+    </PrivyProvider>
   );
 }
