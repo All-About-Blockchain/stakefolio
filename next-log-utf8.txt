@@ -1,0 +1,17 @@
+﻿
+> stakefolio@0.2.0 dev
+> next dev
+
+   Γû▓ Next.js 15.5.12
+   - Local:        http://localhost:3000
+   - Network:      http://10.5.0.2:3000
+   - Environments: .env
+
+ Γ£ô Starting...
+ Γ£ô Ready in 13.4s
+ Γùï Compiling /funding ...
+ Γ£ô Compiled /funding in 62.1s (6261 modules)
+ Γ£ô Compiled in 5.2s (6261 modules)
+ GET /funding 200 in 91201ms
+ GET /funding 200 in 250ms
+ GET /funding 200 in 241ms

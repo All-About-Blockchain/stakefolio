@@ -3,6 +3,7 @@ import '@/app/globals.css';
 import '@interchain-ui/react/styles';
 
 import { PrivyProvider } from '@privy-io/react-auth';
+import { MoonPayProvider } from '@moonpay/moonpay-react';
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
 import {
@@ -87,7 +88,12 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     >
       <ToastProvider>
         <WalletProvider>
-          <AppContent Component={Component} pageProps={pageProps} />
+          <MoonPayProvider
+            apiKey='pk_test_123' // Replace with real test/prod key
+            debug
+          >
+            <AppContent Component={Component} pageProps={pageProps} />
+          </MoonPayProvider>
         </WalletProvider>
       </ToastProvider>
     </PrivyProvider>
