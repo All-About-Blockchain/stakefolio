@@ -52,12 +52,16 @@ export const useLivePrices = () => {
           setPrices(newPrices);
           setLoading(false);
         } else {
-          console.warn('No price data returned from Pyth, using fallback prices');
+          console.warn(
+            'No price data returned from Pyth, using fallback prices'
+          );
           setPrices(fallbackPrices);
           setLoading(false);
         }
       } catch (err) {
-        console.warn('Error fetching live prices, falling back to static data.');
+        console.warn(
+          'Error fetching live prices, falling back to static data.'
+        );
         setPrices(fallbackPrices);
         setLoading(false);
       }

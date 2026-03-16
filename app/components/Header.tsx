@@ -13,23 +13,25 @@ const Header = () => {
     return false;
   };
 
+  const navLinkClass = (path: string) => {
+    const active = isActive(path);
+    return `flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-all duration-300 ${
+      active
+        ? 'bg-black text-white shadow-md'
+        : 'text-gray-500 hover:bg-gray-100 hover:text-black'
+    }`;
+  };
+
   return (
-    <div className='flex h-[60px] justify-between px-6 py-4'>
+    <div className='sticky top-0 z-40 flex h-[80px] items-center justify-between border-b border-gray-100 bg-white/80 px-8 backdrop-blur-md'>
       <div className='flex items-center'>
-        <Link href='/portfolio'>
-          <span className='bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-3xl font-bold text-transparent'>
+        <Link href='/'>
+          <span className='font-["Playfair_Display",_serif] text-3xl font-medium tracking-tight text-black'>
             Stakefolio
           </span>
         </Link>
-        <div className='ml-8 flex gap-3'>
-          <Link
-            href='/portfolio'
-            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 ${
-              isActive('/portfolio')
-                ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-lg'
-                : 'glass-button border-0 text-gray-600 hover:bg-gray-100'
-            }`}
-          >
+        <div className='ml-12 flex gap-2'>
+          <Link href='/' className={navLinkClass('/')}>
             <svg
               className='h-4 w-4'
               fill='none'
@@ -45,14 +47,7 @@ const Header = () => {
             </svg>
             Portfolio
           </Link>
-          <Link
-            href='/funding'
-            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 ${
-              isActive('/funding')
-                ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-lg'
-                : 'glass-button border-0 text-gray-600 hover:bg-gray-100'
-            }`}
-          >
+          <Link href='/funding' className={navLinkClass('/funding')}>
             <svg
               className='h-4 w-4'
               fill='none'
@@ -69,13 +64,25 @@ const Header = () => {
             Funding
           </Link>
           <Link
-            href='/swap'
-            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 ${
-              isActive('/swap')
-                ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-lg'
-                : 'glass-button border-0 text-gray-600 hover:bg-gray-100'
-            }`}
+            href='/market-analysis'
+            className={navLinkClass('/market-analysis')}
           >
+            <svg
+              className='h-4 w-4'
+              fill='none'
+              stroke='currentColor'
+              viewBox='0 0 24 24'
+            >
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth={2}
+                d='M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z'
+              />
+            </svg>
+            Market
+          </Link>
+          <Link href='/swap' className={navLinkClass('/swap')}>
             <svg
               className='h-4 w-4'
               fill='none'
@@ -90,29 +97,6 @@ const Header = () => {
               />
             </svg>
             Swap
-          </Link>
-          <Link
-            href='/onboarding'
-            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 ${
-              isActive('/onboarding')
-                ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-lg'
-                : 'glass-button border-0 text-gray-600 hover:bg-gray-100'
-            }`}
-          >
-            <svg
-              className='h-4 w-4'
-              fill='none'
-              stroke='currentColor'
-              viewBox='0 0 24 24'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth={2}
-                d='M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253'
-              />
-            </svg>
-            Get Started
           </Link>
         </div>
       </div>

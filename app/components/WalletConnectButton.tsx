@@ -71,7 +71,7 @@ const WalletConnectButton = () => {
   const getWalletIcon = () => {
     if (connectedWallet === 'privy') {
       return (
-        <div className='flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-r from-violet-500 to-purple-600'>
+        <div className='flex h-6 w-6 items-center justify-center rounded-full bg-black'>
           <Shield className='h-3 w-3 text-white' />
         </div>
       );
@@ -111,7 +111,7 @@ const WalletConnectButton = () => {
         {!address ? (
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className='glass-button flex items-center gap-2 rounded-lg border-0 px-4 py-2 text-sm font-medium transition-all duration-200 hover:bg-gray-100'
+            className='flex items-center gap-2 rounded-full border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-black transition-all hover:border-black hover:shadow-sm'
           >
             <svg
               className='h-4 w-4'
@@ -134,15 +134,15 @@ const WalletConnectButton = () => {
         ) : (
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className='glass-button flex items-center gap-3 rounded-lg border-0 px-4 py-2 text-sm font-medium transition-all duration-200 hover:bg-gray-100'
+            className='flex items-center gap-3 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-black transition-all hover:border-black hover:shadow-sm'
           >
             {getWalletIcon()}
             <div className='flex items-center gap-2'>
-              <p className='glass-ultra-light rounded-lg p-2 font-mono text-sm'>
+              <p className='font-mono text-sm tracking-tight'>
                 {address?.slice(0, 8)}...{address?.slice(-6)}
               </p>
               <ChevronDown
-                className={`h-4 w-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+                className={`h-4 w-4 text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
               />
             </div>
           </button>
@@ -151,30 +151,40 @@ const WalletConnectButton = () => {
 
       {/* Expanded dropdown */}
       {isExpanded && (
-        <div className='bright-card ultra-soft-shadow absolute right-0 top-14 z-50 w-[400px] rounded-xl border-0 p-4 shadow-2xl'>
-          <div className='mb-4 flex justify-between'>
-            <h3 className='font-semibold text-gray-800'>
+        <div className='absolute right-0 top-14 z-50 w-[400px] rounded-2xl border border-gray-100 bg-white p-6 shadow-xl'>
+          <div className='mb-6 flex items-center justify-between border-b border-gray-100 pb-4'>
+            <h3 className='font-["Playfair_Display",_serif] text-xl font-light text-black'>
               {address ? 'Wallet Options' : 'Connect Wallet'}
             </h3>
             <button
               onClick={() => setIsExpanded(false)}
-              className='text-gray-500 hover:text-gray-700'
+              className='text-gray-400 transition-colors hover:text-black'
             >
-              ✕
+              <svg
+                className='h-5 w-5'
+                fill='none'
+                stroke='currentColor'
+                viewBox='0 0 24 24'
+              >
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth={2}
+                  d='M6 18L18 6M6 6l12 12'
+                />
+              </svg>
             </button>
           </div>
 
           {address ? (
             /* Connected wallet options */
             <div className='space-y-4'>
-              <div className='rounded-lg bg-emerald-50 p-4'>
-                <div className='flex items-center gap-3'>
+              <div className='rounded-xl border border-gray-100 bg-gray-50 p-4'>
+                <div className='flex items-center gap-4'>
                   {getWalletIcon()}
                   <div>
-                    <p className='font-medium text-emerald-800'>
-                      {getWalletName()}
-                    </p>
-                    <p className='text-sm text-emerald-600'>
+                    <p className='font-medium text-black'>{getWalletName()}</p>
+                    <p className='text-sm text-gray-500'>
                       {address?.slice(0, 8)}...{address?.slice(-6)}
                     </p>
                   </div>
@@ -182,7 +192,7 @@ const WalletConnectButton = () => {
               </div>
 
               {/* Pro Mode Toggle */}
-              <div className='flex items-center justify-between rounded-lg border border-gray-200 p-3'>
+              <div className='flex items-center justify-between rounded-xl border border-gray-100 p-4'>
                 <div className='flex items-center gap-2'>
                   <Settings className='h-4 w-4 text-gray-500' />
                   <span className='text-sm font-medium text-gray-700'>
@@ -192,7 +202,7 @@ const WalletConnectButton = () => {
                 <button
                   onClick={toggleProMode}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    isProMode ? 'bg-purple-500' : 'bg-gray-300'
+                    isProMode ? 'bg-black' : 'bg-gray-200'
                   }`}
                 >
                   <span
@@ -205,7 +215,7 @@ const WalletConnectButton = () => {
 
               <button
                 onClick={handleDisconnect}
-                className='flex w-full items-center justify-center gap-2 rounded-lg bg-red-500 px-4 py-3 font-medium text-white transition-colors hover:bg-red-600'
+                className='mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-gray-50 py-3 font-medium text-red-600 transition-colors hover:bg-red-50'
               >
                 <LogOut className='h-4 w-4' />
                 Disconnect Wallet
@@ -213,19 +223,19 @@ const WalletConnectButton = () => {
             </div>
           ) : (
             /* Wallet connection options */
-            <div className='space-y-4'>
+            <div className='space-y-6'>
               {/* Primary: Privy Login */}
               <div>
                 <button
                   onClick={handleConnectPrivy}
-                  className='flex w-full items-center gap-3 rounded-lg bg-gradient-to-r from-violet-500 to-purple-600 p-4 text-left text-white transition-all hover:scale-[1.01] hover:shadow-lg'
+                  className='group flex w-full items-center gap-4 rounded-xl border border-gray-200 bg-white p-4 text-left transition-all hover:border-black hover:shadow-md'
                 >
-                  <div className='flex h-10 w-10 items-center justify-center rounded-full bg-white/20'>
-                    <Shield className='h-5 w-5 text-white' />
+                  <div className='flex h-12 w-12 items-center justify-center rounded-full bg-black transition-transform group-hover:scale-105'>
+                    <Shield className='h-6 w-6 text-white' />
                   </div>
                   <div>
-                    <p className='font-semibold'>Connect with Privy</p>
-                    <p className='text-sm text-white/80'>
+                    <p className='font-medium text-black'>Connect with Privy</p>
+                    <p className='text-sm text-gray-500'>
                       Email, social, or wallet
                     </p>
                   </div>
@@ -233,7 +243,7 @@ const WalletConnectButton = () => {
               </div>
 
               {/* Pro Mode Toggle */}
-              <div className='flex items-center justify-between rounded-lg border border-gray-200 p-3'>
+              <div className='flex items-center justify-between rounded-xl border border-gray-100 bg-gray-50 p-4'>
                 <div className='flex items-center gap-2'>
                   <Settings className='h-4 w-4 text-gray-500' />
                   <span className='text-sm text-gray-600'>
@@ -243,7 +253,7 @@ const WalletConnectButton = () => {
                 <button
                   onClick={toggleProMode}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    isProMode ? 'bg-purple-500' : 'bg-gray-300'
+                    isProMode ? 'bg-black' : 'bg-gray-200'
                   }`}
                 >
                   <span
@@ -256,15 +266,15 @@ const WalletConnectButton = () => {
 
               {/* Extension Wallets (Pro Mode only) */}
               {isProMode && (
-                <div>
-                  <h4 className='mb-3 text-sm font-semibold text-gray-700'>
+                <div className='animate-in fade-in slide-in-from-top-2 duration-300'>
+                  <h4 className='mb-3 text-xs font-semibold uppercase tracking-wider text-gray-400'>
                     Extension Wallets
                   </h4>
-                  <div className='space-y-2'>
+                  <div className='space-y-3'>
                     {/* Keplr */}
                     <button
                       onClick={() => handleConnectExtension('keplr')}
-                      className='flex w-full items-center gap-3 rounded-lg border border-gray-200 p-3 text-left transition-all hover:border-purple-300 hover:bg-purple-50'
+                      className='flex w-full items-center gap-3 rounded-xl border border-gray-100 bg-white p-3 text-left transition-all hover:border-gray-300 hover:bg-gray-50'
                     >
                       <Image
                         src='/wallet/keplr.png'
@@ -274,9 +284,7 @@ const WalletConnectButton = () => {
                         className='h-8 w-8'
                       />
                       <div>
-                        <p className='text-sm font-medium text-gray-800'>
-                          Keplr
-                        </p>
+                        <p className='text-sm font-medium text-black'>Keplr</p>
                         <p className='text-xs text-gray-500'>
                           Most popular Cosmos wallet
                         </p>
@@ -286,7 +294,7 @@ const WalletConnectButton = () => {
                     {/* Cosmostation */}
                     <button
                       onClick={() => handleConnectExtension('cosmostation')}
-                      className='flex w-full items-center gap-3 rounded-lg border border-gray-200 p-3 text-left transition-all hover:border-purple-300 hover:bg-purple-50'
+                      className='flex w-full items-center gap-3 rounded-xl border border-gray-100 bg-white p-3 text-left transition-all hover:border-gray-300 hover:bg-gray-50'
                     >
                       <Image
                         src='/wallet/cosmostation.png'
@@ -296,7 +304,7 @@ const WalletConnectButton = () => {
                         className='h-8 w-8'
                       />
                       <div>
-                        <p className='text-sm font-medium text-gray-800'>
+                        <p className='text-sm font-medium text-black'>
                           Cosmostation
                         </p>
                         <p className='text-xs text-gray-500'>
@@ -308,7 +316,7 @@ const WalletConnectButton = () => {
                     {/* Leap */}
                     <button
                       onClick={() => handleConnectExtension('leap')}
-                      className='flex w-full items-center gap-3 rounded-lg border border-gray-200 p-3 text-left transition-all hover:border-purple-300 hover:bg-purple-50'
+                      className='flex w-full items-center gap-3 rounded-xl border border-gray-100 bg-white p-3 text-left transition-all hover:border-gray-300 hover:bg-gray-50'
                     >
                       <Image
                         src='/wallet/leap.png'
@@ -318,9 +326,7 @@ const WalletConnectButton = () => {
                         className='h-8 w-8'
                       />
                       <div>
-                        <p className='text-sm font-medium text-gray-800'>
-                          Leap
-                        </p>
+                        <p className='text-sm font-medium text-black'>Leap</p>
                         <p className='text-xs text-gray-500'>
                           Modern Cosmos wallet
                         </p>
@@ -330,7 +336,7 @@ const WalletConnectButton = () => {
                     {/* OKX Wallet */}
                     <button
                       onClick={() => handleConnectExtension('okx')}
-                      className='flex w-full items-center gap-3 rounded-lg border border-gray-200 p-3 text-left transition-all hover:border-purple-300 hover:bg-purple-50'
+                      className='flex w-full items-center gap-3 rounded-xl border border-gray-100 bg-white p-3 text-left transition-all hover:border-gray-300 hover:bg-gray-50'
                     >
                       <Image
                         src='/wallet/okx.png'
@@ -340,7 +346,7 @@ const WalletConnectButton = () => {
                         className='h-8 w-8'
                       />
                       <div>
-                        <p className='text-sm font-medium text-gray-800'>
+                        <p className='text-sm font-medium text-black'>
                           OKX Wallet
                         </p>
                         <p className='text-xs text-gray-500'>
