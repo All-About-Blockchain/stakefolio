@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { PriceServiceConnection } from '@pythnetwork/price-service-client';
+import { fallbackPrices } from '../services/mockMarketData';
 
 // Pyth Price Feed IDs for the assets used in our dashboard
 export const PYTH_FEED_IDS = {
@@ -50,9 +51,14 @@ export const useLivePrices = () => {
 
           setPrices(newPrices);
           setLoading(false);
+        } else {
+          console.warn('No price data returned from Pyth, using fallback prices');
+          setPrices(fallbackPrices);
+          setLoading(false);
         }
       } catch (err) {
-        console.error('Error fetching live prices:', err);
+        console.warn('Error fetching live prices, falling back to static data.');
+        setPrices(fallbackPrices);
         setLoading(false);
       }
     };
