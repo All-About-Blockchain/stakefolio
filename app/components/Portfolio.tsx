@@ -14,6 +14,7 @@ import {
   Shield,
   ArrowRight,
 } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 export function Portfolio() {
@@ -131,9 +132,11 @@ export function Portfolio() {
         <div className='bright-card rounded-xl border-0 p-4 shadow-2xl'>
           <div className='mb-2 flex items-center gap-2'>
             {data.logo && (
-              <img
+              <Image
                 src={data.logo}
                 alt={data.symbol}
+                width={24}
+                height={24}
                 className='h-6 w-6 rounded-full object-cover'
               />
             )}
@@ -182,13 +185,6 @@ export function Portfolio() {
               )}
               {balanceVisible ? 'Hide' : 'Show'}
             </button>
-            <Link
-              href='/swap'
-              className='flex items-center gap-2 rounded-lg bg-gradient-to-r from-purple-500 to-blue-500 px-4 py-2 text-white transition-all hover:scale-105 hover:shadow-lg'
-            >
-              <Zap className='h-4 w-4' />
-              Swap Assets
-            </Link>
           </div>
         </div>
       </div>
@@ -311,7 +307,7 @@ export function Portfolio() {
           </h3>
           <div className='space-y-4'>
             <Link
-              href='/onboarding'
+              href='/staking'
               className='flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-all hover:border-purple-500 hover:shadow-md'
             >
               <div className='flex items-center gap-3'>
@@ -324,24 +320,6 @@ export function Portfolio() {
                   </div>
                   <div className='text-sm text-gray-500'>
                     Start earning rewards
-                  </div>
-                </div>
-              </div>
-              <ArrowRight className='h-5 w-5 text-gray-400' />
-            </Link>
-
-            <Link
-              href='/swap'
-              className='flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-all hover:border-purple-500 hover:shadow-md'
-            >
-              <div className='flex items-center gap-3'>
-                <div className='flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-emerald-500 to-cyan-500'>
-                  <Zap className='h-5 w-5 text-white' />
-                </div>
-                <div>
-                  <div className='font-semibold text-gray-800'>Swap Assets</div>
-                  <div className='text-sm text-gray-500'>
-                    Optimize your portfolio
                   </div>
                 </div>
               </div>
@@ -374,9 +352,11 @@ export function Portfolio() {
                     <div className='flex items-center justify-between'>
                       <div className='flex items-center gap-3'>
                         {token.logo ? (
-                          <img
+                          <Image
                             src={token.logo}
                             alt={token.symbol}
+                            width={32}
+                            height={32}
                             className='h-8 w-8 rounded-full object-cover'
                           />
                         ) : (

@@ -5,8 +5,8 @@ import { BookOpen, Play, Award, Users, Shield, Zap } from 'lucide-react';
 export default function LearnStaking() {
   const router = useRouter();
 
-  const startOnboarding = () => {
-    router.push('/onboarding');
+  const goToStaking = () => {
+    router.push('/staking');
   };
 
   return (
@@ -33,11 +33,11 @@ export default function LearnStaking() {
               networks
             </p>
             <button
-              onClick={startOnboarding}
+              onClick={goToStaking}
               className='rounded-lg border-0 bg-gradient-to-r from-purple-500 to-blue-500 px-8 py-4 text-lg font-semibold text-white shadow-lg transition-all duration-200 hover:shadow-xl'
             >
               <Play className='mr-2 inline h-5 w-5' />
-              Start Learning Journey
+              Go to Staking
             </button>
           </div>
 

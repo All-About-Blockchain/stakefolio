@@ -3,7 +3,6 @@ import '@/app/globals.css';
 import '@interchain-ui/react/styles';
 
 import { PrivyProvider } from '@privy-io/react-auth';
-import { MoonPayProvider } from '@moonpay/moonpay-react';
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
 import {
@@ -12,7 +11,6 @@ import {
   useToast,
 } from '@/app/contexts/ToastContext';
 import { WalletProvider } from '@/app/contexts/WalletContext';
-import { useRouter } from 'next/router';
 
 function AppContent({
   Component,
@@ -22,17 +20,6 @@ function AppContent({
   pageProps: AppProps['pageProps'];
 }) {
   const { toasts, removeToast } = useToast();
-  const router = useRouter();
-
-  // When on onboarding route, render the onboarding app (no main header/footer)
-  if (router.pathname === '/onboarding') {
-    return (
-      <>
-        <Component {...pageProps} />
-        <ToastContainer toasts={toasts} onRemoveToast={removeToast} />
-      </>
-    );
-  }
 
   return (
     <div className='relative min-h-screen overflow-hidden'>
@@ -88,12 +75,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     >
       <ToastProvider>
         <WalletProvider>
-          <MoonPayProvider
-            apiKey='pk_test_123' // Replace with real test/prod key
-            debug
-          >
-            <AppContent Component={Component} pageProps={pageProps} />
-          </MoonPayProvider>
+          <AppContent Component={Component} pageProps={pageProps} />
         </WalletProvider>
       </ToastProvider>
     </PrivyProvider>

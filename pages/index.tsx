@@ -18,7 +18,7 @@ const PortfolioCompositionChart = dynamic(
 
 // Minimalist, high-contrast, clean aesthetic (tashinajackson.com influence)
 export default function Home() {
-  const { address, connectedWallet } = useWallet();
+  const { address } = useWallet();
   const [expandedPanel, setExpandedPanel] = useState<string | null>(null);
   const [addAssetModalType, setAddAssetModalType] = useState<
     'staking' | 'stablecoin' | null
