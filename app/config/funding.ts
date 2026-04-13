@@ -125,8 +125,9 @@ export function getRampAssetParams(chainId: string, assetSymbol: string) {
   const asset = SUPPORTED_ASSETS.find(
     (a) => a.chainId === chainId && a.symbol === assetSymbol
   );
-  const enabled =
-    chain?.rampAssetCodes?.length ? chain.rampAssetCodes.join(',') : 'ETH_ETH';
+  const enabled = chain?.rampAssetCodes?.length
+    ? chain.rampAssetCodes.join(',')
+    : 'ETH_ETH';
   const primary =
     asset?.rampCryptoAssetKey ?? chain?.rampAssetCodes?.[0] ?? 'ETH_ETH';
   return {

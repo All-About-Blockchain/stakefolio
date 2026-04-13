@@ -76,9 +76,7 @@ export default function RampWidgetFrame({
         <h3 className='text-lg font-semibold text-gray-900'>
           {mode === 'onramp' ? 'Buy with bank' : 'Sell to bank'}
         </h3>
-        <p className='text-sm text-gray-500'>
-          Ramp — {enabledCryptoAssets}
-        </p>
+        <p className='text-sm text-gray-500'>Ramp — {enabledCryptoAssets}</p>
       </div>
       <div className='flex flex-wrap gap-2'>
         {iframeSrc && (
@@ -103,30 +101,33 @@ export default function RampWidgetFrame({
     </div>
   );
 
-  const content =
-    !apiKey ? (
-      <div className='p-6 text-sm text-amber-800'>
-        Set{' '}
-        <code className='rounded bg-amber-100 px-1'>NEXT_PUBLIC_RAMP_API_KEY</code>
-        . For production, set{' '}
-        <code className='rounded bg-amber-100 px-1'>NEXT_PUBLIC_RAMP_HOST_LOGO_URL</code>{' '}
-        to your app logo URL (required by Ramp). Local dev can fall back to{' '}
-        <code className='rounded bg-amber-100 px-1'>/vercel.svg</code> if served from your
-        origin.
-      </div>
-    ) : !iframeSrc ? (
-      <div className='flex h-[480px] items-center justify-center text-sm text-gray-500'>
-        Loading Ramp…
-      </div>
-    ) : (
-      <iframe
-        title='Ramp'
-        src={iframeSrc}
-        className='h-[min(70vh,720px)] w-full min-h-[480px] border-0'
-        allow='clipboard-write; payment'
-        referrerPolicy='strict-origin-when-cross-origin'
-      />
-    );
+  const content = !apiKey ? (
+    <div className='p-6 text-sm text-amber-800'>
+      Set{' '}
+      <code className='rounded bg-amber-100 px-1'>
+        NEXT_PUBLIC_RAMP_API_KEY
+      </code>
+      . For production, set{' '}
+      <code className='rounded bg-amber-100 px-1'>
+        NEXT_PUBLIC_RAMP_HOST_LOGO_URL
+      </code>{' '}
+      to your app logo URL (required by Ramp). Local dev can fall back to{' '}
+      <code className='rounded bg-amber-100 px-1'>/vercel.svg</code> if served
+      from your origin.
+    </div>
+  ) : !iframeSrc ? (
+    <div className='flex h-[480px] items-center justify-center text-sm text-gray-500'>
+      Loading Ramp…
+    </div>
+  ) : (
+    <iframe
+      title='Ramp'
+      src={iframeSrc}
+      className='h-[min(70vh,720px)] min-h-[480px] w-full border-0'
+      allow='clipboard-write; payment'
+      referrerPolicy='strict-origin-when-cross-origin'
+    />
+  );
 
   const shell = (
     <div className='overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm'>

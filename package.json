@@ -10,6 +10,8 @@
     "prettier": "prettier --write --ignore-path .gitignore ."
   },
   "dependencies": {
+    "@ai-sdk/openai": "^3.0.52",
+    "@ai-sdk/react": "^3.0.161",
     "@cosmjs/crypto": "^0.34.0",
     "@cosmjs/proto-signing": "^0.34.0",
     "@cosmjs/stargate": "^0.34.0",
@@ -24,6 +26,7 @@
     "@solana/kit": "^6.1.0",
     "@tanstack/react-query": "^5.85.5",
     "add": "^2.0.6",
+    "ai": "^6.0.159",
     "axios": "^1.13.6",
     "decimal.js": "^10.4.3",
     "lucide-react": "^0.536.0",

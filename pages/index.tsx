@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import { useWallet } from '@/app/contexts/WalletContext';
 import { usePortfolioAssets } from '@/app/hooks/usePortfolioAssets';
 import AddAssetModal from '@/app/components/AddAssetModal';
+import PortfolioAiAssistant from '@/app/components/PortfolioAiAssistant';
 import TopStakingNetworks from '@/app/components/TopStakingNetworks';
 
 // Dynamically import chart to avoid SSR issues
@@ -470,7 +471,64 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <TopStakingNetworks />
+
+          <section
+            aria-labelledby='portfolio-guide-heading'
+            className='mt-24 border-t border-gray-100 pt-16 sm:mt-28 sm:pt-20'
+          >
+            <div className='mb-10 max-w-3xl'>
+              <h2
+                id='portfolio-guide-heading'
+                className='font-["Playfair_Display",_serif] text-3xl font-light tracking-tight text-black sm:text-[2rem]'
+              >
+                Guided portfolio and technical depth
+              </h2>
+              <p className='mt-4 text-base leading-relaxed text-gray-600'>
+                The assistant answers in plain language and adapts to your
+                goals. The expandable reference below keeps the granular panels
+                engineers and risk teams expect—consensus mechanics, unbonding,
+                inflation-adjusted yield, and execution paths Stakefolio runs
+                after you deposit and choose methods.
+              </p>
+            </div>
+            <div className='grid items-stretch gap-8 lg:grid-cols-12 lg:gap-10'>
+              <div className='lg:col-span-5'>
+                <PortfolioAiAssistant />
+              </div>
+              <aside className='flex flex-col justify-between rounded-2xl border border-gray-200 bg-gray-50/80 p-6 sm:p-8 lg:col-span-7'>
+                <div>
+                  <h3 className='text-sm font-semibold uppercase tracking-[0.12em] text-gray-400'>
+                    Technical reference
+                  </h3>
+                  <p className='mt-3 text-[15px] leading-relaxed text-gray-700'>
+                    Use the accordion for authoritative, chain-by-chain
+                    parameters—illustrative nominal and real yield, inflation
+                    assumptions, unbonding, participation, and the staking
+                    methods your portfolio can submit on your behalf.
+                  </p>
+                  <ul className='mt-4 list-inside list-disc space-y-2 text-sm text-gray-600'>
+                    <li>Consensus and security write-ups per network</li>
+                    <li>
+                      Metric tiles (liquidity, participation, protocol notes)
+                    </li>
+                    <li>Yield versus inflation with explicit definitions</li>
+                    <li>
+                      Portfolio CTAs wired to deposit and configuration flows
+                    </li>
+                  </ul>
+                </div>
+                <a
+                  href='#staking-networks-reference'
+                  className='mt-8 inline-flex w-fit items-center gap-2 text-sm font-medium text-black underline decoration-gray-300 underline-offset-4 hover:decoration-black'
+                >
+                  Jump to network panels
+                  <span aria-hidden>↓</span>
+                </a>
+              </aside>
+            </div>
+          </section>
+
+          <TopStakingNetworks sectionId='staking-networks-reference' />
         </main>
       </div>
 
