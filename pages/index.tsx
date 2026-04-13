@@ -1,9 +1,12 @@
 import Head from 'next/head';
 import React, { useState } from 'react';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useWallet } from '@/app/contexts/WalletContext';
 import { usePortfolioAssets } from '@/app/hooks/usePortfolioAssets';
 import AddAssetModal from '@/app/components/AddAssetModal';
+import TopStakingNetworks from '@/app/components/TopStakingNetworks';
 
 // Dynamically import chart to avoid SSR issues
 const PortfolioCompositionChart = dynamic(
@@ -19,6 +22,7 @@ const PortfolioCompositionChart = dynamic(
 // Minimalist, high-contrast, clean aesthetic (tashinajackson.com influence)
 export default function Home() {
   const { address } = useWallet();
+  const router = useRouter();
   const [expandedPanel, setExpandedPanel] = useState<string | null>(null);
   const [addAssetModalType, setAddAssetModalType] = useState<
     'staking' | 'stablecoin' | null
@@ -60,6 +64,20 @@ export default function Home() {
               Institutional grade self-custody. Manage, stake, and swap your
               digital assets with uncompromising security and refined precision.
             </p>
+            <div className='mt-6 flex flex-wrap gap-3'>
+              <Link
+                href='/funding?tab=deposit'
+                className='rounded-md bg-black px-4 py-2 text-sm text-white'
+              >
+                Deposit Assets
+              </Link>
+              <Link
+                href='/funding?tab=withdraw'
+                className='rounded-md border border-gray-200 px-4 py-2 text-sm text-gray-700'
+              >
+                Withdraw Assets
+              </Link>
+            </div>
           </div>
 
           <div className='grid grid-cols-1 gap-16 lg:grid-cols-12'>
@@ -68,7 +86,7 @@ export default function Home() {
               {/* Stablecoins Section */}
               <div>
                 <h2 className='mb-4 border-b border-gray-100 pb-4 font-["Playfair_Display",_serif] text-2xl font-light text-black'>
-                  Cash & Stablecoin Deposits
+                  Funding Assets
                 </h2>
                 <div className='flex flex-col gap-4'>
                   {stablecoins.map((coin) => (
@@ -135,6 +153,18 @@ export default function Home() {
                                 {coin.options.map((option) => (
                                   <button
                                     key={option.id}
+                                    onClick={() => {
+                                      if (option.id === 'deposit') {
+                                        router.push(
+                                          `/funding?tab=deposit&asset=${coin.symbol}`
+                                        );
+                                      }
+                                      if (option.id === 'withdraw') {
+                                        router.push(
+                                          `/funding?tab=withdraw&asset=${coin.symbol}`
+                                        );
+                                      }
+                                    }}
                                     className='group relative flex h-full flex-col items-start justify-between rounded-lg border border-gray-200 bg-white p-5 text-left transition-all hover:border-black hover:shadow-md'
                                   >
                                     <div>
@@ -440,6 +470,7 @@ export default function Home() {
               </div>
             </div>
           </div>
+          <TopStakingNetworks />
         </main>
       </div>
 

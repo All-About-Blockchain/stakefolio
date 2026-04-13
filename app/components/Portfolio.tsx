@@ -42,7 +42,7 @@ export function Portfolio() {
     );
   }
 
-  // Get CosmosHub balances
+  // Get CosmosHub balances when a Cosmos-style address is connected
   const cosmosHubData = all.assets.find(
     (chain) => chain.chainName === 'cosmoshub'
   );
@@ -170,7 +170,7 @@ export function Portfolio() {
               Liquid Staking Portfolio
             </h2>
             <p className='mt-2 text-lg text-gray-600'>
-              Your staked assets on CosmosHub
+              Your liquid staking overview
             </p>
           </div>
           <div className='flex items-center gap-3'>
@@ -292,7 +292,7 @@ export function Portfolio() {
                 <Shield className='mx-auto mb-4 h-12 w-12' />
                 <p>No liquid staking assets found</p>
                 <p className='text-sm'>
-                  Connect your wallet to see your portfolio
+                  Connect a Cosmos-compatible address to see on-chain positions
                 </p>
               </div>
             </div>
@@ -307,7 +307,7 @@ export function Portfolio() {
           </h3>
           <div className='space-y-4'>
             <Link
-              href='/staking'
+              href='/funding?tab=deposit'
               className='flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-all hover:border-purple-500 hover:shadow-md'
             >
               <div className='flex items-center gap-3'>
@@ -316,10 +316,27 @@ export function Portfolio() {
                 </div>
                 <div>
                   <div className='font-semibold text-gray-800'>
-                    Buy & Stake ATOM
+                    Fund ETH / BTC / SOL
                   </div>
                   <div className='text-sm text-gray-500'>
-                    Start earning rewards
+                    Deposit with wallet or bank
+                  </div>
+                </div>
+              </div>
+              <ArrowRight className='h-5 w-5 text-gray-400' />
+            </Link>
+            <Link
+              href='/funding?tab=withdraw'
+              className='flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-all hover:border-purple-500 hover:shadow-md'
+            >
+              <div className='flex items-center gap-3'>
+                <div className='flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-gray-700 to-gray-900'>
+                  <Wallet className='h-5 w-5 text-white' />
+                </div>
+                <div>
+                  <div className='font-semibold text-gray-800'>Withdraw</div>
+                  <div className='text-sm text-gray-500'>
+                    Send on-chain or off-ramp to bank
                   </div>
                 </div>
               </div>
@@ -409,7 +426,7 @@ export function Portfolio() {
           <div className='py-8 text-center text-gray-500'>
             <Shield className='mx-auto mb-4 h-12 w-12' />
             <p>No assets found</p>
-            <p className='text-sm'>Start by buying and staking ATOM</p>
+            <p className='text-sm'>Add funded assets to begin tracking yield</p>
           </div>
         )}
       </div>

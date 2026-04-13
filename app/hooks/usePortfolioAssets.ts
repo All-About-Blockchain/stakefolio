@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react';
-import { useWallet } from '@/app/contexts/WalletContext';
 
 export interface YieldOption {
   id: string;
@@ -58,8 +57,6 @@ export interface ChartData {
 }
 
 export function usePortfolioAssets() {
-  const { address } = useWallet();
-
   const [activeStablecoinIds, setActiveStablecoinIds] = useState<string[]>([
     'usdc',
   ]);
@@ -330,41 +327,61 @@ export function usePortfolioAssets() {
         ],
       },
       {
-        id: 'osmosis',
-        name: 'Osmosis',
-        symbol: 'OSMO',
+        id: 'bnb',
+        name: 'BNB Chain',
+        symbol: 'BNB',
         balance: '0.0',
         value: '$0.00',
         iconUrl:
-          'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/osmosis/info/logo.png',
-        maxYield: '8.4%',
+          'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/info/logo.png',
+        maxYield: '4.7%',
         holdings: [],
         options: [
           {
             id: 'native',
             name: 'Native Staking',
-            description: 'Stake to the decentralized interchain exchange.',
-            yield: '8.4%',
+            description: 'Stake BNB to participate in BNB Chain validation.',
+            yield: '4.7%',
             action: 'Stake Now',
           },
         ],
       },
       {
-        id: 'injective',
-        name: 'Injective',
-        symbol: 'INJ',
+        id: 'cardano',
+        name: 'Cardano',
+        symbol: 'ADA',
         balance: '0.0',
         value: '$0.00',
         iconUrl:
-          'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/injective/info/logo.png',
-        maxYield: '15.6%',
+          'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/cardano/info/logo.png',
+        maxYield: '5.3%',
         holdings: [],
         options: [
           {
             id: 'native',
             name: 'Native Staking',
-            description: 'Stake to the fastest L1 blockchain for finance.',
-            yield: '15.6%',
+            description: 'Delegate ADA with non-custodial stake pools.',
+            yield: '5.3%',
+            action: 'Stake Now',
+          },
+        ],
+      },
+      {
+        id: 'polkadot',
+        name: 'Polkadot',
+        symbol: 'DOT',
+        balance: '0.0',
+        value: '$0.00',
+        iconUrl:
+          'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/polkadot/info/logo.png',
+        maxYield: '12.0%',
+        holdings: [],
+        options: [
+          {
+            id: 'native',
+            name: 'Native Staking',
+            description: 'Nominate validators on Polkadot.',
+            yield: '12.0%',
             action: 'Stake Now',
           },
         ],
@@ -390,21 +407,61 @@ export function usePortfolioAssets() {
         ],
       },
       {
-        id: 'polygon',
-        name: 'Polygon',
-        symbol: 'MATIC',
+        id: 'algorand',
+        name: 'Algorand',
+        symbol: 'ALGO',
         balance: '0.0',
         value: '$0.00',
         iconUrl:
-          'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/polygon/info/logo.png',
-        maxYield: '5.2%',
+          'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/algorand/info/logo.png',
+        maxYield: '6.3%',
         holdings: [],
         options: [
           {
             id: 'native',
             name: 'Native Staking',
-            description: 'Stake to secure the Polygon PoS network.',
-            yield: '5.2%',
+            description: 'Participate in Algorand governance and delegation.',
+            yield: '6.3%',
+            action: 'Stake Now',
+          },
+        ],
+      },
+      {
+        id: 'tezos',
+        name: 'Tezos',
+        symbol: 'XTZ',
+        balance: '0.0',
+        value: '$0.00',
+        iconUrl:
+          'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/tezos/info/logo.png',
+        maxYield: '8.9%',
+        holdings: [],
+        options: [
+          {
+            id: 'native',
+            name: 'Liquid Staking',
+            description: 'Delegate XTZ to participating bakers.',
+            yield: '8.9%',
+            action: 'Stake Now',
+          },
+        ],
+      },
+      {
+        id: 'near',
+        name: 'NEAR Protocol',
+        symbol: 'NEAR',
+        balance: '0.0',
+        value: '$0.00',
+        iconUrl:
+          'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/near/info/logo.png',
+        maxYield: 'Varies',
+        holdings: [],
+        options: [
+          {
+            id: 'native',
+            name: 'Native Staking',
+            description: 'Delegate NEAR with validator operators.',
+            yield: 'Varies',
             action: 'Stake Now',
           },
         ],
@@ -466,7 +523,7 @@ export function usePortfolioAssets() {
         chain: 'Solana',
       },
     ],
-    [address]
+    []
   );
 
   const stablecoins = useMemo(

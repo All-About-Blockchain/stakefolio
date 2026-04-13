@@ -104,11 +104,14 @@ export function useAllBalances() {
   const [loading, setLoading] = useState(true);
   const { address } = useWallet();
   const { getUSDPrice } = usePrices();
+  const isCosmosAddress =
+    !!address &&
+    (address.startsWith('cosmos1') || address.startsWith('stride1'));
 
   // Only consider CosmosHub and Stride chains
   const connectedChains = useMemo(
-    () => (address ? CHAIN_CONFIG : []),
-    [address]
+    () => (isCosmosAddress ? CHAIN_CONFIG : []),
+    [isCosmosAddress]
   );
 
   // Debounce: Only fetch after 500ms of no address changes
@@ -122,7 +125,7 @@ export function useAllBalances() {
   }
 
   useEffect(() => {
-    if (!address) {
+    if (!address || !isCosmosAddress) {
       setData([]);
       setLoading(false);
       return;
@@ -287,7 +290,7 @@ export function useAllBalances() {
       cancelled = true;
       clearTimers();
     };
-  }, [addressesDep, connectedChains, getUSDPrice, address]);
+  }, [addressesDep, connectedChains, getUSDPrice, address, isCosmosAddress]);
 
   return { assets: data, loading };
 }
