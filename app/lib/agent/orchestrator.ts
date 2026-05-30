@@ -32,6 +32,7 @@ export class AutonomousAgentOrchestrator {
    */
   public async executeStakingAgentCycle(
     context: TelemetryContext,
+    delegatorAddress: string,
     simulationOverride?: 'hallucinate_illegal_transfer' | 'hallucinate_pooling_target'
   ): Promise<AgentExecutionResult> {
     // 1. Ingest telemetry and compile prompt context and system instructions (Prompt Engineering)
@@ -80,7 +81,7 @@ export class AutonomousAgentOrchestrator {
     }
 
     // 6. Compile deterministic transaction bytecode / execution envelope
-    const transaction = TransactionCompiler.compileApprovedTransaction(parsedRecommendation);
+    const transaction = TransactionCompiler.compileApprovedTransaction(parsedRecommendation, delegatorAddress);
 
     return {
       success: true,

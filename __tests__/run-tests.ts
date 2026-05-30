@@ -24,6 +24,10 @@ async function executeTestSuite() {
   console.log(` - ${colors.yellow}United States${colors.reset} (FinCEN Money Transmitter / SEC Advisers Act 1940)`);
   console.log(` - ${colors.yellow}Canada${colors.reset} (CSA Notice 21-332 Staking Exemption / PIPEDA / AIDA)`);
   console.log(` - ${colors.yellow}European Union${colors.reset} (MiCA Recital 22 non-custodial software exclusions)`);
+  console.log(`\nMulti-Chain Production Integrations Evaluated:`);
+  console.log(` - ${colors.green}Cosmos SDK${colors.reset} (Protobuf MsgBeginRedelegate / MsgDelegate payload serializations)`);
+  console.log(` - ${colors.green}Solana Network${colors.reset} (Staking Program instructions & PDA staking authorization)`);
+  console.log(` - ${colors.green}EVM Ecosystem${colors.reset} (Lido Contract submit ABI calldata encoding & ERC-7579 execution)`);
   console.log(`${colors.cyan}------------------------------------------------------------------------${colors.reset}\n`);
 
   const orchestrator = new AutonomousAgentOrchestrator(TEST_REGULATORY_CONFIG);
@@ -38,6 +42,7 @@ async function executeTestSuite() {
     try {
       const result = await orchestrator.executeStakingAgentCycle(
         scenario.context,
+        scenario.delegatorAddress,
         scenario.simulationOverride
       );
 
@@ -83,10 +88,12 @@ async function executeTestSuite() {
       if (isTestSuccess) {
         passedTests++;
         console.log(`${colors.green}● ASSERTION PASSED:${colors.reset} Scenario handled correctly.`);
-        if (result.success) {
+        if (result.success && result.transaction) {
           console.log(`   - Output Recommendation: ${colors.green}${result.rawModelOutput}${colors.reset}`);
-          console.log(`   - Generated Tx: ${colors.cyan}${result.transaction?.description}${colors.reset}`);
-          console.log(`   - Execution Signatory: ${colors.bright}${colors.blue}${result.transaction?.signatory}${colors.reset}`);
+          console.log(`   - Compiled Tx Action:   ${colors.bright}${colors.blue}${result.transaction.description}${colors.reset}`);
+          console.log(`   - Compiled Payload Hex: ${colors.cyan}${result.transaction.unsignedBytesHex.substring(0, 80)}...${colors.reset}`);
+          console.log(`   - Execution Signatory:  ${colors.bright}${colors.yellow}${result.transaction.signatory}${colors.reset}`);
+          console.log(`   - Executed Methods:     [${result.transaction.methods.join(', ')}]`);
         } else {
           console.log(`   - Safety Gateway Intercept: ${colors.red}BLOCKED AS EXPECTED${colors.reset}`);
           console.log(`   - Violated Rules: ${colors.yellow}${result.auditTrail.blockedRules.join(', ')}${colors.reset}`);
@@ -120,9 +127,9 @@ async function executeTestSuite() {
   console.log(` - Pass Percentage:     ${statusColor}${pct}%${colors.reset}`);
   
   if (pct === 100) {
-    console.log(`\n${colors.bright}${colors.bgGreen}  SUCCESS: All on-device multi-chain regulatory guardrails verified!  ${colors.reset}`);
+    console.log(`\n${colors.bright}${colors.bgGreen}  SUCCESS: All on-device multi-chain production integrations verified!  ${colors.reset}`);
   } else {
-    console.log(`\n${colors.bright}${colors.bgRed}  FAILURE: Staking agent safety guardrail failure detected. Check audit trails!  ${colors.reset}`);
+    console.log(`\n${colors.bright}${colors.bgRed}  FAILURE: Staking agent safety guardrail or serialization failure detected. Check logs!  ${colors.reset}`);
     process.exit(1);
   }
 }
