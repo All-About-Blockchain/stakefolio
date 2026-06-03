@@ -165,7 +165,7 @@ export default function PriceHistoryPage() {
                       <XAxis dataKey='time' />
                       <YAxis />
                       <Tooltip
-                        formatter={(value: number, name: string) => [
+                        formatter={(value: any, name: any) => [
                           formatCurrency(value, name.toUpperCase()),
                           name.toUpperCase(),
                         ]}
@@ -208,7 +208,7 @@ export default function PriceHistoryPage() {
                       <XAxis dataKey='time' />
                       <YAxis />
                       <Tooltip
-                        formatter={(value: number, name: string) => [
+                        formatter={(value: any, name: any) => [
                           name === 'marketCap'
                             ? `$${value.toFixed(2)}B`
                             : `$${value.toFixed(2)}M`,

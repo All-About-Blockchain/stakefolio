@@ -301,7 +301,7 @@ export function AllBalancesList() {
                 cx='50%'
                 cy='50%'
                 labelLine={false}
-                label={({ name, usdValue }) =>
+                label={({ name, usdValue }: any) =>
                   `${name}: ${formatCurrency(usdValue)}`
                 }
                 outerRadius={120}

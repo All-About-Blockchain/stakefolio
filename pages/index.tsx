@@ -8,6 +8,7 @@ import { usePortfolioAssets } from '@/app/hooks/usePortfolioAssets';
 import AddAssetModal from '@/app/components/AddAssetModal';
 import PortfolioAiAssistant from '@/app/components/PortfolioAiAssistant';
 import TopStakingNetworks from '@/app/components/TopStakingNetworks';
+import AutonomousStakingAgentUi from '@/app/components/AutonomousStakingAgentUi';
 
 // Dynamically import chart to avoid SSR issues
 const PortfolioCompositionChart = dynamic(
@@ -59,11 +60,10 @@ export default function Home() {
           {/* Header Section */}
           <div className='mb-20'>
             <h1 className='font-["Playfair_Display",_serif] text-5xl font-light tracking-tight text-black sm:text-6xl'>
-              Portfolio Overview
+              Autonomous Staking Portal
             </h1>
             <p className='mt-4 max-w-2xl text-lg font-light text-gray-500'>
-              Institutional grade self-custody. Manage, stake, and swap your
-              digital assets with uncompromising security and refined precision.
+              On-device AI agents automating multi-chain staking rebalancing, dynamic yield optimization, airdrop sentinel splits, and active governance proxying. Sovereign, secure, and non-custodial.
             </p>
             <div className='mt-6 flex flex-wrap gap-3'>
               <Link
@@ -471,6 +471,19 @@ export default function Home() {
               </div>
             </div>
           </div>
+
+          {/* Autonomous AI Staking Agent Section */}
+          <section className='mt-24 border-t border-gray-100 pt-16 sm:mt-28 sm:pt-20'>
+            <div className='mb-10 max-w-3xl'>
+              <h2 className='font-["Playfair_Display",_serif] text-3xl font-light tracking-tight text-black sm:text-[2rem]'>
+                Autonomous Agent Execution Portal
+              </h2>
+              <p className='mt-4 text-base leading-relaxed text-gray-600'>
+                Deploy fully autonomous, multi-chain staking strategies under strict non-custodial guardrails. Configure local compliance parameters and simulate live telemetry rebalancing events.
+              </p>
+            </div>
+            <AutonomousStakingAgentUi />
+          </section>
 
           <section
             aria-labelledby='portfolio-guide-heading'

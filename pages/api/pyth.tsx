@@ -15,6 +15,11 @@ import { Request, Response } from 'express';
 interface PythData {
   // Define the structure of the Pyth data here
 }
+
+export default async function handler(req: any, res: any) {
+  res.status(200).json({ message: "Pyth API placeholder" });
+}
+
 /* 
 app.get('/api/pyth', async (req: Request, res: Response) => {
   try {

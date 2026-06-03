@@ -37,7 +37,7 @@ const PortfolioCompositionChart = ({ data }: { data: StakedAsset[] }) => {
             outerRadius,
             value,
             symbol,
-          }) => {
+          }: any) => {
             if (midAngle === undefined) return null;
             const RADIAN = Math.PI / 180;
             const radius = innerRadius + (outerRadius - innerRadius) * 1.3;
