@@ -154,12 +154,12 @@ export default function AutonomousStakingAgentUi() {
 
     // Dynamic, premium loading stages to mimic secure sandbox computation steps
     const executionStages = [
-      'Establishing secure local on-device hardware sandbox...',
-      'Ingesting live multi-chain telemetry and validator sets...',
-      'Sweeping tri-jurisdictional compliance gateways (SEC/CSA/MiCA)...',
-      'Running local model inference (Phi-3 3B quantized engine)...',
-      'Enforcing strict JSON Schema GBNF grammar constraints...',
-      'Assembling and compiling target cryptographic transaction bytes...'
+      'Setting up secure environment on your device...',
+      'Checking network conditions and validator status...',
+      'Running regulatory compliance checks...',
+      'Analyzing with on-device AI...',
+      'Validating against your safety rules...',
+      'Preparing transaction for review...'
     ];
 
     for (const stage of executionStages) {
@@ -286,14 +286,14 @@ export default function AutonomousStakingAgentUi() {
               <span className="relative inline-flex h-3 w-3 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]"></span>
             </span>
             <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-600">
-              Active On-Device Sovereign Daemon
+              Running On Your Device
             </p>
           </div>
           <h2 className="font-['Playfair_Display',_serif] text-3xl font-light tracking-tight text-black">
-            Autonomous Agentic Console
+            Staking Agent
           </h2>
           <p className="text-xs font-light text-gray-400">
-            Secure client-side logic executing exclusively within local hardware secure enclave sandboxes.
+            Everything runs locally on your device. Your keys never leave your hardware.
           </p>
         </div>
         
@@ -301,8 +301,8 @@ export default function AutonomousStakingAgentUi() {
         <div className="flex items-center gap-3 self-start rounded-full border border-emerald-100 bg-emerald-50/20 px-4 py-2 text-xs font-medium text-emerald-800 shadow-sm shadow-emerald-100/10 sm:self-center">
           <Fingerprint className="h-4.5 w-4.5 text-emerald-600 animate-pulse" />
           <div className="flex flex-col">
-            <span className="font-semibold leading-tight">Zero-Custody Execution</span>
-            <span className="text-[9px] font-normal text-emerald-600/80">Local Hardware Key-Vetting</span>
+            <span className="font-semibold leading-tight">Non-Custodial</span>
+            <span className="text-[9px] font-normal text-emerald-600/80">Your keys stay on-device</span>
           </div>
         </div>
       </div>
@@ -321,8 +321,8 @@ export default function AutonomousStakingAgentUi() {
           }`}
         >
           <Activity className={`h-4.5 w-4.5 ${activeTab === 'yield' ? 'text-black' : 'text-gray-400'}`} />
-          <span className="text-xs">Yield Optimizer</span>
-          <span className="text-[9px] font-normal text-gray-400 hidden sm:inline">Set & Forget (Retail)</span>
+          <span className="text-xs">Auto-Optimize</span>
+          <span className="text-[9px] font-normal text-gray-400 hidden sm:inline">Set preferences, we handle the rest</span>
         </button>
         
         <button
@@ -337,8 +337,8 @@ export default function AutonomousStakingAgentUi() {
           }`}
         >
           <Award className={`h-4.5 w-4.5 ${activeTab === 'airdrop' ? 'text-black' : 'text-gray-400'}`} />
-          <span className="text-xs">Airdrop & Gov Sentinel</span>
-          <span className="text-[9px] font-normal text-gray-400 hidden sm:inline">Decentralization Split</span>
+          <span className="text-xs">Airdrops & Voting</span>
+          <span className="text-[9px] font-normal text-gray-400 hidden sm:inline">Maximize eligibility</span>
         </button>
 
         <button
@@ -353,8 +353,8 @@ export default function AutonomousStakingAgentUi() {
           }`}
         >
           <Shield className={`h-4.5 w-4.5 ${activeTab === 'compliance' ? 'text-black' : 'text-gray-400'}`} />
-          <span className="text-xs">Sovereign Trust & Audit</span>
-          <span className="text-[9px] font-normal text-gray-400 hidden sm:inline">HNWI & Institutional</span>
+          <span className="text-xs">Security & Audit</span>
+          <span className="text-[9px] font-normal text-gray-400 hidden sm:inline">How your assets stay safe</span>
         </button>
       </div>
 
@@ -373,7 +373,7 @@ export default function AutonomousStakingAgentUi() {
                 <div className="rounded-xl border border-gray-100 bg-gray-50/40 p-4 shadow-sm">
                   <span className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
                     <Coins className="h-3.5 w-3.5 text-gray-400" />
-                    Staked Capital
+                    Total Staked
                   </span>
                   <span className="mt-1 block text-xl font-light text-black">$34,520.00</span>
                 </div>
@@ -381,7 +381,7 @@ export default function AutonomousStakingAgentUi() {
                 <div className="rounded-xl border border-emerald-100 bg-emerald-50/10 p-4 shadow-sm">
                   <span className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-emerald-600">
                     <TrendingUp className="h-3.5 w-3.5 text-emerald-500 animate-pulse" />
-                    Nominal Alpha
+                    Extra Yield Earned
                   </span>
                   <span className="mt-1 block text-xl font-bold text-emerald-600">+1.85% APY</span>
                 </div>
@@ -389,7 +389,7 @@ export default function AutonomousStakingAgentUi() {
                 <div className="rounded-xl border border-gray-100 bg-gray-50/40 p-4 shadow-sm">
                   <span className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
                     <Server className="h-3.5 w-3.5 text-gray-400" />
-                    Whitelisted Nodes
+                    Approved Validators
                   </span>
                   <span className="mt-1 block text-xl font-light text-black">8 Approved</span>
                 </div>
@@ -397,9 +397,9 @@ export default function AutonomousStakingAgentUi() {
                 <div className="rounded-xl border border-gray-100 bg-gray-50/40 p-4 shadow-sm">
                   <span className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
                     <Cpu className="h-3.5 w-3.5 text-blue-500" />
-                    Inference Node
+                    AI Engine
                   </span>
-                  <span className="mt-1 block text-xl font-light text-blue-600">Local Phi-3</span>
+                  <span className="mt-1 block text-xl font-light text-blue-600">On-Device AI</span>
                 </div>
               </div>
 
@@ -408,13 +408,13 @@ export default function AutonomousStakingAgentUi() {
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex items-center gap-2">
                     <Sliders className="h-4.5 w-4.5 text-gray-700" />
-                    <h3 className="text-base font-semibold text-black">Simulated Network Telemetry Feeds</h3>
+                    <h3 className="text-base font-semibold text-black">Test Scenarios</h3>
                   </div>
-                  <span className="text-[10px] text-gray-400">Select network event scenario to test rebalancing</span>
+                  <span className="text-[10px] text-gray-400">Select a scenario to see how the agent would respond</span>
                 </div>
                 
                 <p className="text-xs text-gray-500 leading-relaxed">
-                  Select a live telemetry state. Run the autonomous sweep to observe the local client evaluate rules, invoke on-device model inference, and output compiled, structure-compliant bytecode.
+                  Pick a network scenario below, then run the agent to see how it evaluates conditions, applies your safety rules, and decides what action to take.
                 </p>
 
                 {/* Scenario Grid */}
@@ -474,13 +474,13 @@ export default function AutonomousStakingAgentUi() {
                 <div className="rounded-xl border border-gray-150 bg-gray-50/60 p-4 text-xs leading-relaxed text-gray-600 shadow-inner">
                   <div className="font-semibold text-black flex items-center gap-1.5 mb-1.5">
                     <Activity className="h-4 w-4 text-gray-600" />
-                    Active Feeds Data Pack:
+                    Current Network Status:
                   </div>
                   <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 border-t border-gray-200/50 pt-2 text-[11px]">
-                    <div><span className="text-gray-400">Active Node:</span> <span className="font-medium text-black">{currentScenario.context.activeValidator.name}</span></div>
-                    <div><span className="text-gray-400">Network Slippage:</span> <span className="font-medium text-black">{currentScenario.context.slippagePct.toFixed(2)}%</span></div>
-                    <div><span className="text-gray-400">Current Node Uptime:</span> <span className={`font-semibold ${currentScenario.context.activeValidator.uptimePct < 99 ? 'text-rose-600' : 'text-black'}`}>{currentScenario.context.activeValidator.uptimePct}%</span></div>
-                    <div><span className="text-gray-400">Current Node Commission:</span> <span className={`font-semibold ${currentScenario.context.activeValidator.commissionPct > commissionCeiling ? 'text-orange-600' : 'text-black'}`}>{currentScenario.context.activeValidator.commissionPct}%</span></div>
+                    <div><span className="text-gray-400">Current Validator:</span> <span className="font-medium text-black">{currentScenario.context.activeValidator.name}</span></div>
+                    <div><span className="text-gray-400">Slippage:</span> <span className="font-medium text-black">{currentScenario.context.slippagePct.toFixed(2)}%</span></div>
+                    <div><span className="text-gray-400">Uptime:</span> <span className={`font-semibold ${currentScenario.context.activeValidator.uptimePct < 99 ? 'text-rose-600' : 'text-black'}`}>{currentScenario.context.activeValidator.uptimePct}%</span></div>
+                    <div><span className="text-gray-400">Commission:</span> <span className={`font-semibold ${currentScenario.context.activeValidator.commissionPct > commissionCeiling ? 'text-orange-600' : 'text-black'}`}>{currentScenario.context.activeValidator.commissionPct}%</span></div>
                   </div>
                 </div>
 
@@ -512,17 +512,17 @@ export default function AutonomousStakingAgentUi() {
                 <div className="space-y-3.5">
                   <div className="flex items-center gap-2">
                     <Award className="h-5 w-5 text-violet-600" />
-                    <h3 className="text-base font-bold text-black">Airdrop Multi-Chain Optimizer</h3>
+                    <h3 className="text-base font-bold text-black">Airdrop Eligibility Optimizer</h3>
                   </div>
                   <p className="text-xs text-gray-500 leading-relaxed">
-                    Cosmos, Solana, and EVM airdrops frequently disqualify accounts delegating to centralized exchanges, validator hubs, or the top 10 validator nodes. Split delegation constraints and governance proxying maximize drop brackets.
+                    Many airdrops exclude wallets that stake with large exchanges or top validators. The agent splits your delegation and votes on governance proposals to maximize your eligibility score.
                   </p>
                   
                   {/* Dynamic optimization tip */}
                   <div className="text-[10px] text-violet-700 bg-violet-50/50 border border-violet-100/50 rounded-lg p-2.5 font-medium leading-relaxed">
                     {airdropScore >= 85 
-                      ? '🚀 Excellent. Active voting proxy plus decentralization Whitelisting satisfies major bracket multipliers.'
-                      : '💡 Tip: Toggle "Avoid Top 10 Validators" and raise Split ratio to increase your airdrop eligibility brackets.'
+                      ? '🚀 Excellent! Your setup maximizes eligibility for most major airdrops.'
+                      : '💡 Tip: Enable "Avoid Top 10 Validators" and increase the split count to improve your airdrop eligibility.'
                     }
                   </div>
                 </div>
@@ -543,8 +543,8 @@ export default function AutonomousStakingAgentUi() {
                     {/* Delegation split ratio */}
                     <div className="space-y-2">
                       <div className="flex items-center justify-between text-xs">
-                        <span className="font-semibold text-gray-700">Validator Delegation Split</span>
-                        <span className="font-bold text-violet-600 bg-violet-50 px-2 py-0.5 rounded border border-violet-100">{delegationSplit} Sub-Delegations</span>
+                         <span className="block text-xs font-semibold text-gray-700">Split Across Validators</span>
+                         <span className="font-bold text-violet-600 bg-violet-50 px-2 py-0.5 rounded border border-violet-100">{delegationSplit} Validators</span>
                       </div>
                       <input
                         type="range"
@@ -556,7 +556,7 @@ export default function AutonomousStakingAgentUi() {
                         className="h-1.5 w-full cursor-pointer appearance-none rounded-lg bg-gray-200 accent-black"
                       />
                       <span className="block text-[9px] text-gray-400">
-                        Automatically partitions delegated capital across multiple whitelist validators to avoid pooling caps.
+                        Spreads your stake across multiple validators to avoid concentration penalties.
                       </span>
                     </div>
 
@@ -566,7 +566,7 @@ export default function AutonomousStakingAgentUi() {
                       <label className="flex items-center justify-between cursor-pointer rounded-lg border border-gray-100 p-3 hover:bg-gray-50/50">
                         <div>
                           <span className="block text-xs font-semibold text-gray-850">Avoid Top-10 Validators</span>
-                          <span className="block text-[9px] text-gray-400">Auto-redelegates if a node exceeds 8% total power limit.</span>
+                           <span className="block text-[9px] text-gray-400">Automatically moves stake away from overly large validators.</span>
                         </div>
                         <button 
                           onClick={() => setAvoidTop10(!avoidTop10)}
@@ -583,7 +583,7 @@ export default function AutonomousStakingAgentUi() {
                       <label className="flex items-center justify-between cursor-pointer rounded-lg border border-gray-100 p-3 hover:bg-gray-50/50">
                         <div>
                           <span className="block text-xs font-semibold text-gray-850">Avoid Custodial Exchanges</span>
-                          <span className="block text-[9px] text-gray-400">Blocks and moves stakes from exchange nodes (e.g. Coinbase).</span>
+                           <span className="block text-[9px] text-gray-400">Avoids exchange-operated validators to improve airdrop chances.</span>
                         </div>
                         <button 
                           onClick={() => setAvoidExchanges(!avoidExchanges)}
@@ -607,11 +607,11 @@ export default function AutonomousStakingAgentUi() {
                   <div>
                     <div className="flex items-center gap-2 border-b border-gray-100 pb-3">
                       <Vote className="h-4 w-4 text-blue-600" />
-                      <span className="text-xs font-bold uppercase tracking-wider text-black">On-Device Governance Proxy</span>
+                      <span className="text-xs font-bold uppercase tracking-wider text-black">Auto-Voting</span>
                     </div>
 
                     <p className="mt-3.5 text-xs text-gray-550 leading-relaxed">
-                      Frequent airdrops demand active voting histories. Designate an on-device local voting policy to maintain perfect compliance brackets automatically.
+                      Many airdrops require active governance participation. Choose how the agent votes on your behalf to maintain eligibility.
                     </p>
 
                     <div className="mt-4 flex flex-col gap-2">
@@ -624,8 +624,8 @@ export default function AutonomousStakingAgentUi() {
                         }`}
                       >
                         <div>
-                          <span className="block text-xs font-bold text-black">Active YES (Mirror Consensus)</span>
-                          <span className="text-[9px] text-gray-400 leading-normal block">Automatically match popular consensus votes</span>
+                          <span className="block text-xs font-bold text-black">Vote with Majority</span>
+                          <span className="text-[9px] text-gray-400 leading-normal block">Automatically votes with the community consensus</span>
                         </div>
                         {govProxyMode === 'active' && <CheckCircle2 className="h-4 w-4 text-black shrink-0" />}
                       </button>
@@ -639,8 +639,8 @@ export default function AutonomousStakingAgentUi() {
                         }`}
                       >
                         <div>
-                          <span className="block text-xs font-bold text-black">Mirror Active Validator Votes</span>
-                          <span className="text-[9px] text-gray-400 leading-normal block">Replicates delegated validator voting actions</span>
+                          <span className="block text-xs font-bold text-black">Follow My Validator</span>
+                          <span className="text-[9px] text-gray-400 leading-normal block">Votes the same way as your delegated validator</span>
                         </div>
                         {govProxyMode === 'passive' && <CheckCircle2 className="h-4 w-4 text-black shrink-0" />}
                       </button>
@@ -654,8 +654,8 @@ export default function AutonomousStakingAgentUi() {
                         }`}
                       >
                         <div>
-                          <span className="block text-xs font-bold text-black">Secure Biometric Verification</span>
-                          <span className="text-[9px] text-gray-400 leading-normal block">Prompts secure hot-keys only upon manual FaceID approval</span>
+                          <span className="block text-xs font-bold text-black">Ask Me Each Time</span>
+                          <span className="text-[9px] text-gray-400 leading-normal block">Notifies you and waits for your manual approval</span>
                         </div>
                         {govProxyMode === 'custom' && <CheckCircle2 className="h-4 w-4 text-black shrink-0" />}
                       </button>
@@ -676,11 +676,11 @@ export default function AutonomousStakingAgentUi() {
               <div className="rounded-2xl border border-gray-150 bg-gradient-to-b from-gray-50 to-white p-5 shadow-sm">
                 <div className="flex items-center gap-2 border-b border-gray-100 pb-3">
                   <LockKeyhole className="h-5 w-5 text-gray-800" />
-                  <h3 className="text-sm font-semibold text-black">Secure Enclave Dual-Key Split Trust Structure</h3>
+                  <h3 className="text-sm font-semibold text-black">How Your Assets Stay Safe</h3>
                 </div>
 
                 <p className="mt-2 text-xs text-gray-500 leading-relaxed">
-                  Security is structurally split at the OS architecture layer. Staking Authority is delegated strictly to the local agent&apos;s sandboxed hotkey, while Withdrawal Authority remains locked behind offline keys.
+                  Your security uses a two-key design. The agent can only stake and restake — it can never withdraw or transfer your funds to an external address.
                 </p>
 
                 {/* CSS Blueprint Graphic */}
@@ -692,10 +692,10 @@ export default function AutonomousStakingAgentUi() {
                       <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
                       <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
                     </div>
-                    <div className="flex items-center gap-2 text-xs font-bold text-gray-800">
-                      <Fingerprint className="h-4.5 w-4.5 text-gray-700" />
-                      USER SECURE ENCLAVE
-                    </div>
+                     <div className="flex items-center gap-2 text-xs font-bold text-gray-800">
+                       <Fingerprint className="h-4.5 w-4.5 text-gray-700" />
+                       YOUR MASTER KEY
+                     </div>
                     <span className="inline-flex rounded-full bg-emerald-50 px-2 py-0.5 text-[9px] font-bold text-emerald-700 uppercase">
                       Offline Master Key
                     </span>
@@ -709,22 +709,22 @@ export default function AutonomousStakingAgentUi() {
                     <div className="absolute top-2.5 right-3.5 flex h-2 w-2">
                       <span className="relative inline-flex h-2 w-2 rounded-full bg-blue-500 animate-pulse"></span>
                     </div>
-                    <div className="flex items-center gap-2 text-xs font-bold text-gray-800">
-                      <Key className="h-4.5 w-4.5 text-blue-500" />
-                      STAKING PDA AUTHORITY
-                    </div>
-                    <span className="inline-flex rounded-full bg-blue-50 px-2 py-0.5 text-[9px] font-bold text-blue-700 uppercase">
-                      On-Chain Delegated
-                    </span>
-                    <p className="text-[10px] text-gray-550 leading-relaxed">
-                      Holds <strong>Staking & Reallocation Authority</strong>. Ephemeral daemon handles auto-compounding and uptime rebalancing triggers under whitelisted constraints.
-                    </p>
+                     <div className="flex items-center gap-2 text-xs font-bold text-gray-800">
+                       <Key className="h-4.5 w-4.5 text-blue-500" />
+                       AGENT STAKING KEY
+                     </div>
+                     <span className="inline-flex rounded-full bg-blue-50 px-2 py-0.5 text-[9px] font-bold text-blue-700 uppercase">
+                       Staking Only
+                     </span>
+                     <p className="text-[10px] text-gray-550 leading-relaxed">
+                       Can <strong>stake, restake, and compound rewards</strong>. Handles automatic rebalancing within your approved validator set.
+                     </p>
                   </div>
 
                 </div>
 
                 <div className="mt-3.5 rounded-lg bg-gray-50 border border-gray-150 p-3 text-[10px] text-gray-500 text-center leading-relaxed">
-                  🛡️ <strong>Liability Shield Exception:</strong> All code runs in a client sandbox; keys are 100% self-managed. Zero central custody intermediary risks.
+                  🛡️ <strong>Your protection:</strong> All code runs on your device. Your keys are never shared. No intermediary ever has custody of your assets.
                 </div>
               </div>
 
@@ -732,7 +732,7 @@ export default function AutonomousStakingAgentUi() {
               <div className="rounded-2xl border border-gray-150 bg-white p-5 space-y-4 shadow-sm">
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="h-5 w-5 text-gray-800 animate-pulse" />
-                  <h3 className="text-sm font-semibold text-black">Tri-Jurisdictional Exemption Vetting Gateways</h3>
+                  <h3 className="text-sm font-semibold text-black">Regulatory Compliance Checks</h3>
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-3">
@@ -743,10 +743,10 @@ export default function AutonomousStakingAgentUi() {
                       <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">US SEC</span>
                       <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[9px] font-bold text-emerald-700">PASS</span>
                     </div>
-                    <span className="block text-xs font-bold text-black">Advisers Act 1940</span>
-                    <p className="text-[10px] text-gray-550 leading-relaxed">
-                      Exemption satisfied. Publisher has zero custody, zero pooling, and zero discretionary rebalancing control.
-                    </p>
+                      <span className="block text-xs font-bold text-black">Advisers Act 1940</span>
+                      <p className="text-[10px] text-gray-550 leading-relaxed">
+                        Compliant. Stakefolio never takes custody of or pools your assets.
+                      </p>
                   </div>
 
                   {/* Canada CSA */}
@@ -755,10 +755,10 @@ export default function AutonomousStakingAgentUi() {
                       <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Canada CSA</span>
                       <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[9px] font-bold text-emerald-700">PASS</span>
                     </div>
-                    <span className="block text-xs font-bold text-black">Staff Notice 21-332</span>
-                    <p className="text-[10px] text-gray-550 leading-relaxed">
-                      Exemption satisfied. Pure P2P staking. Assets are directly delegated on-chain to whitelisted nodes.
-                    </p>
+                      <span className="block text-xs font-bold text-black">Staff Notice 21-332</span>
+                      <p className="text-[10px] text-gray-550 leading-relaxed">
+                        Compliant. Direct peer-to-peer staking — your assets go straight to on-chain validators.
+                      </p>
                   </div>
 
                   {/* EU MiCA */}
@@ -767,10 +767,10 @@ export default function AutonomousStakingAgentUi() {
                       <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">EU MiCA</span>
                       <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[9px] font-bold text-emerald-700">PASS</span>
                     </div>
-                    <span className="block text-xs font-bold text-black">Recital 22 Exclusions</span>
-                    <p className="text-[10px] text-gray-550 leading-relaxed">
-                      Exemption satisfied. Open-source, non-custodial wallet tool running without intermediaries.
-                    </p>
+                      <span className="block text-xs font-bold text-black">Recital 22 Exclusions</span>
+                      <p className="text-[10px] text-gray-550 leading-relaxed">
+                        Compliant. Open-source, non-custodial software with no intermediaries.
+                      </p>
                   </div>
 
                 </div>
@@ -786,14 +786,14 @@ export default function AutonomousStakingAgentUi() {
           
           {/* Active Settings Panel */}
           <div className="rounded-2xl border border-gray-150 bg-gray-50/40 p-5 space-y-4 shadow-sm">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-black">Guardrails & Safety Limits</h3>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-black">Your Safety Limits</h3>
             
             <div className="space-y-4 text-xs">
               
               {/* Slippage slider */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-500 font-medium">Slippage Ceiling</span>
+                   <span className="text-gray-500 font-medium">Max Slippage</span>
                   <span className="font-bold text-black">{slippageLimit.toFixed(1)}%</span>
                 </div>
                 <input
@@ -813,7 +813,7 @@ export default function AutonomousStakingAgentUi() {
               {/* Commission limit slider */}
               <div className="space-y-2 border-t border-gray-100 pt-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-500 font-medium">Commission Tolerance</span>
+                   <span className="text-gray-500 font-medium">Max Commission</span>
                   <span className="font-bold text-black">{commissionCeiling.toFixed(1)}%</span>
                 </div>
                 <input
@@ -833,7 +833,7 @@ export default function AutonomousStakingAgentUi() {
               {/* Gas Limit slider */}
               <div className="space-y-2 border-t border-gray-100 pt-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-500 font-medium">Max Daily Gas limit</span>
+                   <span className="text-gray-500 font-medium">Max Daily Gas Fee</span>
                   <span className="font-bold text-black">{maxDailyGas.toFixed(2)} ETH</span>
                 </div>
                 <input
@@ -855,7 +855,7 @@ export default function AutonomousStakingAgentUi() {
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-1.5">
                     <Lock className="h-3.5 w-3.5 text-gray-400" />
-                    Non-Custodial Mode (Direct delegation only)
+                    Non-Custodial (your keys only)
                   </span>
                   <span className="rounded bg-emerald-50 px-1.5 py-0.5 text-[9px] font-bold text-emerald-700 uppercase border border-emerald-100">
                     Active
@@ -865,7 +865,7 @@ export default function AutonomousStakingAgentUi() {
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-1.5">
                     <ShieldCheck className="h-3.5 w-3.5 text-gray-400" />
-                    Secure Enclave Verification
+                    Hardware Key Protection
                   </span>
                   <span className="rounded bg-emerald-50 px-1.5 py-0.5 text-[9px] font-bold text-emerald-700 uppercase border border-emerald-100">
                     Active
@@ -875,7 +875,7 @@ export default function AutonomousStakingAgentUi() {
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-1.5">
                     <Activity className="h-3.5 w-3.5 text-gray-400" />
-                    Uptime performance vetting
+                    Validator uptime checks
                   </span>
                   <span className="rounded bg-emerald-50 px-1.5 py-0.5 text-[9px] font-bold text-emerald-700 uppercase border border-emerald-100">
                     Active
@@ -902,8 +902,8 @@ export default function AutonomousStakingAgentUi() {
                 </div>
               ) : (
                 <div className="flex items-center gap-2 text-sm font-semibold">
-                  <Play className="h-4 w-4 fill-white" />
-                  Run Autonomous Checkup
+                   <Play className="h-4 w-4 fill-white" />
+                   Run Agent Check
                 </div>
               )}
             </button>
@@ -911,7 +911,7 @@ export default function AutonomousStakingAgentUi() {
             {/* Run Progress Stage Subtitle */}
             {isRunning && runProgress && (
               <div className="rounded-xl border border-gray-150 bg-white p-4 shadow-sm text-center">
-                <span className="block text-[10px] font-bold uppercase tracking-wider text-gray-450 mb-1">Agent Action Sequence</span>
+                <span className="block text-[10px] font-bold uppercase tracking-wider text-gray-450 mb-1">Processing</span>
                 <span className="text-[11px] font-medium text-black leading-snug animate-pulse">{runProgress}</span>
                 
                 {/* Horizontal progress bar */}
@@ -948,9 +948,9 @@ export default function AutonomousStakingAgentUi() {
               )}
               <div>
                 <h4 className="text-base font-bold text-black leading-tight">
-                  {runResult.success ? 'Autonomous Action Approved' : 'Action Blocked by Security Gateway'}
+                  {runResult.success ? 'Action Approved ✓' : 'Action Blocked — Safety Rule Triggered'}
                 </h4>
-                <span className="text-xs text-gray-500">Telemetry Evaluation Verdict</span>
+                <span className="text-xs text-gray-500">Agent Decision</span>
               </div>
             </div>
             
@@ -960,7 +960,7 @@ export default function AutonomousStakingAgentUi() {
                   ? 'bg-emerald-50 border-emerald-200 text-emerald-700' 
                   : 'bg-amber-50 border-amber-250 text-amber-800'
               }`}>
-                {runResult.success ? 'Verification Passed' : 'Safety Gateway Warning'}
+                {runResult.success ? 'All Checks Passed' : 'Safety Limit Exceeded'}
               </span>
             </div>
           </div>
@@ -973,7 +973,7 @@ export default function AutonomousStakingAgentUi() {
               <span className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-gray-400">
                 <span className="flex items-center gap-1.5">
                   <Cpu className="h-3.5 w-3.5" />
-                  On-Device Model JSON Output
+                  AI Agent Output (Advanced)
                 </span>
                 {runResult.rawOutput && (
                   <button 
@@ -1003,16 +1003,16 @@ export default function AutonomousStakingAgentUi() {
             <div className="space-y-2">
               <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-gray-400">
                 <Shield className="h-3.5 w-3.5" />
-                Security Gateway Compliance Log
+                Safety Check Results
               </span>
               <div className="rounded-xl border border-gray-150 bg-white p-4 text-xs space-y-3 shadow-inner h-[160px] overflow-y-auto">
                 {runResult.success ? (
                   <div className="space-y-2.5">
                     <p className="text-emerald-700 leading-relaxed font-semibold">
-                      ✓ Zero rules violated. Fully satisfied all local slippage ceilings, commission boundaries, gas caps, and whitelisting targets.
+                      ✓ All safety checks passed. Your slippage, commission, and gas limits are all within range.
                     </p>
                     <div className="border-t border-gray-100 pt-2 text-[10px] text-gray-550 leading-relaxed">
-                      <strong>Legislation Swept:</strong> US Advisers Act 1940, Canada CSA Staff Notice 21-332, and European MiCA Recitals. Verified 100% compliant.
+                      <strong>Compliance:</strong> Verified against US, Canadian, and EU regulatory frameworks. Fully compliant.
                     </div>
                   </div>
                 ) : (
@@ -1040,7 +1040,7 @@ export default function AutonomousStakingAgentUi() {
               <div className="flex items-center justify-between">
                 <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-gray-400">
                   <FileCode className="h-3.5 w-3.5" />
-                  Sovereign Transaction Bytecode Ledger
+                  Transaction Details (Advanced)
                 </span>
                 
                 <button 
@@ -1066,7 +1066,7 @@ export default function AutonomousStakingAgentUi() {
                 {/* Meta details */}
                 <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center text-xs">
                   <div className="space-y-0.5">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase">Compiled action payload</span>
+                    <span className="text-[10px] font-bold text-gray-400 uppercase">Prepared Action</span>
                     <span className="block font-bold text-black text-sm">
                       {runResult.transaction.description}
                     </span>
@@ -1083,7 +1083,7 @@ export default function AutonomousStakingAgentUi() {
 
                 {/* Bytecode block */}
                 <div className="space-y-1.5">
-                  <span className="block text-[9px] font-bold text-gray-400 uppercase tracking-wide">Serialized Unsigned Bytes (Ready for Local Hardware Signature)</span>
+                  <span className="block text-[9px] font-bold text-gray-400 uppercase tracking-wide">Transaction Data (Ready to Sign)</span>
                   <div className="break-all rounded-lg bg-gray-50 border border-gray-150 p-3.5 text-xs text-gray-600 font-mono leading-relaxed max-h-[90px] overflow-y-auto shadow-inner">
                     {runResult.transaction.unsignedBytesHex}
                   </div>
@@ -1093,8 +1093,8 @@ export default function AutonomousStakingAgentUi() {
                 <div className="flex items-start gap-2 rounded bg-gray-50 border border-gray-100 p-3 text-[10px] text-gray-500 leading-normal">
                   <Fingerprint className="h-4.5 w-4.5 text-gray-450 shrink-0 mt-0.5" />
                   <div>
-                    <strong className="text-black block">Ephemeral Local Vetting:</strong>
-                    This payload has been deterministically compiled in your sandboxed RAM space. Staking Authority keys can sign and broadcast, but your Offline Withdrawal Enclave private keys remain completely untouched.
+                    <strong className="text-black block">Security Note:</strong>
+                    This transaction was built on your device. Your staking key can sign and broadcast it, but your withdrawal key remains untouched — only you can withdraw funds.
                   </div>
                 </div>
 
@@ -1114,9 +1114,9 @@ export default function AutonomousStakingAgentUi() {
           <div className="space-y-0.5">
             <h3 className="text-base font-bold text-black flex items-center gap-2">
               <Server className="h-4.5 w-4.5 text-gray-700" />
-              Local Client Audit Trail Ledger
+              Activity Log
             </h3>
-            <span className="text-xs text-gray-400 block">Sovereign client chronological verification events logs</span>
+            <span className="text-xs text-gray-400 block">History of all agent actions and decisions</span>
           </div>
 
           {/* Search and filters controls */}

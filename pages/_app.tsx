@@ -1,6 +1,7 @@
 import type { AppProps } from 'next/app';
 import '@/app/globals.css';
 import '@interchain-ui/react/styles';
+import dynamic from 'next/dynamic';
 
 import { PrivyProvider } from '@privy-io/react-auth';
 import Header from '@/app/components/Header';
@@ -11,6 +12,11 @@ import {
   useToast,
 } from '@/app/contexts/ToastContext';
 import { WalletProvider } from '@/app/contexts/WalletContext';
+
+const FloatingAiChat = dynamic(
+  () => import('@/app/components/FloatingAiChat'),
+  { ssr: false }
+);
 
 function AppContent({
   Component,
@@ -52,6 +58,9 @@ function AppContent({
 
       {/* Toast Container */}
       <ToastContainer toasts={toasts} onRemoveToast={removeToast} />
+
+      {/* Floating AI Assistant */}
+      <FloatingAiChat />
     </div>
   );
 }

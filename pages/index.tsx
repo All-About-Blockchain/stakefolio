@@ -6,9 +6,16 @@ import { useRouter } from 'next/router';
 import { useWallet } from '@/app/contexts/WalletContext';
 import { usePortfolioAssets } from '@/app/hooks/usePortfolioAssets';
 import AddAssetModal from '@/app/components/AddAssetModal';
-import PortfolioAiAssistant from '@/app/components/PortfolioAiAssistant';
-import TopStakingNetworks from '@/app/components/TopStakingNetworks';
-import AutonomousStakingAgentUi from '@/app/components/AutonomousStakingAgentUi';
+import {
+  ArrowDownToLine,
+  Layers,
+  TrendingUp,
+  Bot,
+  Wallet,
+  Coins,
+  ChevronRight,
+  BookOpen,
+} from 'lucide-react';
 
 // Dynamically import chart to avoid SSR issues
 const PortfolioCompositionChart = dynamic(
@@ -21,7 +28,6 @@ const PortfolioCompositionChart = dynamic(
   }
 );
 
-// Minimalist, high-contrast, clean aesthetic (tashinajackson.com influence)
 export default function Home() {
   const { address } = useWallet();
   const router = useRouter();
@@ -47,42 +53,147 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Stakefolio - Institutional Self-Custody</title>
+        <title>Stakefolio — Staking Made Simple</title>
         <meta
           name='description'
-          content='Clean, sophisticated staking and wealth management.'
+          content='Earn staking rewards across top networks. Your keys, your assets, your rewards.'
         />
         <meta name='viewport' content='width=device-width, initial-scale=1' />
       </Head>
 
       <div className='min-h-screen bg-white font-sans text-gray-900 selection:bg-black selection:text-white'>
-        <main className='mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8'>
-          {/* Header Section */}
-          <div className='mb-20'>
-            <h1 className='font-["Playfair_Display",_serif] text-5xl font-light tracking-tight text-black sm:text-6xl'>
-              Autonomous Staking Portal
+        <main className='mx-auto max-w-7xl px-6 py-16 sm:py-20 lg:px-8'>
+          {/* Hero Section — Outcome-Oriented */}
+          <div className='mb-16'>
+            <h1 className='font-["Playfair_Display",_serif] text-4xl font-light tracking-tight text-black sm:text-5xl lg:text-6xl'>
+              Earn staking rewards,
+              <br className='hidden sm:block' />
+              without the complexity
             </h1>
-            <p className='mt-4 max-w-2xl text-lg font-light text-gray-500'>
-              On-device AI agents automating multi-chain staking rebalancing, dynamic yield optimization, airdrop sentinel splits, and active governance proxying. Sovereign, secure, and non-custodial.
+            <p className='mt-5 max-w-2xl text-lg font-light leading-relaxed text-gray-500'>
+              Stakefolio handles multi-chain staking, yield optimization, and
+              governance — all on your device, fully non-custodial. Your keys,
+              your assets, your rewards.
             </p>
-            <div className='mt-6 flex flex-wrap gap-3'>
-              <Link
-                href='/funding?tab=deposit'
-                className='rounded-md bg-black px-4 py-2 text-sm text-white'
-              >
-                Deposit Assets
-              </Link>
-              <Link
-                href='/funding?tab=withdraw'
-                className='rounded-md border border-gray-200 px-4 py-2 text-sm text-gray-700'
-              >
-                Withdraw Assets
-              </Link>
+          </div>
+
+          {/* Quick Actions Row */}
+          <div className='mb-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
+            <Link
+              href='/funding?tab=deposit'
+              className='group flex items-center gap-4 rounded-2xl border border-gray-200 bg-white p-5 transition-all hover:border-black hover:shadow-md'
+            >
+              <div className='flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-black text-white transition-transform group-hover:scale-105'>
+                <ArrowDownToLine className='h-5 w-5' />
+              </div>
+              <div>
+                <span className='block text-sm font-semibold text-black'>
+                  Deposit
+                </span>
+                <span className='text-xs text-gray-500'>
+                  Add funds to get started
+                </span>
+              </div>
+              <ChevronRight className='ml-auto h-4 w-4 text-gray-300 transition-colors group-hover:text-black' />
+            </Link>
+
+            <Link
+              href='/staking'
+              className='group flex items-center gap-4 rounded-2xl border border-gray-200 bg-white p-5 transition-all hover:border-black hover:shadow-md'
+            >
+              <div className='flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white transition-transform group-hover:scale-105'>
+                <Layers className='h-5 w-5' />
+              </div>
+              <div>
+                <span className='block text-sm font-semibold text-black'>
+                  Stake
+                </span>
+                <span className='text-xs text-gray-500'>
+                  Choose networks & earn
+                </span>
+              </div>
+              <ChevronRight className='ml-auto h-4 w-4 text-gray-300 transition-colors group-hover:text-black' />
+            </Link>
+
+            <Link
+              href='/agent'
+              className='group flex items-center gap-4 rounded-2xl border border-gray-200 bg-white p-5 transition-all hover:border-black hover:shadow-md'
+            >
+              <div className='flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-violet-600 text-white transition-transform group-hover:scale-105'>
+                <Bot className='h-5 w-5' />
+              </div>
+              <div>
+                <span className='block text-sm font-semibold text-black'>
+                  AI Agent
+                </span>
+                <span className='text-xs text-gray-500'>
+                  Auto-optimize staking
+                </span>
+              </div>
+              <ChevronRight className='ml-auto h-4 w-4 text-gray-300 transition-colors group-hover:text-black' />
+            </Link>
+
+            <Link
+              href='/learn-staking'
+              className='group flex items-center gap-4 rounded-2xl border border-gray-200 bg-white p-5 transition-all hover:border-black hover:shadow-md'
+            >
+              <div className='flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gray-800 text-white transition-transform group-hover:scale-105'>
+                <BookOpen className='h-5 w-5' />
+              </div>
+              <div>
+                <span className='block text-sm font-semibold text-black'>
+                  Learn
+                </span>
+                <span className='text-xs text-gray-500'>
+                  Explore top networks
+                </span>
+              </div>
+              <ChevronRight className='ml-auto h-4 w-4 text-gray-300 transition-colors group-hover:text-black' />
+            </Link>
+          </div>
+
+          {/* At-a-Glance Summary Row */}
+          <div className='mb-16 grid gap-4 sm:grid-cols-3'>
+            <div className='rounded-2xl border border-gray-100 bg-gray-50/50 p-6'>
+              <div className='flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-gray-400'>
+                <Wallet className='h-3.5 w-3.5' />
+                Total Balance
+              </div>
+              <div className='mt-2 text-3xl font-light tracking-tight text-black'>
+                $65,025.00
+              </div>
+            </div>
+
+            <div className='rounded-2xl border border-emerald-100 bg-emerald-50/30 p-6'>
+              <div className='flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-emerald-600'>
+                <TrendingUp className='h-3.5 w-3.5' />
+                Estimated Annual Rewards
+              </div>
+              <div className='mt-2 text-3xl font-light tracking-tight text-emerald-700'>
+                $4,812.00
+              </div>
+              <span className='mt-1 inline-block text-sm text-emerald-600'>
+                ~7.4% weighted avg APY
+              </span>
+            </div>
+
+            <div className='rounded-2xl border border-gray-100 bg-gray-50/50 p-6'>
+              <div className='flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-gray-400'>
+                <Coins className='h-3.5 w-3.5' />
+                Active Positions
+              </div>
+              <div className='mt-2 text-3xl font-light tracking-tight text-black'>
+                {assets.length + stablecoins.length}
+              </div>
+              <span className='mt-1 inline-block text-sm text-gray-500'>
+                across {assets.length} networks
+              </span>
             </div>
           </div>
 
-          <div className='grid grid-cols-1 gap-16 lg:grid-cols-12'>
-            {/* Left Column - Assets Panel */}
+          {/* Main Content Grid */}
+          <div className='grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-16'>
+            {/* Left Column - Assets */}
             <div className='flex flex-col gap-8 lg:col-span-7'>
               {/* Stablecoins Section */}
               <div>
@@ -101,7 +212,7 @@ export default function Home() {
                     >
                       {/* Asset Header ROW */}
                       <div
-                        className='flex items-center justify-between p-6'
+                        className='flex items-center justify-between p-5 sm:p-6'
                         onClick={() => togglePanel(coin.id)}
                       >
                         <div className='flex items-center gap-4'>
@@ -111,7 +222,7 @@ export default function Home() {
                             className='h-10 w-10 rounded-full'
                           />
                           <div>
-                            <h3 className='flex items-center gap-3 text-xl font-medium text-black'>
+                            <h3 className='flex items-center gap-3 text-lg font-medium text-black sm:text-xl'>
                               {coin.name}
                               {expandedPanel !== coin.id && (
                                 <span className='rounded-full border border-emerald-100 bg-emerald-50 px-2 py-0.5 text-sm font-normal text-emerald-600'>
@@ -125,7 +236,7 @@ export default function Home() {
                           </div>
                         </div>
                         <div className='text-right'>
-                          <div className='text-xl font-medium text-black'>
+                          <div className='text-lg font-medium text-black sm:text-xl'>
                             {coin.value}
                           </div>
                           <div className='text-sm text-gray-500'>
@@ -134,7 +245,7 @@ export default function Home() {
                         </div>
                       </div>
 
-                      {/* Expanded Content / Deposit Options */}
+                      {/* Expanded Content */}
                       <div
                         className={`grid transition-all duration-300 ease-in-out ${
                           expandedPanel === coin.id
@@ -143,7 +254,7 @@ export default function Home() {
                         }`}
                       >
                         <div className='overflow-hidden'>
-                          <div className='mt-2 flex flex-col gap-8 border-t border-gray-100 p-6 pt-0'>
+                          <div className='mt-2 flex flex-col gap-8 border-t border-gray-100 p-5 pt-0 sm:p-6'>
                             <div>
                               <h4 className='mb-4 text-sm font-semibold uppercase tracking-wider text-gray-400'>
                                 Transaction Options
@@ -293,7 +404,7 @@ export default function Home() {
                     >
                       {/* Asset Header ROW */}
                       <div
-                        className='flex items-center justify-between p-6'
+                        className='flex items-center justify-between p-5 sm:p-6'
                         onClick={() => togglePanel(asset.id)}
                       >
                         <div className='flex items-center gap-4'>
@@ -303,7 +414,7 @@ export default function Home() {
                             className='h-10 w-10 rounded-full'
                           />
                           <div>
-                            <h3 className='flex items-center gap-3 text-xl font-medium text-black'>
+                            <h3 className='flex items-center gap-3 text-lg font-medium text-black sm:text-xl'>
                               {asset.name}
                               {expandedPanel !== asset.id && (
                                 <span className='rounded-full border border-emerald-100 bg-emerald-50 px-2 py-0.5 text-sm font-normal text-emerald-600'>
@@ -317,7 +428,7 @@ export default function Home() {
                           </div>
                         </div>
                         <div className='text-right'>
-                          <div className='text-xl font-medium text-black'>
+                          <div className='text-lg font-medium text-black sm:text-xl'>
                             {asset.value}
                           </div>
                           <div className='text-sm text-gray-500'>
@@ -326,7 +437,7 @@ export default function Home() {
                         </div>
                       </div>
 
-                      {/* Expanded Content / Deposit Options */}
+                      {/* Expanded Content */}
                       <div
                         className={`grid transition-all duration-300 ease-in-out ${
                           expandedPanel === asset.id
@@ -335,8 +446,8 @@ export default function Home() {
                         }`}
                       >
                         <div className='overflow-hidden'>
-                          <div className='mt-2 flex flex-col gap-8 border-t border-gray-100 p-6 pt-0'>
-                            {/* Breakdown Section */}
+                          <div className='mt-2 flex flex-col gap-8 border-t border-gray-100 p-5 pt-0 sm:p-6'>
+                            {/* Holdings Breakdown */}
                             <div>
                               <h4 className='mb-4 text-sm font-semibold uppercase tracking-wider text-gray-400'>
                                 Current Holdings
@@ -374,7 +485,7 @@ export default function Home() {
                               </div>
                             </div>
 
-                            {/* Yield Opportunities Section */}
+                            {/* Yield Opportunities */}
                             <div>
                               <h4 className='mb-4 text-sm font-semibold uppercase tracking-wider text-gray-400'>
                                 Yield Opportunities
@@ -455,12 +566,12 @@ export default function Home() {
               <h2 className='mb-4 border-b border-gray-100 pb-4 font-["Playfair_Display",_serif] text-2xl font-light text-black'>
                 Composition
               </h2>
-              <div className='flex h-full min-h-[500px] flex-col rounded-2xl border border-gray-100 bg-gray-50 p-8'>
+              <div className='flex h-full min-h-[500px] flex-col rounded-2xl border border-gray-100 bg-gray-50 p-6 sm:p-8'>
                 <div className='mb-8'>
                   <div className='text-sm font-semibold uppercase tracking-wider text-gray-500'>
                     Total Balance
                   </div>
-                  <div className='text-5xl font-light tracking-tight text-black'>
+                  <div className='text-4xl font-light tracking-tight text-black sm:text-5xl'>
                     $65,025.00
                   </div>
                 </div>
@@ -471,77 +582,6 @@ export default function Home() {
               </div>
             </div>
           </div>
-
-          {/* Autonomous AI Staking Agent Section */}
-          <section className='mt-24 border-t border-gray-100 pt-16 sm:mt-28 sm:pt-20'>
-            <div className='mb-10 max-w-3xl'>
-              <h2 className='font-["Playfair_Display",_serif] text-3xl font-light tracking-tight text-black sm:text-[2rem]'>
-                Autonomous Agent Execution Portal
-              </h2>
-              <p className='mt-4 text-base leading-relaxed text-gray-600'>
-                Deploy fully autonomous, multi-chain staking strategies under strict non-custodial guardrails. Configure local compliance parameters and simulate live telemetry rebalancing events.
-              </p>
-            </div>
-            <AutonomousStakingAgentUi />
-          </section>
-
-          <section
-            aria-labelledby='portfolio-guide-heading'
-            className='mt-24 border-t border-gray-100 pt-16 sm:mt-28 sm:pt-20'
-          >
-            <div className='mb-10 max-w-3xl'>
-              <h2
-                id='portfolio-guide-heading'
-                className='font-["Playfair_Display",_serif] text-3xl font-light tracking-tight text-black sm:text-[2rem]'
-              >
-                Guided portfolio and technical depth
-              </h2>
-              <p className='mt-4 text-base leading-relaxed text-gray-600'>
-                The assistant answers in plain language and adapts to your
-                goals. The expandable reference below keeps the granular panels
-                engineers and risk teams expect—consensus mechanics, unbonding,
-                inflation-adjusted yield, and execution paths Stakefolio runs
-                after you deposit and choose methods.
-              </p>
-            </div>
-            <div className='grid items-stretch gap-8 lg:grid-cols-12 lg:gap-10'>
-              <div className='lg:col-span-5'>
-                <PortfolioAiAssistant />
-              </div>
-              <aside className='flex flex-col justify-between rounded-2xl border border-gray-200 bg-gray-50/80 p-6 sm:p-8 lg:col-span-7'>
-                <div>
-                  <h3 className='text-sm font-semibold uppercase tracking-[0.12em] text-gray-400'>
-                    Technical reference
-                  </h3>
-                  <p className='mt-3 text-[15px] leading-relaxed text-gray-700'>
-                    Use the accordion for authoritative, chain-by-chain
-                    parameters—illustrative nominal and real yield, inflation
-                    assumptions, unbonding, participation, and the staking
-                    methods your portfolio can submit on your behalf.
-                  </p>
-                  <ul className='mt-4 list-inside list-disc space-y-2 text-sm text-gray-600'>
-                    <li>Consensus and security write-ups per network</li>
-                    <li>
-                      Metric tiles (liquidity, participation, protocol notes)
-                    </li>
-                    <li>Yield versus inflation with explicit definitions</li>
-                    <li>
-                      Portfolio CTAs wired to deposit and configuration flows
-                    </li>
-                  </ul>
-                </div>
-                <a
-                  href='#staking-networks-reference'
-                  className='mt-8 inline-flex w-fit items-center gap-2 text-sm font-medium text-black underline decoration-gray-300 underline-offset-4 hover:decoration-black'
-                >
-                  Jump to network panels
-                  <span aria-hidden>↓</span>
-                </a>
-              </aside>
-            </div>
-          </section>
-
-          <TopStakingNetworks sectionId='staking-networks-reference' />
         </main>
       </div>
 
